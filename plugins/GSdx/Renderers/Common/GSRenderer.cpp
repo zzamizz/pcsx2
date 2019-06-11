@@ -127,6 +127,11 @@ bool GSRenderer::Merge(int field)
 		m_regs->DISP[0].DISPFB.FBW == m_regs->DISP[1].DISPFB.FBW &&
 		m_regs->DISP[0].DISPFB.PSM == m_regs->DISP[1].DISPFB.PSM;
 
+	// This lambda expression is used for verifying if the 2 contexts of displays are shifted apart from each other by a specific value.
+	auto frameshift = [](GSVector4i r1, GSVector4i r2, int shift) {
+        return ((r1.eq(r2 + GSVector4i(0, shift, 0, shift))) ||  r2.eq(r1 + GSVector4i(0, shift, 0, shift)));
+    };
+
 	if(samesrc /*&& m_regs->PMODE.SLBG == 0 && m_regs->PMODE.MMOD == 1 && m_regs->PMODE.ALP == 0x80*/)
 	{
 		// persona 4:
@@ -147,11 +152,11 @@ bool GSRenderer::Merge(int field)
 		//
 		// same just the first image shifted
 		//
-		// These kinds of cases are now fixed by the more generic frame_diff code below, as the code here was too specific and has become obsolete.
+		// These kinds of cases are now fixed by the more generic frameshift code below, as the code here was too specific and has become obsolete.
 		// NOTE: Persona 4 and God Of War are not rare exceptions, many games have the same(or very similar) offsets.
 
 		int topDiff = fr[0].top - fr[1].top;
-		if (dr[0].eq(dr[1]) && (fr[0].eq(fr[1] + GSVector4i(0, topDiff, 0, topDiff)) || fr[1].eq(fr[0] + GSVector4i(0, topDiff, 0, topDiff))))
+		if ( (dr[0].eq(dr[1])) && frameshift(fr[0], fr[1], topDiff))
 		{
 			// dq5:
 			//
