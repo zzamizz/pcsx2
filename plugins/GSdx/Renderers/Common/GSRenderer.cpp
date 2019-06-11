@@ -82,6 +82,38 @@ void GSRenderer::ResetDevice()
     if(m_dev) m_dev->Reset(1, 1);
 }
 
+// This lambda expression is used for verifying if the 2 contexts of displays are shifted apart from each other by a specific value.
+auto frameshift = [](GSVector4i r1, GSVector4i r2, int shift) {
+    return ((r1.eq(r2 + GSVector4i(0, shift, 0, shift))) || r2.eq(r1 + GSVector4i(0, shift, 0, shift)));
+};
+
+// Mizuiro constantly alters its DH value on the DISP register from 464 to 480
+// This causes the screen to shake vertically due to the frequent change in DISP register value
+// This doesn't happen in the PS2, the assumption is that the GS has a delay before applying
+// a new DH value to the output circuit. The following function handles such delay, currently it only
+// implements the delay for DH values, delay for other display values could also be potentially handled
+// but we're still not sure what happens on the PS2 yet and if this is the correct approach or not, so it's
+// limited to the DH value for now.
+static GSVector4i DelayDisplayRectangleChange(const GSVector4i &current, int context)
+{
+    static std::array<GSVector4i, 2> cached_rectangle = {GSVector4i(0), GSVector4i(0)};
+    static std::array<bool, 2> initialized_delay = {false, false};
+    const GSVector4i previous = cached_rectangle.at(context);
+
+    if (!initialized_delay.at(context) && current.height() != previous.height() && current.xyzz().eq(previous.xyzz()) && !frameshift(current, previous, 1))
+	{
+#ifdef ENABLE_PCRTC_DEBUG
+        printf("Delay on display rectangle height transistion (Requesting change from %d to %d) ", previous.height(), current.height());
+#endif
+        initialized_delay.at(context) = true;
+        return previous;
+    }
+
+	cached_rectangle.at(context) = current;
+    initialized_delay.at(context) = false;
+    return current;
+}
+
 bool GSRenderer::Merge(int field)
 {
 	bool en[2];
@@ -126,11 +158,6 @@ bool GSRenderer::Merge(int field)
 		m_regs->DISP[0].DISPFB.FBP == m_regs->DISP[1].DISPFB.FBP &&
 		m_regs->DISP[0].DISPFB.FBW == m_regs->DISP[1].DISPFB.FBW &&
 		m_regs->DISP[0].DISPFB.PSM == m_regs->DISP[1].DISPFB.PSM;
-
-	// This lambda expression is used for verifying if the 2 contexts of displays are shifted apart from each other by a specific value.
-	auto frameshift = [](GSVector4i r1, GSVector4i r2, int shift) {
-        return ((r1.eq(r2 + GSVector4i(0, shift, 0, shift))) ||  r2.eq(r1 + GSVector4i(0, shift, 0, shift)));
-    };
 
 	if(samesrc /*&& m_regs->PMODE.SLBG == 0 && m_regs->PMODE.MMOD == 1 && m_regs->PMODE.ALP == 0x80*/)
 	{
@@ -204,8 +231,8 @@ bool GSRenderer::Merge(int field)
 	{
 		if(!en[i] || !tex[i]) continue;
 
-		GSVector4i r = fr[i];
-		GSVector4 scale = GSVector4(tex[i]->GetScale()).xyxy();
+		const GSVector4i r = DelayDisplayRectangleChange(fr[i], i);
+		const GSVector4 scale = GSVector4(tex[i]->GetScale()).xyxy();
 
 		src[i] = GSVector4(r) * scale / GSVector4(tex[i]->GetSize()).xyxy();
 		src_hw[i] = (GSVector4(r) + GSVector4 (0, y_offset[i], 0, y_offset[i])) * scale / GSVector4(tex[i]->GetSize()).xyxy();
