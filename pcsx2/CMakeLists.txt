@@ -533,6 +533,19 @@ set(pcsx2WindowsHeaders
 	windows/resource.h
 	windows/Win32.h)
 
+set(sVUSources
+	x86/sVU/sVU_Lower.cpp
+	x86/sVU/sVU_Micro.cpp
+	x86/sVU/sVU_Upper.cpp
+	x86/sVU/sVU_zerorec.cpp
+	)
+
+set(newVIFSources
+	x86/newVif/newVif_Dynarec.cpp
+	x86/newVif/newVif_Unpack.cpp
+	x86/newVif/newVif_UnpackSSE.cpp
+	)
+
 # x86 sources
 set(pcsx2x86Sources
 	x86/BaseblockEx.cpp
@@ -559,18 +572,41 @@ set(pcsx2x86Sources
 	x86/ix86-32/iR5900Shift.cpp
 	x86/ix86-32/iR5900Templates.cpp
 	x86/ix86-32/recVTLB.cpp
-	x86/newVif_Dynarec.cpp
-	x86/newVif_Unpack.cpp
-	x86/newVif_UnpackSSE.cpp
+	${newVIFSources}
 	)
-if (NOT DISABLE_SVU)
-    set(pcsx2x86Sources ${pcsx2x86Sources}
-	x86/sVU_Lower.cpp
-	x86/sVU_Micro.cpp
-	x86/sVU_Upper.cpp
-	x86/sVU_zerorec.cpp
-    )
-endif()
+
+set (microVUHeaders
+	x86/mVU/microVU_Alloc.inl
+	x86/mVU/microVU_Analyze.inl
+	x86/mVU/microVU_Branch.inl
+	x86/mVU/microVU_Clamp.inl
+	x86/mVU/microVU_Compile.inl
+	x86/mVU/microVU.cpp
+	x86/mVU/microVU_Execute.inl
+	x86/mVU/microVU_Flags.inl
+	x86/mVU/microVU.h
+	x86/mVU/microVU_IR.h
+	x86/mVU/microVU_Log.inl
+	x86/mVU/microVU_Lower.inl
+	x86/mVU/microVU_Macro.inl
+	x86/mVU/microVU_Misc.h
+	x86/mVU/microVU_Misc.inl
+	x86/mVU/microVU_Profiler.h
+	x86/mVU/microVU_Tables.inl
+	x86/mVU/microVU_Upper.inl
+	)
+
+set(sVUHeaders
+	x86/sVU/sVU_Compare.h
+	x86/sVU/sVU_Micro.h
+	x86/sVU/sVU_zerorec.h
+	)
+
+	set(newVifHeaders
+	x86/newVif/newVif.h
+	x86/newVif/newVif_HashBucket.h
+	x86/newVif/newVif_UnpackSSE.h
+	)
 
 # x86 headers
 set(pcsx2x86Headers
@@ -589,36 +625,19 @@ set(pcsx2x86Headers
 	x86/iR5900Move.h
 	x86/iR5900MultDiv.h
 	x86/iR5900Shift.h
-	x86/microVU_Alloc.inl
-	x86/microVU_Analyze.inl
-	x86/microVU_Branch.inl
-	x86/microVU_Clamp.inl
-	x86/microVU_Compile.inl
-	x86/microVU.cpp
-	x86/microVU_Execute.inl
-	x86/microVU_Flags.inl
-	x86/microVU.h
-	x86/microVU_IR.h
-	x86/microVU_Log.inl
-	x86/microVU_Lower.inl
-	x86/microVU_Macro.inl
-	x86/microVU_Misc.h
-	x86/microVU_Misc.inl
-	x86/microVU_Profiler.h
-	x86/microVU_Tables.inl
-	x86/microVU_Upper.inl
-	x86/newVif.h
-	x86/newVif_HashBucket.h
-	x86/newVif_UnpackSSE.h
 	x86/R5900_Profiler.h
-	x86/sVU_Compare.h
-	x86/sVU_Micro.h
-	x86/sVU_zerorec.h
+	${newVifHeaders}
+	${sVUHeaders}
+	${microVUHeaders}
 	)
+
+if (NOT DISABLE_SVU)
+	set(pcsx2x86Sources ${pcsx2x86Sources} ${sVUSources})
+endif()
 
 # collect .S files
 if (NOT DISABLE_SVU)
-    set(pcsx2SSources x86/aVUzerorec.S)
+    set(pcsx2SSources x86/sVU/aVUzerorec.S)
     # change language of .S-files to c++
     set_source_files_properties(${pcsx2SSources} PROPERTIES LANGUAGE CXX)
 else()

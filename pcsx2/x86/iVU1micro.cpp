@@ -19,7 +19,7 @@
 #include "Common.h"
 #include "iR5900.h"
 #include "VUmicro.h"
-#include "sVU_zerorec.h"
+#include "sVU/sVU_zerorec.h"
 
 
 #define useMVU1 CHECK_MICROVU1
