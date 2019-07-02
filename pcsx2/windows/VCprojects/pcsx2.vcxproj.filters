@@ -296,7 +296,7 @@
     <ClCompile Include="..\..\x86\iVU1micro.cpp">
       <Filter>System\Ps2\EmotionEngine\VU\Dynarec</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\x86\microVU.cpp">
+    <ClCompile Include="..\..\x86\mVU\microVU.cpp">
       <Filter>System\Ps2\EmotionEngine\VU\Dynarec\microVU</Filter>
     </ClCompile>
     <ClCompile Include="..\..\x86\sVU\sVU_Lower.cpp">

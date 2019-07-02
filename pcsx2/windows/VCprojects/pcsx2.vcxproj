@@ -229,7 +229,7 @@
     <ClCompile Include="..\..\VUmicro.cpp" />
     <ClCompile Include="..\..\VUmicroMem.cpp" />
     <ClCompile Include="..\..\x86\iVU1micro.cpp" />
-    <ClCompile Include="..\..\x86\microVU.cpp" />
+    <ClCompile Include="..\..\x86\mVU\microVU.cpp" />
     <ClCompile Include="..\..\x86\sVU\sVU_Lower.cpp">
       <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
     </ClCompile>
