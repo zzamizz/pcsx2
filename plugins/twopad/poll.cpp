@@ -43,7 +43,6 @@ void QueryInfo::reset()
     currentCommand = 0;
     numBytes = 0;
     queryDone = 1;
-    //memset(response, 0xF3, sizeof(response));
     std::fill_n(response, sizeof(response), 0xF3);
 }
 
@@ -181,7 +180,7 @@ u8 pad_poll(u8 value)
                     query.set_result(configExit);
                     return 0xF3;
                 }
-                break; // Comment out if it breaks anything.
+                //break; // Comment out if it breaks anything.
 
             case CMD_READ_DATA_AND_VIBRATE:
             {
@@ -374,11 +373,17 @@ u8 pad_poll(u8 value)
                 else if (query.lastByte == 5)
                 {
                     if (!(value & 1))
+                    {
                         pad->set_mode(MODE_DIGITAL);
+                    }
                     else if (!(value & 2))
+                    {
                         pad->set_mode(MODE_ANALOG);
+                    }
                     else
+                    {
                         pad->set_mode(MODE_DS2_NATIVE);
+                    }
                 }
                 break;
 

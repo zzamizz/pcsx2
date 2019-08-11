@@ -45,6 +45,83 @@ static bool s_Shift = false;
 static unsigned int s_previous_mouse_x = 0;
 static unsigned int s_previous_mouse_y = 0;
 
+// Eh, just for testing purposes. This will be replaced.
+void get_hard_coded_key(u32 key, s32 *pad, s32 *index)
+{
+    switch(key)
+    {
+        case XK_a:
+            *pad = 0;
+            *index = PAD_L2;
+            break;
+
+        case XK_semicolon:
+            *pad = 0;
+            *index = PAD_R2;
+            break;
+
+        case XK_w:
+            *pad = 0;
+            *index = PAD_L1;
+            break;
+
+        case XK_p:
+            *pad = 0;
+            *index = PAD_R1;
+            break;
+
+        case XK_i:
+            *pad = 0;
+            *index = PAD_TRIANGLE;
+            break;
+
+        case XK_l:
+            *pad = 0;
+            *index = PAD_CIRCLE;
+            break;
+
+        case XK_k:
+            *pad = 0;
+            *index = PAD_CROSS;
+            break;
+
+        case XK_j:
+            *pad = 0;
+            *index = PAD_SQUARE;
+            break;
+
+        case XK_v:
+            *pad = 0;
+            *index = PAD_SELECT;
+            break;
+
+        case XK_n:
+            *pad = 0;
+            *index = PAD_START;
+            break;
+
+        case XK_e:
+            *pad = 0;
+            *index = PAD_UP;
+            break;
+
+        case XK_f:
+            *pad = 0;
+            *index = PAD_RIGHT;
+            break;
+
+        case XK_d:
+            *pad = 0;
+            *index = PAD_DOWN;
+            break;
+
+        case XK_s:
+            *pad = 0;
+            *index = PAD_LEFT;
+            break;
+    }
+}
+
 void AnalyzeKeyEvent(keyEvent &evt)
 {
     KeySym key = (KeySym)evt.key;
@@ -55,16 +132,8 @@ void AnalyzeKeyEvent(keyEvent &evt)
     // If there is, pad is the pad it is on, and index is the button value.
 
     // Needs to be written.
-    
-    /*for (int cpad = 0; cpad < 2; cpad++)
-    {
-        int tmp_index = get_keyboard_key(cpad, key);
-        if (tmp_index != -1)
-        {
-            pad = cpad;
-            index = tmp_index;
-        }
-    }*/
+    get_hard_coded_key(evt.key, &pad, &index);
+    //if (index != -1) printf("Key pressed: key = %i\n", index);
 
     switch (evt.evt)
     {
@@ -113,7 +182,9 @@ void AnalyzeKeyEvent(keyEvent &evt)
                 }
             }
             else if (index != -1)
+            {
                 ps2_gamepad[pad].press(index);
+            }
 
             event.evt = KEYPRESS;
             event.key = key;

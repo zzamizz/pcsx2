@@ -178,6 +178,21 @@ EXPORT_C_(void) PADupdate(int pad)
 
     // Poll keyboard/mouse event. There is currently no way to separate pad0 from pad1 event.
     // So we will populate both pads at the same time.
+
+    ps2_gamepad[0].keyboard_state_access();
+    ps2_gamepad[1].keyboard_state_access();
+
+    PollForX11KeyboardInput();
+
+    ps2_gamepad[0].joystick_state_access();
+    ps2_gamepad[1].joystick_state_access();
+
+    //PollForJoystickInput(cpad);
+
+    ps2_gamepad[0].commit_status();
+    ps2_gamepad[1].commit_status();
+
+    Pad::rumble_all();
 }
 
 // Send a key event from wx-gui to pad
