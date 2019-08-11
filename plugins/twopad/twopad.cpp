@@ -30,7 +30,7 @@ const u32 version = PS2E_PAD_VERSION;
 const u32 revision = 1;
 const u32 build = 0; // increase that with each version
 
-const u32 pad_save_state_version ((revision << 8) | (build << 0));
+const u32 pad_save_state_version = ((revision << 8) | (build << 0));
 
 std::string ini_path("inis/");
 std::string log_path("logs/");
@@ -68,6 +68,9 @@ EXPORT_C_(u32) PS2EgetLibVersion2(u32 type)
 EXPORT_C_(s32) PADinit(u32 flags)
 {
     init_sdl();
+#if defined(__unix__)
+    init_x11_keys();
+#endif
 
     Pad::reset_all();
     query.reset();
@@ -187,7 +190,9 @@ EXPORT_C_(void) PADupdate(int pad)
     ps2_gamepad[0].keyboard_state_access();
     ps2_gamepad[1].keyboard_state_access();
 
+#if defined(__unix__)
     PollForX11KeyboardInput();
+#endif
 
     ps2_gamepad[0].joystick_state_access();
     ps2_gamepad[1].joystick_state_access();

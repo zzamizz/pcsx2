@@ -25,8 +25,8 @@
 #include "twopad.h"
 #include <array>
 
-static const u32 MAX_ANALOG_VALUE = 32766;
-static const u32 m_analog_released_val = 0x7F;
+static const s32 MAX_ANALOG_VALUE = 32766;
+static const s32 m_analog_released_val = 0x7F;
 
 class PADAnalog
 {
@@ -51,14 +51,12 @@ class PADAnalog
 class ps2_pad
 {
     private:
+        // Toggle keyboard/joystick. keyboard = true.
+        bool m_state_access;
+
         u16 m_button;
         u16 m_internal_button_kbd;
         u16 m_internal_button_joy;
-
-        std::array<u8, MAX_KEYS> m_button_pressure;
-        std::array<u8, MAX_KEYS> m_internal_button_pressure;
-
-        bool m_state_access;
 
         PADAnalog m_analog;
         PADAnalog m_internal_analog_kbd;
@@ -68,11 +66,10 @@ class ps2_pad
         bool analog_is_reversed(u32 index);
         u8 analog_merge(u8 kbd, u8 joy);
 
+        std::array<u8, MAX_KEYS> m_button_pressure;
+        std::array<u8, MAX_KEYS> m_internal_button_pressure;
     public:
-        ps2_pad()
-        {
-            Init();
-        }
+        ps2_pad() { Init();}
         void Init();
 
         void keyboard_state_access() { m_state_access = true; }
@@ -84,6 +81,7 @@ class ps2_pad
         u16 get();
         u8 get(u32 index);
         u8 get_result(u16 value, u32 test);
+        void set(u32 index, s32 value);
 
         void commit_status();
 };

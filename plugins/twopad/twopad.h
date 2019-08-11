@@ -65,11 +65,24 @@ enum gamePadValues {
     PAD_R_UP,     // Right joystick (Up) ↑
     PAD_R_RIGHT,  // Right joystick (Right) →
     PAD_R_DOWN,   // Right joystick (Down) ↓
-    PAD_R_LEFT    // Right joystick (Left) ←
+    PAD_R_LEFT,    // Right joystick (Left) ←
+    PAD_NULL
 };
 
 // Number of elements in gamePadValues.
-static const u32 MAX_KEYS = 24;
+static const u32 MAX_KEYS = (u32)PAD_NULL;
+
+struct pad_key_map
+{
+    u8 pad = 0;
+    gamePadValues key = PAD_NULL;
+
+    void set(u8 thePad, gamePadValues theKey)
+    {
+        pad = thePad;
+        key = theKey;
+    }
+};
 
 #include "ps2_pad.h"
 
