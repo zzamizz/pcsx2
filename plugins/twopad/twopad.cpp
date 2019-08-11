@@ -24,6 +24,7 @@
 #include "mt_queue.h"
 #include "poll.h"
 #include "ps2_pad.h"
+#include "sdl_controller.h"
 
 const u32 version = PS2E_PAD_VERSION;
 const u32 revision = 1;
@@ -66,6 +67,8 @@ EXPORT_C_(u32) PS2EgetLibVersion2(u32 type)
 // Called once.
 EXPORT_C_(s32) PADinit(u32 flags)
 {
+    init_sdl();
+
     Pad::reset_all();
     query.reset();
     ps2_gamepad[0].Init();
@@ -125,6 +128,8 @@ EXPORT_C_(void) PADsetLogDir(const char *dir)
 // PADkeyEvent is called every vsync. (Return NULL if there's no event.)
 EXPORT_C_(keyEvent *) PADkeyEvent()
 {
+    sdl_events();
+
     s_event = event;
     event.evt = 0;
     event.key = 0;
@@ -187,7 +192,7 @@ EXPORT_C_(void) PADupdate(int pad)
     ps2_gamepad[0].joystick_state_access();
     ps2_gamepad[1].joystick_state_access();
 
-    //PollForJoystickInput(cpad);
+    PollForJoystickInput();
 
     ps2_gamepad[0].commit_status();
     ps2_gamepad[1].commit_status();

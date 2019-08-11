@@ -26,13 +26,15 @@ linux/keyboard_x11.h)
 set(twopadSources
     twopad.cpp
     poll.cpp
-    ps2_pad.cpp)
+    ps2_pad.cpp
+    sdl_controller.cpp)
 
 # twopad headers
 set(twopadHeaders
     twopad.h
     poll.h
-    ps2_pad.h)
+    ps2_pad.h
+    sdl_controller.h)
 
 if(Windows)
     # to be added.
