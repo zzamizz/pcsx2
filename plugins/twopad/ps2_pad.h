@@ -24,9 +24,17 @@
 
 #include "twopad.h"
 #include <array>
+#include <algorithm>
 
 static const s32 MAX_ANALOG_VALUE = 32766;
 static const s32 m_analog_released_val = 0x7F;
+
+// From https://stackoverflow.com/questions/9323903/most-efficient-elegant-way-to-clip-a-number
+// because std::clamp is C++17.
+template <typename T>
+T clip(const T& n, const T& lower, const T& upper) {
+  return std::max(lower, std::min(n, upper));
+}
 
 class PADAnalog
 {
@@ -46,6 +54,45 @@ class PADAnalog
             rx = m_analog_released_val;
             ry = m_analog_released_val;
         }
+
+        void merge(PADAnalog temp, PADAnalog temp2)
+        {
+            if (temp.lx != m_analog_released_val)
+                lx = temp.lx;
+            else
+                lx = temp2.lx;
+            
+            
+            if (temp.ly != m_analog_released_val)
+                ly = temp.ly;
+            else
+                ly = temp2.ly;
+
+            if (temp.rx != m_analog_released_val)
+                rx = temp.rx;
+            else
+                rx = temp2.rx;
+
+            if (temp.ry != m_analog_released_val)
+                ry = temp.ry;
+            else
+                ry = temp2.ry;
+        }
+};
+
+class ps2_pad_internal
+{
+    public:
+        u16 button;
+        PADAnalog analog;
+
+        ps2_pad_internal() { init(); }
+
+        void init()
+        {
+            button = 0xFFFF;
+            analog.init();
+        }
 };
 
 class ps2_pad
@@ -54,26 +101,28 @@ class ps2_pad
         // Toggle keyboard/joystick. keyboard = true.
         bool m_state_access;
 
-        u16 m_button;
-        u16 m_internal_button_kbd;
-        u16 m_internal_button_joy;
-
-        PADAnalog m_analog;
-        PADAnalog m_internal_analog_kbd;
-        PADAnalog m_internal_analog_joy;
+        ps2_pad_internal kbd, joy, main;
 
         void analog_set(u32 index, u8 value);
         bool analog_is_reversed(u32 index);
-        u8 analog_merge(u8 kbd, u8 joy);
 
         std::array<u8, MAX_KEYS> m_button_pressure;
         std::array<u8, MAX_KEYS> m_internal_button_pressure;
     public:
         ps2_pad() { Init();}
+
         void Init();
 
         void keyboard_state_access() { m_state_access = true; }
         void joystick_state_access() { m_state_access = false; }
+
+        ps2_pad_internal *current()
+        {
+            if (m_state_access)
+                return &kbd;
+            else
+                return &joy;
+        }
 
         void press(u32 index, s32 value = 0xFF);
         void release( u32 index);

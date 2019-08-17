@@ -22,24 +22,18 @@
 
 #include "twopad.h"
 #include "ps2_pad.h"
+#include <algorithm>
 
 void ps2_pad::Init()
 {
-        m_state_access = false;
+    joystick_state_access();
         
-        m_button = 0xFFFF;
-        m_internal_button_kbd = 0xFFFF;
-        m_internal_button_joy = 0xFFFF;
+    main.init();
+    kbd.init();
+    joy.init();
 
-        for (int index = 0; index < MAX_KEYS; index++)
-        {
-            m_button_pressure[index] = 0xFF;
-            m_internal_button_pressure[index] = 0xFF;
-        }
-
-        m_analog.init();
-        m_internal_analog_kbd.init();
-        m_internal_analog_joy.init();
+    m_button_pressure.fill(0xFF);
+    m_internal_button_pressure.fill(0xFF);
 }
 
 void ps2_pad::press( u32 index, s32 value)
@@ -48,18 +42,11 @@ void ps2_pad::press( u32 index, s32 value)
     {
         m_internal_button_pressure[index] = value;
 
-        if (m_state_access)
-            clear_bit(m_internal_button_kbd, index);
-        else
-            clear_bit(m_internal_button_joy, index);
+        clear_bit(current()->button, index);
     }
     else
     {
-        // clamp value
-        if (value > MAX_ANALOG_VALUE)
-            value = MAX_ANALOG_VALUE;
-        else if (value < -MAX_ANALOG_VALUE)
-            value = -MAX_ANALOG_VALUE;
+        value = clip(value, -MAX_ANALOG_VALUE, MAX_ANALOG_VALUE);
 
         //                          Left -> -- -> Right
         // Value range :        FFFF8002 -> 0  -> 7FFE
@@ -83,10 +70,7 @@ void ps2_pad::release(u32 index)
     }
     else
     {
-        if (m_state_access)
-            set_bit(m_internal_button_kbd, index);
-        else
-            set_bit(m_internal_button_joy, index);
+        set_bit(current()->button, index);
     }
 }
 
@@ -100,38 +84,31 @@ void ps2_pad::set(u32 index, s32 value)
 
 u16 ps2_pad::get()
 {
-    return m_button;
+    return main.button;
 }
 
 void ps2_pad::analog_set(u32 index, u8 value)
 {
-    PADAnalog *m_internal_analog_ref;
-
-    if (m_state_access)
-        m_internal_analog_ref = &m_internal_analog_kbd;
-    else
-        m_internal_analog_ref = &m_internal_analog_joy;
-
     switch (index)
     {
         case PAD_R_LEFT:
         case PAD_R_RIGHT:
-            m_internal_analog_ref->rx = value;
+            current()->analog.rx = value;
             break;
 
         case PAD_R_DOWN:
         case PAD_R_UP:
-            m_internal_analog_ref->ry = value;
+            current()->analog.ry = value;
             break;
 
         case PAD_L_LEFT:
         case PAD_L_RIGHT:
-            m_internal_analog_ref->lx = value;
+            current()->analog.lx = value;
             break;
 
         case PAD_L_DOWN:
         case PAD_L_UP:
-            m_internal_analog_ref->ly = value;
+            current()->analog.ly = value;
             break;
 
         default:
@@ -162,7 +139,6 @@ bool ps2_pad::analog_is_reversed(u32 index)
         default:
             return false;
     }*/
-    //return false;
     return false;
 }
 
@@ -172,19 +148,19 @@ u8 ps2_pad::get(u32 index)
     {
         case PAD_R_LEFT:
         case PAD_R_RIGHT:
-            return m_analog.rx;
+            return main.analog.rx;
 
         case PAD_R_DOWN:
         case PAD_R_UP:
-            return m_analog.ry;
+            return main.analog.ry;
 
         case PAD_L_LEFT:
         case PAD_L_RIGHT:
-            return m_analog.lx;
+            return main.analog.lx;
 
         case PAD_L_DOWN:
         case PAD_L_UP:
-            return m_analog.ly;
+            return main.analog.ly;
 
         default:
             return m_button_pressure[index];
@@ -196,23 +172,11 @@ u8 ps2_pad::get_result(u16 value, u32 test)
     return !test_bit(value, test) ? get(test) : 0;
 }
 
-u8 ps2_pad::analog_merge(u8 kbd, u8 joy)
-{
-    if (kbd != m_analog_released_val)
-        return kbd;
-    else
-        return joy;
-}
-
 void ps2_pad::commit_status()
 {
-    m_button = m_internal_button_kbd & m_internal_button_joy;
+    main.button = kbd.button & joy.button;
 
-    for (int index = 0; index < MAX_KEYS; index++)
-        m_button_pressure[index] = m_internal_button_pressure[index];
+    m_button_pressure = m_internal_button_pressure;
 
-    m_analog.lx = analog_merge(m_internal_analog_kbd.lx, m_internal_analog_joy.lx);
-    m_analog.ly = analog_merge(m_internal_analog_kbd.ly, m_internal_analog_joy.ly);
-    m_analog.rx = analog_merge(m_internal_analog_kbd.rx, m_internal_analog_joy.rx);
-    m_analog.ry = analog_merge(m_internal_analog_kbd.ry, m_internal_analog_joy.ry);
+    main.analog.merge(kbd.analog, joy.analog);
 }
