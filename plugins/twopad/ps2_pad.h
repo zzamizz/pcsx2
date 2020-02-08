@@ -22,9 +22,11 @@
 
 #pragma once
 
-#include "twopad.h"
 #include <array>
 #include <algorithm>
+
+#include "twopad.h"
+#include "sdl_controller.h"
 
 static const s32 MAX_ANALOG_VALUE = 32766;
 static const s32 m_analog_released_val = 0x7F;
@@ -108,6 +110,7 @@ class ps2_pad
 
         std::array<u8, MAX_KEYS> m_button_pressure;
         std::array<u8, MAX_KEYS> m_internal_button_pressure;
+        
     public:
         ps2_pad() { Init();}
 
@@ -133,4 +136,14 @@ class ps2_pad
         void set(u32 index, s32 value);
 
         void commit_status();
+
+        bool reversed_lx = false;
+        bool reversed_ly = false;
+        bool reversed_rx = false;
+        bool reversed_ry = false;
+
+        sdl_controller *real = nullptr;
+        bool controller_attached = false;
 };
+
+extern std::array<ps2_pad, 2>ps2_gamepad;

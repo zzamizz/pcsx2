@@ -25,6 +25,7 @@
 #include "poll.h"
 #include "ps2_pad.h"
 #include "sdl_controller.h"
+#include "dialog.h"
 
 const u32 version = PS2E_PAD_VERSION;
 const u32 revision = 1;
@@ -34,6 +35,8 @@ const u32 pad_save_state_version = ((revision << 8) | (build << 0));
 
 std::string ini_path("inis/");
 std::string log_path("logs/");
+
+bool twoPadInitialized = false;
 
 keyEvent event;
 static keyEvent s_event;
@@ -64,19 +67,31 @@ EXPORT_C_(u32) PS2EgetLibVersion2(u32 type)
     return (version << 16) | (revision << 8) | build;
 }
 
-// Called once.
-EXPORT_C_(s32) PADinit(u32 flags)
+void twoPadInit()
 {
     init_sdl();
 #if defined(__unix__)
     init_x11_keys();
 #endif
 
+    if (conf == nullptr) initDialog();
+    twoPadInitialized = true;
+}
+
+void twoPadReset()
+{
     Pad::reset_all();
     query.reset();
     ps2_gamepad[0].Init();
     ps2_gamepad[1].Init();
     slots = {0, 0};
+}
+
+// Called once.
+EXPORT_C_(s32) PADinit(u32 flags)
+{
+    twoPadInit();
+    twoPadReset();
 
     return 0;
 }
@@ -252,7 +267,8 @@ EXPORT_C_(s32) PADsetSlot(u8 port, u8 slot)
 
 EXPORT_C_(void) PADconfigure()
 {
-
+    if (!twoPadInitialized) twoPadInit();
+    if (conf != nullptr) conf->Display();
 }
 
 EXPORT_C_(void) PADabout()

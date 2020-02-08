@@ -26,6 +26,7 @@
 #include <vector>
 
 #include "twopad.h"
+#include "ps2_pad.h"
 #include "sdl_controller.h"
 
 #include <signal.h> // sigaction
@@ -58,6 +59,13 @@ void init_sdl()
     }
 
     scan_controllers();
+
+    // Assume that if we don't know about a controller on gamepad 1, we want to use the first one in the list.
+    if (!ps2_gamepad[0].controller_attached && (ps2_gamepad[0].real == nullptr) && (sdl_pad.size() > 0))
+    {
+        ps2_gamepad[0].controller_attached = true;
+        ps2_gamepad[0].real = sdl_pad.front();
+    }
 }
 
 void scan_controllers()
@@ -140,15 +148,15 @@ void sdl_events()
 
 void PollForJoystickInput()
 {
-    for (int cpad = 0; cpad < 2; cpad++) 
+    for (u32 cpad = 0; cpad < 2; cpad++)
     {
-        for (int i= 0; i < MAX_KEYS; i++) 
+        for (u32 i= 0; i < MAX_KEYS; i++)
         {
             s32 value = 0;
-            
-            for(auto &con : sdl_pad)
+
+            if (ps2_gamepad[cpad].controller_attached)
             {
-                value = con->get_input((gamePadValues)i);
+                value = ps2_gamepad[cpad].real->get_input((gamePadValues)i);
             }
 
             ps2_gamepad[cpad].set(i, value);

@@ -118,27 +118,27 @@ void ps2_pad::analog_set(u32 index, u8 value)
 
 bool ps2_pad::analog_is_reversed(u32 index)
 {
-    /*switch (index)
+    switch (index)
     {
         case PAD_L_RIGHT:
         case PAD_L_LEFT:
-            return (conf->pad_options.reverse_lx);
+            return (reversed_lx);
 
         case PAD_R_LEFT:
         case PAD_R_RIGHT:
-            return (conf->pad_options.reverse_rx);
+            return (reversed_rx);
 
         case PAD_L_UP:
         case PAD_L_DOWN:
-            return (conf->pad_options.reverse_ly);
+            return (reversed_ly);
 
         case PAD_R_DOWN:
         case PAD_R_UP:
-            return (conf->pad_options.reverse_ry);
+            return (reversed_ry);
 
         default:
             return false;
-    }*/
+    }
     return false;
 }
 

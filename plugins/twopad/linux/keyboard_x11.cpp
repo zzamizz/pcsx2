@@ -25,7 +25,9 @@
 
 #include <array>
 #include <map>
+
 #include "keyboard_x11.h"
+#include "ps2_pad.h"
 
 std::map<int, Double> key_to_x11_map;
 

@@ -84,13 +84,10 @@ struct pad_key_map
     }
 };
 
-#include "ps2_pad.h"
-
 static __forceinline bool IsAnalogKey(int index)
 {
     return ((index >= PAD_L_UP) && (index <= PAD_R_LEFT));
 }
 
-extern std::array<ps2_pad, 2>ps2_gamepad;
 extern keyEvent event;
 extern MtQueue<keyEvent> g_ev_fifo;
