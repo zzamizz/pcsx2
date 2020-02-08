@@ -68,20 +68,47 @@ void init_sdl()
     }
 }
 
+sdl_controller::sdl_controller(int i)
+{
+    id = i;
+    controller = SDL_GameControllerOpen(i);
+    joystick = SDL_GameControllerGetJoystick(controller);
+    name = SDL_GameControllerNameForIndex(i);
+
+    rumble_supported = SDL_JoystickIsHaptic(joystick);
+    if (rumble_supported)
+    {
+        haptic = SDL_HapticOpenFromJoystick(joystick);
+        if (haptic == nullptr)
+        {
+            rumble_supported = false;
+        }
+        else
+        {
+            rumble_supported = true;
+            rumble = true;
+            upload_haptic_effects();
+        }
+    }
+
+    map_defaults(0);
+}
+
+sdl_controller::~sdl_controller()
+{
+    if (haptic != nullptr) SDL_HapticClose(haptic);
+    if (joystick != nullptr) SDL_JoystickClose(joystick);
+    if (controller != nullptr) SDL_GameControllerClose(controller);
+}
+
 void scan_controllers()
 {
     for (int i = 0; i < SDL_NumJoysticks(); ++i) 
     {
         if (SDL_IsGameController(i)) 
         {
-            sdl_controller *temp = new sdl_controller;
-
-            temp->controller = SDL_GameControllerOpen(i);
-            temp->joystick = SDL_GameControllerGetJoystick(temp->controller);
-            temp->name = SDL_GameControllerNameForIndex(i);
-            temp->id = i;
-            temp->map_defaults(0);
-            sdl_pad.push_back(temp);
+            sdl_controller *temp = new sdl_controller(i);
+            if (temp != nullptr) sdl_pad.push_back(temp);
 
             printf("Index \'%i\' is a compatible controller, named \'%s\'\n", i, SDL_GameControllerNameForIndex(i));
         } 
@@ -89,6 +116,76 @@ void scan_controllers()
         {
             printf("Index \'%i\' is not a compatible controller.\n", i);
         }
+    }
+}
+
+bool sdl_controller::set_triangle_effect(SDL_HapticEffect &effect, int &id)
+{
+    effect.type = SDL_HAPTIC_TRIANGLE;
+
+    SDL_HapticDirection direction;
+    direction.type = SDL_HAPTIC_POLAR; // We'll be using polar direction encoding.
+    direction.dir[0] = 18000;
+
+    effect.periodic.direction = direction;
+    effect.periodic.period = 10;
+    effect.periodic.magnitude = intensity; // Effect at maximum instensity
+    effect.periodic.offset = 0;
+    effect.periodic.phase = 18000;
+    effect.periodic.length = 125; // 125ms feels quite near to original
+    effect.periodic.delay = 0;
+    effect.periodic.attack_length = 0;
+
+    id = SDL_HapticNewEffect(haptic, &effect);
+    if (id < 0) return false;
+    return true;
+}
+
+bool sdl_controller::set_sine_effect(SDL_HapticEffect &effect, int &id)
+{
+    effect.type = SDL_HAPTIC_SINE;
+
+    SDL_HapticDirection direction;
+    direction.type = SDL_HAPTIC_POLAR; // We'll be using polar direction encoding.
+    direction.dir[0] = 18000;
+
+    effect.periodic.direction = direction;
+    effect.periodic.period = 10;
+    effect.periodic.magnitude = intensity; // Effect at maximum instensity
+    effect.periodic.offset = 0;
+    effect.periodic.phase = 18000;
+    effect.periodic.length = 125; // 125ms feels quite near to original
+    effect.periodic.delay = 0;
+    effect.periodic.attack_length = 0;
+
+    id = SDL_HapticNewEffect(haptic, &effect);
+    if (id < 0) return false;
+    return true;
+}
+
+void sdl_controller::upload_haptic_effects()
+{
+    uint32_t support = SDL_HapticQuery(haptic);
+
+    if (support & SDL_HAPTIC_TRIANGLE)
+    {
+        set_triangle_effect(big_motor, big_motor_id);
+    }
+
+    if (support & SDL_HAPTIC_SINE)
+    {
+        set_sine_effect(small_motor, small_motor_id);
+    }
+
+    if ((small_motor_id < 0) || (big_motor_id < 0))
+    {
+        rumble_supported = false;
+        rumble = false;
+    }
+    else
+    {
+        rumble_supported = true;
+        rumble = true;
     }
 }
 
@@ -116,6 +213,18 @@ int sdl_controller::get_input(gamePadValues input)
     value = SDL_GameControllerGetButton(controller, (SDL_GameControllerButton)key_to_sdl[slot][input]);
 
     return value ? 0xFF : 0; // Max pressure
+}
+
+void sdl_controller::vibrate(int type, int cpad)
+{
+    if ((ps2_gamepad[cpad].controller_attached) && (ps2_gamepad[cpad].real != nullptr))
+    {
+        sdl_controller *ctl = ps2_gamepad[cpad].real;
+        if ((ctl->rumble_supported) && (ctl->rumble) && (ctl->haptic != nullptr))
+        {
+            SDL_HapticRunEffect(ctl->haptic, type, 1);
+        }
+    }
 }
 
 void sdl_events()

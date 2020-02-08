@@ -30,27 +30,40 @@
 #include <wx/arrstr.h>
 #include <wx/choice.h>
 #include <wx/statline.h>
+#include <wx/notebook.h>
+#include <wx/button.h>
+#include <wx/wrapsizer.h>
+
+#include <array>
 
 #include "ps2_pad.h"
 #include "sdl_controller.h"
 
-const int DEFAULT_WIDTH = 200;
-const int DEFAULT_HEIGHT = 230;
+const int DEFAULT_WIDTH = 400;
+const int DEFAULT_HEIGHT = 430;
 
 struct padControls
 {
-    wxStaticBoxSizer *Box;
-    wxChoice *Ctl;
-    wxCheckBox *ReversedLX, *ReversedLY, *Rumble;
+    wxStaticBoxSizer *box;
+    wxChoice *controller_list;
+    wxCheckBox *reversed_lx, *reversed_ly, *rumble;
+};
+
+struct keyControls
+{
+    wxStaticBoxSizer *box;
+    std::array<wxButton*, MAX_KEYS> set_control;
 };
 
 class configDialog : public wxDialog
 {
     private:
         padControls pad1, pad2;
-        wxPanel *panel;
+        keyControls key_pad1, key_pad2;
+        wxScrolledWindow *gamepad_page, *keyboard_page;
 
         void addGamepad(padControls &pad, const wxString controllerName);
+        void addKeyboard(keyControls &keys, const wxString controllerName);
 
     public:
         configDialog ( wxWindow * parent, wxWindowID id, const wxString & title,

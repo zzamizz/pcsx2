@@ -105,7 +105,7 @@ void Pad::rumble(int port)
         {
             currentVibrate[motor] = nextVibrate[motor];
 
-            //GamePad::DoRumble(motor, port);
+            if (ps2_gamepad[port].real != nullptr) ps2_gamepad[port].real->vibrate(motor, port);
         }
     }
 }

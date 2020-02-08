@@ -28,8 +28,6 @@
 #include <vector>
 #include "twopad.h"
 
-#define NB_EFFECT 2 // Don't use more than two, ps2 only has one for big motor and one for small(like most systems).
-
 extern void init_sdl();
 extern void sdl_events();
 extern void scan_controllers();
@@ -44,15 +42,22 @@ class sdl_controller
         int sensitivity = 100;
 
         bool connected = false;
-        bool haptic = false;
+        bool rumble = false, rumble_supported = false;
         
         std::string name;
         std::string guid;
 
         SDL_GameController* controller;
         SDL_Joystick *joystick;
+        SDL_Haptic *haptic;
+        SDL_HapticEffect big_motor, small_motor;
+        int big_motor_id = -1, small_motor_id = -1;
+        Sint16 intensity = 32767;
 
         std::array<std::array<int, MAX_KEYS>,2> key_to_sdl;
+
+        sdl_controller(int i);
+        ~sdl_controller();
 
         int get_input(gamePadValues input);
         void map_defaults(u8 pad)
@@ -82,6 +87,10 @@ class sdl_controller
             key_to_sdl[pad][PAD_R_DOWN] = SDL_CONTROLLER_AXIS_RIGHTY;
             key_to_sdl[pad][PAD_R_LEFT] = SDL_CONTROLLER_AXIS_RIGHTX;
         }
+    void upload_haptic_effects();
+    bool set_triangle_effect(SDL_HapticEffect &effect, int &id);
+    bool set_sine_effect(SDL_HapticEffect &effect, int &id);
+    void vibrate(int type, int cpad);
 };
 
 extern std::vector<sdl_controller*> sdl_pad;
