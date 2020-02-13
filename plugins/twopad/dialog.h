@@ -1,5 +1,5 @@
 /*  TwoPAD - author: arcum42(@gmail.com)
- *  Copyright (C) 2019
+ *  Copyright (C) 2019-2020
  *
  *  Based on ZeroPAD, author zerofrog@gmail.com
  *  And OnePAD, author arcum42, gregory, PCSX2 team

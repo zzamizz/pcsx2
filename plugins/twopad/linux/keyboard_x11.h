@@ -1,5 +1,5 @@
 /*  TwoPAD - author: arcum42(@gmail.com)
- *  Copyright (C) 2019
+ *  Copyright (C) 2019-2020
  *
  *  Based on ZeroPAD, author zerofrog@gmail.com
  *  And OnePAD, author arcum42, gregory, PCSX2 team
@@ -26,8 +26,8 @@
 #include <map>
 #include "twopad.h"
 
-using  Double = std::array<int, 2>; 
-extern std::map<int, Double> key_to_x11_map;
+using x11_map = std::map<int, u32>;
+extern std::array<x11_map, 2> x11_key_map;
 
 extern void PollForX11KeyboardInput();
 extern bool PollX11KeyboardMouseEvent(u32 &pkey);

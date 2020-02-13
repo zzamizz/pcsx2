@@ -1,5 +1,5 @@
 /*  TwoPAD - author: arcum42(@gmail.com)
- *  Copyright (C) 2019
+ *  Copyright (C) 2019-2020
  *
  *  Based on ZeroPAD, author zerofrog@gmail.com
  *  And OnePAD, author arcum42, gregory, PCSX2 team
@@ -21,12 +21,13 @@
  */
 
 #include "dialog.h"
+#include "settings.h"
 
 configDialog *conf;
 
 void initDialog()
 {
-    conf = new configDialog( nullptr, -1, _T("TwoPad"), wxDefaultPosition, /*wxDefaultSize*/wxSize(DEFAULT_WIDTH, DEFAULT_HEIGHT), wxRESIZE_BORDER | wxSYSTEM_MENU | wxCAPTION | wxCLOSE_BOX | wxCLIP_CHILDREN);
+    conf = new configDialog( nullptr, -1, _T("TwoPad"), wxDefaultPosition, wxSize(DEFAULT_WIDTH, DEFAULT_HEIGHT), wxRESIZE_BORDER | wxSYSTEM_MENU | wxCAPTION | wxCLOSE_BOX | wxCLIP_CHILDREN);
 }
 
 void configDialog::addGamepad(padControls &pad, const wxString controllerName)
@@ -211,7 +212,9 @@ void configDialog::getValues()
 
 void configDialog::Display()
 {
+    load_config();
     setValues();
     ShowModal();
     getValues();
+    save_config();
 }

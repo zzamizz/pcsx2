@@ -1,5 +1,5 @@
 /*  TwoPAD - author: arcum42(@gmail.com)
- *  Copyright (C) 2019
+ *  Copyright (C) 2019-2020
  *
  *  Based on ZeroPAD, author zerofrog@gmail.com
  *  And OnePAD, author arcum42, gregory, PCSX2 team
@@ -26,15 +26,13 @@
 #include "ps2_pad.h"
 #include "sdl_controller.h"
 #include "dialog.h"
+#include "settings.h"
 
 const u32 version = PS2E_PAD_VERSION;
 const u32 revision = 1;
 const u32 build = 0; // increase that with each version
 
 const u32 pad_save_state_version = ((revision << 8) | (build << 0));
-
-std::string ini_path("inis/");
-std::string log_path("logs/");
 
 bool twoPadInitialized = false;
 

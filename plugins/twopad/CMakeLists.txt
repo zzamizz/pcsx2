@@ -25,6 +25,7 @@ linux/keyboard_x11.h)
 # twopad sources
 set(twopadSources
     dialog.cpp
+    settings.cpp
     twopad.cpp
     poll.cpp
     ps2_pad.cpp
@@ -33,6 +34,7 @@ set(twopadSources
 # twopad headers
 set(twopadHeaders
     dialog.h
+    settings.h
     twopad.h
     poll.h
     ps2_pad.h

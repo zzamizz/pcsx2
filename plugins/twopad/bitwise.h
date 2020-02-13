@@ -1,5 +1,5 @@
 /*  OnePAD - author: arcum42(@gmail.com)
- *  Copyright (C) 2009
+ *  Copyright (C) 2019-2020
  *
  *  Based on ZeroPAD, author zerofrog@gmail.com
  *  Copyright (C) 2006-2007
