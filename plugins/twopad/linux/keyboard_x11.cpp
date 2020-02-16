@@ -63,7 +63,6 @@ void SetAutoRepeat(bool autorep)
 
 void init_x11_keys()
 {
-    printf("Init x11 keys\n");
     x11_key_map[0][PAD_L2] = XK_a;
     x11_key_map[0][PAD_R2] = XK_semicolon;
     x11_key_map[0][PAD_L1] = XK_w;
@@ -244,6 +243,8 @@ void PollForX11KeyboardInput()
 bool PollX11KeyboardMouseEvent(u32 &pkey)
 {
     GdkEvent *ev = gdk_event_get();
+
+    if (ev == nullptr) return false;
 
     switch(ev->type)
     {

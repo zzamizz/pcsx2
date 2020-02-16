@@ -52,34 +52,81 @@ void configDialog::addGamepad(int cpad)
         controllers);
     controller[cpad].pad.controller_list->SetStringSelection(_T("None"));
 
-    auto *reverse_box = new wxBoxSizer(wxHORIZONTAL);
+    auto *reverse_lbox = new wxBoxSizer(wxHORIZONTAL);
+    auto *reverse_rbox = new wxBoxSizer(wxHORIZONTAL);
+
     controller[cpad].pad.reversed_lx = new wxCheckBox(gamepad_page, wxID_ANY, "reverse LX");
     controller[cpad].pad.reversed_ly = new wxCheckBox(gamepad_page, wxID_ANY, "reverse LY");
-    reverse_box->Add(controller[cpad].pad.reversed_lx);
-    reverse_box->Add(controller[cpad].pad.reversed_ly);
+    controller[cpad].pad.reversed_rx = new wxCheckBox(gamepad_page, wxID_ANY, "reverse RX");
+    controller[cpad].pad.reversed_ry = new wxCheckBox(gamepad_page, wxID_ANY, "reverse RY");
+
+    reverse_lbox->Add(controller[cpad].pad.reversed_lx);
+    reverse_lbox->Add(controller[cpad].pad.reversed_ly);
+    reverse_rbox->Add(controller[cpad].pad.reversed_rx);
+    reverse_rbox->Add(controller[cpad].pad.reversed_ry);
 
     controller[cpad].pad.rumble = new wxCheckBox(gamepad_page, wxID_ANY, "Rumble");
 
     controller[cpad].pad.box->Add(controller[cpad].pad.controller_list);
-    controller[cpad].pad.box->Add(reverse_box);
+    controller[cpad].pad.box->Add(reverse_lbox);
+    controller[cpad].pad.box->Add(reverse_rbox);
     controller[cpad].pad.box->Add(controller[cpad].pad.rumble);
     controller[cpad].pad.box->AddSpacer(20);
+}
+
+void configDialog::configKey(wxCommandEvent &event)
+{
+    bool key_returned = false;
+
+    wxButton *current_button = (wxButton *)event.GetEventObject(); // get the button object
+    int bt_id = current_button->GetId() - 100;        // get the real ID
+    int cpad = bt_id / 100;
+    int key = bt_id - (cpad * 100);
+    bool clear = (key >= 50);
+
+    if (clear) 
+    {
+        key -= 50;
+        keys->set_key(cpad, key, 0);
+        auto label_text = gamepad_names[key] + " = '" + keys->control_to_string(cpad, key) + "'";
+        controller[cpad].key_pad.control_label[key]->SetLabel(label_text);
+        return;
+    }
+
+    controller[cpad].key_pad.control_label[key]->SetLabel("Press any key, or <esc> to cancel.");
+
+    while (!key_returned)
+    {
+        u32 pkey = 0;
+        key_returned = keys->get_key_mouse_event(pkey);
+        if (key_returned) 
+        {
+            if (pkey > 0) keys->set_key(cpad, key, pkey);
+            auto label_text = gamepad_names[key] + " = '" + keys->control_to_string(cpad, key) + "'";
+            controller[cpad].key_pad.control_label[key]->SetLabel(label_text);
+        }
+    }
 }
 
 void configDialog::addKeyboard(int cpad)
 {
     controller[cpad].key_pad.box = new wxStaticBoxSizer(wxVERTICAL, keyboard_page, controller[cpad].name);
 
-    for (int c = 0; c < MAX_KEYS; c++)
+    for (u32 c = 0; c < MAX_KEYS; c++)
     {
         auto *box = new wxBoxSizer(wxHORIZONTAL);
         auto label_text = gamepad_names[c] + " = '" + keys->control_to_string(cpad, c) + "'";
+        u32 id = 100 + (100 * cpad) + c;
 
-        controller[cpad].key_pad.set_control[c] = new wxButton(keyboard_page, 100 + c, _T("Set"), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
-        controller[cpad].key_pad.set_control[c]->Disable();
+        controller[cpad].key_pad.set_control[c] = new wxButton(keyboard_page, id, _T("Set"), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+        Bind(wxEVT_BUTTON, &configDialog::configKey, this);
         box->Add(controller[cpad].key_pad.set_control[c], wxSizerFlags().Expand().Right());
+        controller[cpad].key_pad.clear_control[c] = new wxButton(keyboard_page, id + 50, _T("Clear"), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+        //Bind(wxEVT_BUTTON, &configDialog::configKey, this);
+        box->Add(controller[cpad].key_pad.clear_control[c], wxSizerFlags().Expand().Right());
 
-        box->Add(new wxStaticText(keyboard_page, wxID_ANY, label_text), wxSizerFlags().Expand().Left());
+        controller[cpad].key_pad.control_label[c] = new wxStaticText(keyboard_page, wxID_ANY, label_text);
+        box->Add(controller[cpad].key_pad.control_label[c], wxSizerFlags().Expand().Left());
         box->AddStretchSpacer();
         controller[cpad].key_pad.box->Add(box, wxSizerFlags().Expand().Center());
     }
@@ -135,9 +182,13 @@ void configDialog::setValues()
 {
     controller[0].pad.reversed_lx->SetValue(ps2_gamepad[0]->reversed_lx);
     controller[0].pad.reversed_ly->SetValue(ps2_gamepad[0]->reversed_ly);
+    controller[0].pad.reversed_rx->SetValue(ps2_gamepad[0]->reversed_rx);
+    controller[0].pad.reversed_ry->SetValue(ps2_gamepad[0]->reversed_ry);
 
     controller[1].pad.reversed_lx->SetValue(ps2_gamepad[1]->reversed_lx);
     controller[1].pad.reversed_ly->SetValue(ps2_gamepad[1]->reversed_ly);
+    controller[1].pad.reversed_rx->SetValue(ps2_gamepad[1]->reversed_rx);
+    controller[1].pad.reversed_ry->SetValue(ps2_gamepad[1]->reversed_ry);
 
     if (ps2_gamepad[0]->controller_attached == false)
     {
@@ -167,15 +218,28 @@ void configDialog::setValues()
     {
         controller[1].pad.rumble->Disable();
     }
+
+    for (int cpad = 0; cpad < 2; cpad++)
+    {
+        for (u32 c = 0; c < MAX_KEYS; c++)
+        {
+            auto label_text = gamepad_names[c] + " = '" + keys->control_to_string(cpad, c) + "'";
+            controller[cpad].key_pad.control_label[c]->SetLabel(label_text);
+        }
+    }
 }
 
 void configDialog::getValues()
 {
     ps2_gamepad[0]->reversed_lx = controller[0].pad.reversed_lx->GetValue();
     ps2_gamepad[0]->reversed_ly = controller[0].pad.reversed_ly->GetValue();
+    ps2_gamepad[0]->reversed_rx = controller[0].pad.reversed_rx->GetValue();
+    ps2_gamepad[0]->reversed_ry = controller[0].pad.reversed_ry->GetValue();
 
     ps2_gamepad[1]->reversed_lx = controller[1].pad.reversed_lx->GetValue();
     ps2_gamepad[1]->reversed_ly = controller[1].pad.reversed_ly->GetValue();
+    ps2_gamepad[1]->reversed_rx = controller[1].pad.reversed_rx->GetValue();
+    ps2_gamepad[1]->reversed_ry = controller[1].pad.reversed_ry->GetValue();
 
     wxString pad1_name = controller[0].pad.controller_list->GetStringSelection();
     if (pad1_name == _T("None"))

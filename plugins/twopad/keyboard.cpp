@@ -26,7 +26,8 @@ keyboard_control *keys;
 
 keyboard_control::keyboard_control()
 {
-    init_keys();
+    x11_key_map[0].empty();
+    x11_key_map[1].empty();
 }
 
 keyboard_control::~keyboard_control()

@@ -90,7 +90,7 @@ void init_config()
     ps2_gamepad[1]->reversed_lx = false;
     ps2_gamepad[1]->reversed_ly = false;
     ps2_gamepad[1]->reversed_rx = false;
-    ps2_gamepad[0]->reversed_ry = false;
+    ps2_gamepad[1]->reversed_ry = false;
 
 }
 
@@ -114,7 +114,10 @@ void load_config()
 
                 sprintf(str, "[%d][%d] = 0x%%x\n", pad, key);
 
-                if (fscanf(f, str, &value) > 0) keys->set_key(pad, key, value);
+                if (fscanf(f, str, &value) > 0)
+                {
+                    keys->set_key(pad, key, value);
+                }
             }
         }
         
