@@ -112,9 +112,19 @@ class ps2_pad
         std::array<u8, MAX_KEYS> m_internal_button_pressure;
         
     public:
-        ps2_pad() { Init();}
+        int pad_num = 0;
+        bool reversed_lx = false;
+        bool reversed_ly = false;
+        bool reversed_rx = false;
+        bool reversed_ry = false;
 
-        void Init();
+        sdl_controller *real = nullptr;
+        bool controller_attached = false;
+
+        ps2_pad();
+        ps2_pad(int cpad);
+        void reset();
+
 
         void keyboard_state_access() { m_state_access = true; }
         void joystick_state_access() { m_state_access = false; }
@@ -134,16 +144,8 @@ class ps2_pad
         u8 get(u32 index);
         u8 get_result(u16 value, u32 test);
         void set(u32 index, s32 value);
-
+        void poll_joystick();
         void commit_status();
-
-        bool reversed_lx = false;
-        bool reversed_ly = false;
-        bool reversed_rx = false;
-        bool reversed_ry = false;
-
-        sdl_controller *real = nullptr;
-        bool controller_attached = false;
 };
 
-extern std::array<ps2_pad, 2>ps2_gamepad;
+extern std::array<ps2_pad*, 2>ps2_gamepad;

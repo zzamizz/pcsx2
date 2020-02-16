@@ -61,10 +61,10 @@ void init_sdl()
     scan_controllers();
 
     // Assume that if we don't know about a controller on gamepad 1, we want to use the first one in the list.
-    if (!ps2_gamepad[0].controller_attached && (ps2_gamepad[0].real == nullptr) && (sdl_pad.size() > 0))
+    if (!ps2_gamepad[0]->controller_attached && (ps2_gamepad[0]->real == nullptr) && (sdl_pad.size() > 0))
     {
-        ps2_gamepad[0].controller_attached = true;
-        ps2_gamepad[0].real = sdl_pad.front();
+        ps2_gamepad[0]->controller_attached = true;
+        ps2_gamepad[0]->real = sdl_pad.front();
     }
 }
 
@@ -189,7 +189,7 @@ void sdl_controller::upload_haptic_effects()
     }
 }
 
-int sdl_controller::get_input(gamePadValues input)
+int sdl_controller::get_input(int input)
 {
     float k = sensitivity / 100.0; // convert sensibility to float
     int value = 0;
@@ -217,9 +217,9 @@ int sdl_controller::get_input(gamePadValues input)
 
 void sdl_controller::vibrate(int type, int cpad)
 {
-    if ((ps2_gamepad[cpad].controller_attached) && (ps2_gamepad[cpad].real != nullptr))
+    if ((ps2_gamepad[cpad]->controller_attached) && (ps2_gamepad[cpad]->real != nullptr))
     {
-        sdl_controller *ctl = ps2_gamepad[cpad].real;
+        sdl_controller *ctl = ps2_gamepad[cpad]->real;
         if ((ctl->rumble_supported) && (ctl->rumble) && (ctl->haptic != nullptr))
         {
             SDL_HapticRunEffect(ctl->haptic, type, 1);
@@ -259,16 +259,16 @@ void PollForJoystickInput()
 {
     for (u32 cpad = 0; cpad < 2; cpad++)
     {
-        for (u32 i= 0; i < MAX_KEYS; i++)
+        for (int i= 0; i < MAX_KEYS; i++)
         {
             s32 value = 0;
 
-            if (ps2_gamepad[cpad].controller_attached)
+            if (ps2_gamepad[cpad]->controller_attached)
             {
-                value = ps2_gamepad[cpad].real->get_input((gamePadValues)i);
+                value = ps2_gamepad[cpad]->real->get_input(i);
             }
 
-            ps2_gamepad[cpad].set(i, value);
+            ps2_gamepad[cpad]->set(i, value);
         }
     }
 }

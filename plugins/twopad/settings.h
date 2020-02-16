@@ -22,6 +22,7 @@
 
 #include <string>
 #include <cstring>
+#include "keyboard.h"
 
 extern std::string ini_path;
 extern std::string log_path;

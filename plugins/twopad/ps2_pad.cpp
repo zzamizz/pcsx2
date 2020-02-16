@@ -20,20 +20,33 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  */
 
-#include "twopad.h"
-#include "ps2_pad.h"
 #include <algorithm>
 
-void ps2_pad::Init()
+#include "twopad.h"
+#include "ps2_pad.h"
+#include "bitwise.h"
+
+void ps2_pad::reset()
 {
     joystick_state_access();
-        
+
     main.init();
     kbd.init();
     joy.init();
 
     m_button_pressure.fill(0xFF);
     m_internal_button_pressure.fill(0xFF);
+}
+
+ps2_pad::ps2_pad()
+{
+    reset();
+}
+
+ps2_pad::ps2_pad(int cpad)
+{
+    pad_num = cpad;
+    reset();
 }
 
 void ps2_pad::press( u32 index, s32 value)
@@ -179,4 +192,19 @@ void ps2_pad::commit_status()
     m_button_pressure = m_internal_button_pressure;
 
     main.analog.merge(kbd.analog, joy.analog);
+}
+
+void ps2_pad::poll_joystick()
+{
+    for (int i= 0; i < MAX_KEYS; i++)
+    {
+        s32 value = 0;
+
+        if (controller_attached)
+        {
+            value = real->get_input(i);
+        }
+
+        set(i, value);
+    }
 }

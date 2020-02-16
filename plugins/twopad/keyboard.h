@@ -22,29 +22,30 @@
 
 #pragma once
 
-#include <array>
-#include <map>
-
-#ifdef _WIN32
-#include <windows.h>
-#include <windowsx.h>
-#else
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
-#include <X11/keysym.h>
+#if defined(__unix__)
+#include "linux/keyboard_x11.h"
 #endif
 
-#include "twopad.h"
+class keyboard_control
+{
+    private:
+    public:
+        keyboard_control();
+        ~keyboard_control();
 
-extern Display *GSdsp;
-extern Window GSwin;
+        bool auto_repeat = false;
+        
+        void poll_keyboard();
+        void set_autorepeat(bool repeat);
+        void idle();
+        const char* control_to_string(int cpad, int key);
 
-using x11_map = std::map<int, u32>;
-extern std::array<x11_map, 2> x11_key_map;
+        #if defined(__unix__)
+        const char* key_to_string(KeySym k);
+        bool get_key_mouse_event(u32 &pkey);
+        KeySym get_key(int cpad, int key);
+        void set_key(int cpad, int key, KeySym val);
+        #endif
+};
 
-extern void PollForX11KeyboardInput();
-extern bool PollX11KeyboardMouseEvent(u32 &pkey);
-
-extern void SetAutoRepeat(bool autorep);
-extern void init_x11_keys();
-extern const char* KeyToString(KeySym k);
+extern keyboard_control *keys;

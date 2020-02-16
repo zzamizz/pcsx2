@@ -59,7 +59,7 @@ class sdl_controller
         sdl_controller(int i);
         ~sdl_controller();
 
-        int get_input(gamePadValues input);
+        int get_input(int input);
         void map_defaults(u8 pad)
         {
             key_to_sdl[pad][PAD_L2] = SDL_CONTROLLER_AXIS_TRIGGERLEFT;

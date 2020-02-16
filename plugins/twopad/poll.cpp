@@ -105,7 +105,7 @@ void Pad::rumble(int port)
         {
             currentVibrate[motor] = nextVibrate[motor];
 
-            if (ps2_gamepad[port].real != nullptr) ps2_gamepad[port].real->vibrate(motor, port);
+            if (ps2_gamepad[port]->real != nullptr) ps2_gamepad[port]->real->vibrate(motor, port);
         }
     }
 }
@@ -186,7 +186,7 @@ u8 pad_poll(u8 value)
             {
                 query.response[2] = 0x5A;
 
-                u16 buttons = ps2_gamepad[query.port].get();
+                u16 buttons = ps2_gamepad[query.port]->get();
 
                 query.numBytes = 5;
 
@@ -197,29 +197,29 @@ u8 pad_poll(u8 value)
                 {
                     query.numBytes = 9;
 
-                    query.response[5] = ps2_gamepad[query.port].get(PAD_R_RIGHT);
-                    query.response[6] = ps2_gamepad[query.port].get(PAD_R_UP);
-                    query.response[7] = ps2_gamepad[query.port].get(PAD_L_RIGHT);
-                    query.response[8] = ps2_gamepad[query.port].get(PAD_L_UP);
+                    query.response[5] = ps2_gamepad[query.port]->get(PAD_R_RIGHT);
+                    query.response[6] = ps2_gamepad[query.port]->get(PAD_R_UP);
+                    query.response[7] = ps2_gamepad[query.port]->get(PAD_L_RIGHT);
+                    query.response[8] = ps2_gamepad[query.port]->get(PAD_L_UP);
 
                     if (pad->mode != MODE_ANALOG)
                     {
                         query.numBytes = 21;
 
-                        query.response[9] = ps2_gamepad[query.port].get_result(buttons, PAD_RIGHT);
-                        query.response[10] = ps2_gamepad[query.port].get_result(buttons, PAD_LEFT);
-                        query.response[11] = ps2_gamepad[query.port].get_result(buttons, PAD_UP);
-                        query.response[12] = ps2_gamepad[query.port].get_result(buttons, PAD_DOWN);
+                        query.response[9] = ps2_gamepad[query.port]->get_result(buttons, PAD_RIGHT);
+                        query.response[10] = ps2_gamepad[query.port]->get_result(buttons, PAD_LEFT);
+                        query.response[11] = ps2_gamepad[query.port]->get_result(buttons, PAD_UP);
+                        query.response[12] = ps2_gamepad[query.port]->get_result(buttons, PAD_DOWN);
 
-                        query.response[13] = ps2_gamepad[query.port].get_result(buttons, PAD_TRIANGLE);
-                        query.response[14] = ps2_gamepad[query.port].get_result(buttons, PAD_CIRCLE);
-                        query.response[15] = ps2_gamepad[query.port].get_result(buttons, PAD_CROSS);
-                        query.response[16] = ps2_gamepad[query.port].get_result(buttons, PAD_SQUARE);
+                        query.response[13] = ps2_gamepad[query.port]->get_result(buttons, PAD_TRIANGLE);
+                        query.response[14] = ps2_gamepad[query.port]->get_result(buttons, PAD_CIRCLE);
+                        query.response[15] = ps2_gamepad[query.port]->get_result(buttons, PAD_CROSS);
+                        query.response[16] = ps2_gamepad[query.port]->get_result(buttons, PAD_SQUARE);
 
-                        query.response[17] = ps2_gamepad[query.port].get_result(buttons, PAD_L1);
-                        query.response[18] = ps2_gamepad[query.port].get_result(buttons, PAD_R1);
-                        query.response[19] = ps2_gamepad[query.port].get_result(buttons, PAD_L2);
-                        query.response[20] = ps2_gamepad[query.port].get_result(buttons, PAD_R2);
+                        query.response[17] = ps2_gamepad[query.port]->get_result(buttons, PAD_L1);
+                        query.response[18] = ps2_gamepad[query.port]->get_result(buttons, PAD_R1);
+                        query.response[19] = ps2_gamepad[query.port]->get_result(buttons, PAD_L2);
+                        query.response[20] = ps2_gamepad[query.port]->get_result(buttons, PAD_R2);
                     }
                 }
             }

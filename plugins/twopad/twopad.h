@@ -28,18 +28,7 @@
 
 #include <algorithm>
 #include <array>
-
-#include "bitwise.h"
-#include "mt_queue.h"
-
-#ifdef _WIN32
-#include <windows.h>
-#include <windowsx.h>
-#else
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
-#include <X11/keysym.h>
-#endif
+#include <string>
 
 enum gamePadValues {
     PAD_L2 = 0,   // L2 button
@@ -72,22 +61,35 @@ enum gamePadValues {
 // Number of elements in gamePadValues.
 static const u32 MAX_KEYS = (u32)PAD_NULL;
 
-struct pad_key_map
-{
-    u8 pad = 0;
-    gamePadValues key = PAD_NULL;
 
-    void set(u8 thePad, gamePadValues theKey)
-    {
-        pad = thePad;
-        key = theKey;
-    }
+const std::array<std::string, MAX_KEYS> gamepad_names = { 
+    "L2",
+    "R2",
+    "L1",
+    "R1",
+    "Triangle",
+    "Circle",
+    "Cross",
+    "Square",
+    "Select",
+    "L3",
+    "R3",
+    "Start",
+    "Pad Up",
+    "Pad Right",
+    "Pad Down",
+    "Pad Left",
+   "Left Stick Up",
+   "Left Stick Right",
+   "Left Stick Down",
+   "Left Stick Left",
+    "Right Stick Up",
+    "Right Stick Right",
+    "Right Stick Down",
+    "Right Stick Left"
 };
 
 static __forceinline bool IsAnalogKey(int index)
 {
     return ((index >= PAD_L_UP) && (index <= PAD_R_LEFT));
 }
-
-extern keyEvent event;
-extern MtQueue<keyEvent> g_ev_fifo;

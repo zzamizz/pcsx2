@@ -38,6 +38,7 @@
 
 #include "ps2_pad.h"
 #include "sdl_controller.h"
+#include "keyboard.h"
 
 const int DEFAULT_WIDTH = 400;
 const int DEFAULT_HEIGHT = 430;
@@ -55,15 +56,21 @@ struct keyControls
     std::array<wxButton*, MAX_KEYS> set_control;
 };
 
+struct dialog_pads
+{
+    padControls pad;
+    keyControls key_pad;
+    wxString name;
+};
+
 class configDialog : public wxDialog
 {
     private:
-        padControls pad1, pad2;
-        keyControls key_pad1, key_pad2;
         wxScrolledWindow *gamepad_page, *keyboard_page;
+        std::array<dialog_pads, 2> controller;
 
-        void addGamepad(padControls &pad, const wxString controllerName);
-        void addKeyboard(keyControls &keys, const wxString controllerName);
+        void addGamepad(int cpad);
+        void addKeyboard(int cpad);
 
     public:
         configDialog ( wxWindow * parent, wxWindowID id, const wxString & title,
