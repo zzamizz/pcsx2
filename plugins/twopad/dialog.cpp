@@ -152,7 +152,7 @@ void configDialog::setValues()
 
     if ((ps2_gamepad[0]->real != nullptr) && (ps2_gamepad[0]->real->rumble_supported))
     {
-        controller[0].pad.rumble->SetValue(ps2_gamepad[0]->real->rumble);
+        controller[0].pad.rumble->SetValue(ps2_gamepad[0]->rumble);
     }
     else
     {
@@ -161,7 +161,7 @@ void configDialog::setValues()
 
     if ((ps2_gamepad[1]->real != nullptr) && (ps2_gamepad[1]->real->rumble_supported))
     {
-        controller[1].pad.rumble->SetValue(ps2_gamepad[1]->real->rumble);
+        controller[1].pad.rumble->SetValue(ps2_gamepad[1]->rumble);
     }
     else
     {
@@ -191,7 +191,7 @@ void configDialog::getValues()
             {
                 ps2_gamepad[0]->controller_attached = true;
                 ps2_gamepad[0]->real = pad;
-                ps2_gamepad[0]->real->rumble = controller[0].pad.rumble->GetValue();
+                ps2_gamepad[0]->rumble = controller[0].pad.rumble->GetValue();
             }
         }
     }
@@ -210,7 +210,7 @@ void configDialog::getValues()
             {
                 ps2_gamepad[1]->controller_attached = true;
                 ps2_gamepad[1]->real = pad;
-                ps2_gamepad[1]->real->rumble = controller[1].pad.rumble->GetValue();
+                ps2_gamepad[1]->rumble = controller[1].pad.rumble->GetValue();
             }
         }
     }

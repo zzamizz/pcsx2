@@ -120,11 +120,11 @@ class ps2_pad
 
         sdl_controller *real = nullptr;
         bool controller_attached = false;
+        bool rumble = false;
 
         ps2_pad();
         ps2_pad(int cpad);
         void reset();
-
 
         void keyboard_state_access() { m_state_access = true; }
         void joystick_state_access() { m_state_access = false; }

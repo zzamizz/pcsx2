@@ -26,9 +26,7 @@ keyboard_control *keys;
 
 keyboard_control::keyboard_control()
 {
-    #if defined(__unix__)
-    init_x11_keys();
-    #endif
+    init_keys();
 }
 
 keyboard_control::~keyboard_control()
@@ -36,6 +34,13 @@ keyboard_control::~keyboard_control()
     #if defined(__unix__)
     #endif
     set_autorepeat(true);
+}
+
+void keyboard_control::init_keys()
+{
+    #if defined(__unix__)
+    init_x11_keys();
+    #endif
 }
 
 void keyboard_control::poll_keyboard()

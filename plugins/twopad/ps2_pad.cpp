@@ -196,15 +196,11 @@ void ps2_pad::commit_status()
 
 void ps2_pad::poll_joystick()
 {
-    for (int i= 0; i < MAX_KEYS; i++)
+    if (controller_attached)
     {
-        s32 value = 0;
-
-        if (controller_attached)
+        for (int i= 0; i < MAX_KEYS; i++)
         {
-            value = real->get_input(i);
+            set(i, real->get_input(i));
         }
-
-        set(i, value);
     }
 }

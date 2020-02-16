@@ -140,8 +140,6 @@ EXPORT_C_(void) PADsetLogDir(const char *dir)
 // PADkeyEvent is called every vsync. (Return NULL if there's no event.)
 EXPORT_C_(keyEvent *) PADkeyEvent()
 {
-    sdl_events();
-
     s_event = event;
     event.evt = 0;
     event.key = 0;
@@ -192,8 +190,9 @@ EXPORT_C_(void) PADupdate(int pad)
     ps2_gamepad[0]->joystick_state_access();
     ps2_gamepad[1]->joystick_state_access();
 
-     ps2_gamepad[0]->poll_joystick();
-     ps2_gamepad[1]->poll_joystick();
+    ps2_gamepad[0]->poll_joystick();
+    ps2_gamepad[1]->poll_joystick();
+    sdl_events();
 
     ps2_gamepad[0]->commit_status();
     ps2_gamepad[1]->commit_status();

@@ -86,7 +86,6 @@ sdl_controller::sdl_controller(int i)
         else
         {
             rumble_supported = true;
-            rumble = true;
             upload_haptic_effects();
         }
     }
@@ -180,15 +179,28 @@ void sdl_controller::upload_haptic_effects()
     if ((small_motor_id < 0) || (big_motor_id < 0))
     {
         rumble_supported = false;
-        rumble = false;
     }
     else
     {
         rumble_supported = true;
-        rumble = true;
     }
 }
 
+void sdl_controller::vibrate(int type, int cpad)
+{
+    if (ps2_gamepad[cpad]->rumble)
+    {
+        if ((ps2_gamepad[cpad]->controller_attached) && (ps2_gamepad[cpad]->real != nullptr))
+        {
+            sdl_controller *ctl = ps2_gamepad[cpad]->real;
+            if ((ctl->rumble_supported) && (ctl->haptic != nullptr))
+            {
+                SDL_HapticRunEffect(ctl->haptic, type, 1);
+            }
+        }
+    }
+}
+    
 int sdl_controller::get_input(int input)
 {
     float k = sensitivity / 100.0; // convert sensibility to float
@@ -215,18 +227,6 @@ int sdl_controller::get_input(int input)
     return value ? 0xFF : 0; // Max pressure
 }
 
-void sdl_controller::vibrate(int type, int cpad)
-{
-    if ((ps2_gamepad[cpad]->controller_attached) && (ps2_gamepad[cpad]->real != nullptr))
-    {
-        sdl_controller *ctl = ps2_gamepad[cpad]->real;
-        if ((ctl->rumble_supported) && (ctl->rumble) && (ctl->haptic != nullptr))
-        {
-            SDL_HapticRunEffect(ctl->haptic, type, 1);
-        }
-    }
-}
-
 void sdl_events()
 {
     SDL_Event sdlEvent;
@@ -236,39 +236,46 @@ void sdl_events()
         switch( sdlEvent.type ) 
         {
             case SDL_CONTROLLERDEVICEADDED:
-                //scan_controllers();
+            {
+                printf("Controller plugged in.\n");
+                bool found = false;
+                int c_id = sdlEvent.cdevice.which;
+
+                for (auto control : sdl_pad)
+                {
+                    if (control->name == SDL_GameControllerNameForIndex(c_id))
+                    {
+                        found = true;
+                        control->id = c_id;
+                        control->controller = SDL_GameControllerOpen(c_id);
+                        control->joystick = SDL_GameControllerGetJoystick(control->controller);
+                        control->connected = true;
+                    }
+                }
+
+                if (!found)
+                {
+                    sdl_controller *temp = new sdl_controller(c_id);
+                    if (temp != nullptr) sdl_pad.push_back(temp);
+                }
+                
                 break;
+            }
 
             case SDL_CONTROLLERDEVICEREMOVED:
-                //scan_controllers();
+            {
+                printf("Controller unplugged.\n");
+                for (auto control : sdl_pad)
+                    if (control->id == sdlEvent.cdevice.which) control->connected = false;
+
                 break;
+            }
 
             case SDL_CONTROLLERBUTTONDOWN:
             case SDL_CONTROLLERBUTTONUP:
-                //OnControllerButton( sdlEvent.cbutton );
-                break;
-
             case SDL_CONTROLLERAXISMOTION:
-                //OnControllerAxis( sdlEvent.caxis );
+                // We poll for this manually, so do nothing at the moment.
                 break;
-        }
-    }
-}
-
-void PollForJoystickInput()
-{
-    for (u32 cpad = 0; cpad < 2; cpad++)
-    {
-        for (int i= 0; i < MAX_KEYS; i++)
-        {
-            s32 value = 0;
-
-            if (ps2_gamepad[cpad]->controller_attached)
-            {
-                value = ps2_gamepad[cpad]->real->get_input(i);
-            }
-
-            ps2_gamepad[cpad]->set(i, value);
         }
     }
 }

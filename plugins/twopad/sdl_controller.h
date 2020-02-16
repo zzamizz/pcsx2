@@ -42,7 +42,7 @@ class sdl_controller
         int sensitivity = 100;
 
         bool connected = false;
-        bool rumble = false, rumble_supported = false;
+        bool rumble_supported = false;
         
         std::string name;
         std::string guid;

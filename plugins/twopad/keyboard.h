@@ -34,11 +34,12 @@ class keyboard_control
         ~keyboard_control();
 
         bool auto_repeat = false;
-        
+
         void poll_keyboard();
         void set_autorepeat(bool repeat);
         void idle();
         const char* control_to_string(int cpad, int key);
+        void init_keys();
 
         #if defined(__unix__)
         const char* key_to_string(KeySym k);

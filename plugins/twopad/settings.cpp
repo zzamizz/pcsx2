@@ -26,6 +26,7 @@
 
 #include "settings.h"
 #include "twopad.h"
+#include "ps2_pad.h"
 
 #if defined(__unix__)
 #include "linux/keyboard_x11.h"
@@ -52,6 +53,19 @@ void save_config()
             }
         }
         fprintf(f, "auto_repeat = %x\n", keys->auto_repeat);
+
+        fprintf(f, "rumble[0] = %x\n", ps2_gamepad[0]->rumble);
+        fprintf(f, "reversed_lx[0] = %x\n", ps2_gamepad[0]->reversed_lx);
+        fprintf(f, "reversed_ly[0] = %x\n", ps2_gamepad[0]->reversed_ly);
+        fprintf(f, "reversed_rx[0] = %x\n", ps2_gamepad[0]->reversed_rx);
+        fprintf(f, "reversed_ry[0] = %x\n", ps2_gamepad[0]->reversed_ry);
+
+        fprintf(f, "rumble[1] = %x\n", ps2_gamepad[1]->rumble);
+        fprintf(f, "reversed_lx[1] = %x\n", ps2_gamepad[1]->reversed_lx);
+        fprintf(f, "reversed_ly[1] = %x\n", ps2_gamepad[1]->reversed_ly);
+        fprintf(f, "reversed_rx[1] = %x\n", ps2_gamepad[1]->reversed_rx);
+        fprintf(f, "reversed_ry[1] = %x\n", ps2_gamepad[1]->reversed_ry);
+
         fclose(f);
     }
     else
@@ -62,33 +76,61 @@ void save_config()
     
 }
 
+void init_config()
+{
+    keys->auto_repeat = true;
+
+    ps2_gamepad[0]->rumble = true;
+    ps2_gamepad[0]->reversed_lx = false;
+    ps2_gamepad[0]->reversed_ly = false;
+    ps2_gamepad[0]->reversed_rx = false;
+    ps2_gamepad[0]->reversed_ry = false;
+
+    ps2_gamepad[1]->rumble = true;
+    ps2_gamepad[1]->reversed_lx = false;
+    ps2_gamepad[1]->reversed_ly = false;
+    ps2_gamepad[1]->reversed_rx = false;
+    ps2_gamepad[0]->reversed_ry = false;
+
+}
+
 void load_config()
 {
     FILE *f;
     const std::string ini_file(ini_path + "TwoPad.ini");
     u32 value = 0;
 
+    init_config();
+    keys->init_keys();
+
     f = fopen(ini_file.c_str(), "r");
     if (f != nullptr)
     {
         for (int pad = 0; pad < 2; pad++)
         {
-            for (int key = 0; key < MAX_KEYS; key++)
+            for (u32 key = 0; key < MAX_KEYS; key++)
             {
                 char str[256];
-                u32 temp = 0;
 
                 sprintf(str, "[%d][%d] = 0x%%x\n", pad, key);
 
-                if (fscanf(f, str, &temp) <= 0)
-                    temp = 0;
-                else
-                    keys->set_key(pad, key, temp);
+                if (fscanf(f, str, &value) > 0) keys->set_key(pad, key, value);
             }
         }
         
-        if (fscanf(f, "auto_repeat = %x\n", &value) > 0)
-            keys->auto_repeat = value;
+        if (fscanf(f, "auto_repeat = %x\n", &value) > 0) keys->auto_repeat = value;
+
+        if (fscanf(f, "rumble[0] = %x\n", &value) > 0) ps2_gamepad[0]->rumble = value;
+        if (fscanf(f, "reversed_lx[0] = %x\n", &value) > 0) ps2_gamepad[0]->reversed_lx = value;
+        if (fscanf(f, "reversed_ly[0] = %x\n", &value) > 0) ps2_gamepad[0]->reversed_ly = value;
+        if (fscanf(f, "reversed_rx[0] = %x\n", &value) > 0) ps2_gamepad[0]->reversed_rx = value;
+        if (fscanf(f, "reversed_ry[0] = %x\n", &value) > 0) ps2_gamepad[0]->reversed_ry = value;
+
+        if (fscanf(f, "rumble[1] = %x\n", &value) > 0) ps2_gamepad[1]->rumble = value;
+        if (fscanf(f, "reversed_lx[1] = %x\n", &value) > 0) ps2_gamepad[1]->reversed_lx = value;
+        if (fscanf(f, "reversed_ly[1] = %x\n", &value) > 0) ps2_gamepad[1]->reversed_ly = value;
+        if (fscanf(f, "reversed_rx[1] = %x\n", &value) > 0) ps2_gamepad[1]->reversed_rx = value;
+        if (fscanf(f, "reversed_ry[1] = %x\n", &value) > 0) ps2_gamepad[1]->reversed_ry = value;
 
         fclose(f);
     }
@@ -96,5 +138,4 @@ void load_config()
     {
         printf("Unable to load twopad configuration.\n");
     }
-
 }

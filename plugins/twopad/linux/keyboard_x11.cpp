@@ -63,6 +63,7 @@ void SetAutoRepeat(bool autorep)
 
 void init_x11_keys()
 {
+    printf("Init x11 keys\n");
     x11_key_map[0][PAD_L2] = XK_a;
     x11_key_map[0][PAD_R2] = XK_semicolon;
     x11_key_map[0][PAD_L1] = XK_w;
@@ -99,7 +100,7 @@ void HandleEvent(keyEvent &evt, int pad, int index)
     switch (evt.evt)
     {
         case KeyPress:
-            // Shift F12 is not yet use by pcsx2. So keep it to grab/ungrab input
+            // Shift F12 is not yet used by pcsx2. So keep it to grab/ungrab input
             // I found it very handy vs the automatic fullscreen detection
             // 1/ Does not need to detect full-screen
             // 2/ Can use a debugger in full-screen
