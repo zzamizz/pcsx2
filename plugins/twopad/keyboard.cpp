@@ -28,12 +28,14 @@ keyboard_control::keyboard_control()
 {
     x11_key_map[0].empty();
     x11_key_map[1].empty();
+    SDL_DisableScreenSaver();
 }
 
 keyboard_control::~keyboard_control()
 {
     #if defined(__unix__)
     #endif
+    SDL_EnableScreenSaver();
     set_autorepeat(true);
 }
 
@@ -64,17 +66,6 @@ void keyboard_control::set_autorepeat(bool repeat)
 void keyboard_control::idle()
 {
 #if defined(__unix__)
-    // Gamepad inputs don't count as an activity. Therefore screensaver will
-    // be fired after a couple of minutes.
-    // Emulate an user activity.
-    static int count = 0;
-    count++;
-
-    // 1 call every 4096 Vsync is enough.
-    if ((count & 0xFFF) == 0) 
-    {
-        XResetScreenSaver(GSdsp);
-    }
 #endif
 }
 

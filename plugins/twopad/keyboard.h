@@ -22,6 +22,7 @@
 
 #pragma once
 
+#include "SDL.h"
 #if defined(__unix__)
 #include "linux/keyboard_x11.h"
 #endif
