@@ -295,12 +295,25 @@ set(HARDENING_FLAG "-D_FORTIFY_SOURCE=2  ${HARDENING_FLAG}")
 endif()
 
 # -Wno-attributes: "always_inline function might not be inlinable" <= real spam (thousand of warnings!!!)
+# 
+# This is because the line (Pcsx2Defs.h):
+# #define __forceinline __attribute__((always_inline, unused))
+# should be:
+# #define __forceinline __inline__ __attribute__((always_inline, unused)) 
+# However, this will need some work on getting it to compiler in clang.
+#
+# This also masks the fact that EXPORT, EXPORT_C, and EXPORT_C_ all have the gcc only "externally_visible" attribute
+# which shouldn't be used in clang. These should also be consolidated into one set of defines.
+
 # -Wno-missing-field-initializers: standard allow to init only the begin of struct/array in static init. Just a silly warning.
+# Mostly PluginManager.cpp and MipsAssemblerTables.cpp & GSRendererOGL.cpp & GSDeviceOGL.cpp. Could probably be fixed properly. 
 # Note: future GCC (aka GCC 5.1.1) has less false positive so warning could maybe put back
-# -Wno-unused-function: warn for function not used in release build
-# -Wno-unused-value: lots of warning for this kind of statements "0 && ...". There are used to disable some parts of code in release/dev build.
+# -Wno-unused-function: warns for function not used in release build
+# -Wno-unused-value: lots of warnings for this kind of statements "0 && ...". There are used to disable some parts of code in release/dev build.
 # -Wno-overloaded-virtual: Gives a fair number of warnings under clang over in the wxwidget gui section of the code.
-set(DEFAULT_WARNINGS "-Wall -Wextra -Wno-attributes -Wno-unused-function -Wno-unused-parameter -Wno-missing-field-initializers -Wno-overloaded-virtual")
+# I do expect "IEventListener_AppStatus::DispatchEvent" and "wxFrame::ShowFullScreen" should be fixed properly, though.
+
+set(DEFAULT_WARNINGS "-Wall -Wextra -Wno-attributes -Wno-missing-field-initializers -Wno-unused-function -Wno-unused-parameter -Wno-overloaded-virtual")
 if (NOT USE_ICC)
     set(DEFAULT_WARNINGS "${DEFAULT_WARNINGS} -Wno-unused-value ")
 endif()
