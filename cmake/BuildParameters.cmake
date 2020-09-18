@@ -320,11 +320,6 @@ else()
     set(DBG "-g ${DBG}")
 endif()
 
-if (USE_CLANG)
-    # -Wno-deprecated-register: glib issue...
-    set(DEFAULT_WARNINGS "${DEFAULT_WARNINGS}  -Wno-deprecated-register -Wno-c++14-extensions")
-endif()
-
 set(LTO_FLAGS "")
 if (USE_LTO)
 if (NOT USE_GCC)
