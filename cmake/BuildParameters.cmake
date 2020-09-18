@@ -289,10 +289,9 @@ endif()
 
 # Remove FORTIFY_SOURCE when compiling as debug, because it spams a lot of warnings on clang due to no optimization.
 # Should probably be checked on gcc as well, as the USE_CLANG might not be needed.
-if (USE_CLANG AND CMAKE_BUILD_TYPE MATCHES "Debug")
 set(HARDENING_FLAG "-Wformat -Wformat-security")
-else()
-set(HARDENING_FLAG "-D_FORTIFY_SOURCE=2  -Wformat -Wformat-security")
+if (NOT (USE_CLANG AND CMAKE_BUILD_TYPE MATCHES "Debug"))
+set(HARDENING_FLAG "-D_FORTIFY_SOURCE=2  ${HARDENING_FLAG}")
 endif()
 
 # -Wno-attributes: "always_inline function might not be inlinable" <= real spam (thousand of warnings!!!)
@@ -307,23 +306,30 @@ if (NOT USE_ICC)
 endif()
 
 # -Wstrict-aliasing=n: to fix one day aliasing issue. n=1/2/3
-if (USE_ICC)
-    set(AGGRESSIVE_WARNING "-Wstrict-aliasing ")
+
+set(AGGRESSIVE_WARNING "-Wstrict-aliasing ")
+if (NOT USE_ICC)
+    set(AGGRESSIVE_WARNING "${AGGRESSIVE_WARNING} -Wstrict-overflow=1 ")
+endif()
+
+set(DBG "-fno-omit-frame-pointer")
+
+if (USE_GCC)
+    set(DBG "-ggdb3 ${DBG}")
 else()
-    set(AGGRESSIVE_WARNING "-Wstrict-aliasing -Wstrict-overflow=1 ")
+    set(DBG "-g ${DBG}")
 endif()
 
 if (USE_CLANG)
     # -Wno-deprecated-register: glib issue...
     set(DEFAULT_WARNINGS "${DEFAULT_WARNINGS}  -Wno-deprecated-register -Wno-c++14-extensions")
-    set(DBG "-g -fno-omit-frame-pointer")
-elseif (USE_ICC)
-    set(DBG "-g -fno-omit-frame-pointer")
-elseif (USE_GCC)
-    set(DBG "-ggdb3 -fno-omit-frame-pointer")
 endif()
 
+set(LTO_FLAGS "")
 if (USE_LTO)
+if (NOT USE_GCC)
+    message ("Pcsx2 is not currently able to compile with lto enabled on anything other than gcc. Disabling lto.")
+else()
     include(ProcessorCount)
     ProcessorCount(ncpu)
     set(LTO_FLAGS "-fuse-linker-plugin -flto=${ncpu}")
@@ -331,8 +337,7 @@ if (USE_LTO)
     set(CMAKE_AR /usr/bin/gcc-ar CACHE STRING "Archiver" FORCE)
     set(CMAKE_RANLIB /usr/bin/gcc-ranlib CACHE STRING "ranlib" FORCE)
     set(CMAKE_NM /usr/bin/gcc-nm CACHE STRING "nm" FORCE)
-else()
-    set(LTO_FLAGS "")
+endif()
 endif()
 
 if (USE_PGO_GENERATE OR USE_PGO_OPTIMIZE)
@@ -348,7 +353,7 @@ if(USE_PGO_OPTIMIZE)
 endif()
 
 if(CMAKE_BUILD_TYPE MATCHES "Debug")
-    set(DEBUG_FLAG "${DBG} -DPCSX2_DEVBUILD -DPCSX2_DEBUG -D_DEBUG")
+    set(DEBUG_FLAG "${DBG} -D_DEBUG -DPCSX2_DEVBUILD -DPCSX2_DEBUG")
 elseif(CMAKE_BUILD_TYPE MATCHES "Devel")
     set(DEBUG_FLAG "${DBG} -DNDEBUG -DPCSX2_DEVBUILD -D_DEVEL")
 elseif(CMAKE_BUILD_TYPE MATCHES "Release")
