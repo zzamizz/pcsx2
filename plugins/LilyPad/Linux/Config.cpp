@@ -532,8 +532,6 @@ void RefreshEnabledDevices(int updateDeviceList)
 
 void Configure()
 {
-	Dialog LilySettingsDialog;
-
     // Can end up here without PADinit() being called first.
     LoadSettings();
 
@@ -541,5 +539,13 @@ void Configure()
     // disabling some devices due to focus changes, or releasing mouse.
     RefreshEnabledDevices(0);
 
-	if (LilySettingsDialog.ShowModal() == wxID_OK) SaveSettings();
+    // Needs to be declared after the last two calls.
+	Dialog LilySettingsDialog;
+
+	if (LilySettingsDialog.ShowModal() == wxID_OK)
+        SaveSettings();
+    else
+        LoadSettings();
+    
+    
 }

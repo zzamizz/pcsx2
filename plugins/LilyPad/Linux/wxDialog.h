@@ -19,14 +19,33 @@
 
 #include <wx/wx.h>
 #include <wx/notebook.h>
+#include <wx/dataview.h>
+#include <wx/arrstr.h>
+#include <vector>
+
+struct pad_location
+{
+    unsigned int port;
+    unsigned int slot;
+};
 
 class GeneralTab : public wxPanel
 {
+private:
+    wxCheckBox *multitap_1_check, *multitap_2_check, *multiple_bindings_check;
+    wxChoice *choice;
+    wxDataViewListCtrl *pad_list;
+    std::vector<pad_location> loc;
+
 public:
 
 	GeneralTab(wxWindow* parent);
-	void Update();
-	void CallUpdate(wxCommandEvent& event);
+	void RefreshList();
+	void CallRefreshList(wxCommandEvent& event);
+	void UpdateType();
+	void CallUpdateType(wxCommandEvent& event);
+	void UpdateCheck();
+	void CallCheck(wxCommandEvent& event);
 };
 
 class PadTab : public wxPanel
@@ -42,10 +61,12 @@ class Dialog : public wxDialog
 {
 private:
 	wxBoxSizer* m_top_box;
-
+    wxNotebook* book;
+    
 public:
 	Dialog();
 	~Dialog();
+    void CreatePadTabs();
 	void Update();
 	void CallUpdate(wxCommandEvent& event);
 };

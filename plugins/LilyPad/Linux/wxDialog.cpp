@@ -62,23 +62,117 @@ int GetPadTypeName(wxString &string, unsigned int port, unsigned int slot, unsig
 GeneralTab::GeneralTab(wxWindow* parent)
 	: wxPanel(parent, wxID_ANY)
 {
-	auto* tab_box = new wxBoxSizer(wxVERTICAL);
+	auto* tab_box = new wxBoxSizer(wxHORIZONTAL);
+    auto* pad_box = new wxStaticBoxSizer(wxHORIZONTAL, this, "Pads");
+    auto* pad_options = new wxBoxSizer(wxVERTICAL);
 
-	auto* temp_text = new wxStaticText(this, wxID_ANY, "This is a placeholder for general settings.");
-	tab_box->Add(temp_text);
+    multitap_1_check = new wxCheckBox(this, wxID_ANY, "Port 1 Multitap");
+    multitap_2_check = new wxCheckBox(this, wxID_ANY, "Port 2 Multitap");
+    multiple_bindings_check = new wxCheckBox(this, wxID_ANY, "Multiple Bindings");
+
+    multiple_bindings_check->SetValue(config.multipleBinding);
+    multitap_1_check->SetValue(config.bools[7]);
+    multitap_2_check->SetValue(config.bools[8]);
+
+    pad_options->Add(multitap_1_check);
+    pad_options->Add(multitap_2_check);
+    pad_options->Add(multiple_bindings_check);
+
+    pad_box->Add(pad_options);
+
+    pad_list = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(350,100));
+    pad_list->AppendTextColumn("Pad", wxDATAVIEW_CELL_INERT, 60);
+    pad_list->AppendTextColumn("Type", wxDATAVIEW_CELL_INERT, 186);
+    pad_list->AppendTextColumn("Bindings", wxDATAVIEW_CELL_INERT, 40);
+
+    pad_box->Add(pad_list, wxSizerFlags().Expand());
+
+    wxArrayString why;
+    for(auto str : padTypes)
+    {
+        why.Add(str);
+    }
+    choice = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, why);
+    pad_box->Add(choice);
+
+    RefreshList();
+    
+    tab_box->Add(pad_box, wxSizerFlags().Centre().Expand());
 
 	SetSizerAndFit(tab_box);
-	Bind(wxEVT_CHECKBOX, &GeneralTab::CallUpdate, this);
+	Bind(wxEVT_CHOICE, &GeneralTab::CallRefreshList, this);
+	Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &GeneralTab::CallUpdateType, this);
+	Bind(wxEVT_CHECKBOX, &GeneralTab::CallCheck, this);
 }
 
-void GeneralTab::CallUpdate(wxCommandEvent& /*event*/)
+void GeneralTab::CallRefreshList(wxCommandEvent& /*event*/)
 {
-	Update();
+	RefreshList();
 }
 
-void GeneralTab::Update()
+void GeneralTab::CallUpdateType(wxCommandEvent& /*event*/)
 {
+	UpdateType();
+}
 
+void GeneralTab::CallCheck(wxCommandEvent& /*event*/)
+{
+	UpdateCheck();
+}
+
+// Updates the list with the current information.
+void GeneralTab::RefreshList()
+{
+    int list_selection = pad_list->GetSelectedRow();
+    int choice_selection = choice->GetSelection();
+
+    if (choice_selection >= 0)
+    {
+        config.padConfigs[loc[list_selection].port][loc[list_selection].slot].type = (PadType)choice_selection; 
+    }
+
+    pad_list->DeleteAllItems();
+    loc.clear();
+    
+    for (unsigned int port = 0; port < 2; port++)
+    {
+        for (unsigned int slot = 0; slot < 4; slot++)
+        {
+            wxString title;
+            wxVector<wxVariant> data;
+
+            if (!GetPadName(title, port, slot)) continue;
+
+            data.push_back(wxVariant(title));
+            data.push_back(wxVariant(padTypes[config.padConfigs[port][slot].type]));
+            data.push_back(wxVariant("0"));
+            pad_list->AppendItem(data);
+            loc.push_back({port, slot});
+        }
+    }
+}
+
+// Updates the selected item with the type chosen.
+void GeneralTab::UpdateType()
+{
+    int selection = pad_list->GetSelectedRow();
+
+    if (selection >= 0)
+    {
+        unsigned int port = 0;
+        unsigned int slot = 0;
+
+        port = loc[selection].port;
+        slot = loc[selection].slot;
+        choice->SetSelection(config.padConfigs[port][slot].type);
+    }
+}
+
+void GeneralTab::UpdateCheck()
+{
+    config.multipleBinding = multiple_bindings_check->GetValue();
+    config.bools[7] = multitap_1_check->GetValue();
+    config.bools[8] = multitap_2_check->GetValue();
 }
 
 PadTab::PadTab(wxWindow* parent, unsigned int port, unsigned int slot)
@@ -106,37 +200,42 @@ void PadTab::Update()
 }
 
 Dialog::Dialog()
-	: wxDialog(nullptr, wxID_ANY, "Controller Config", wxDefaultPosition, wxDefaultSize, wxCAPTION | wxCLOSE_BOX)
+	: wxDialog(nullptr, wxID_ANY, "Controller Config", wxDefaultPosition, wxSize(750, -1), wxCAPTION | wxCLOSE_BOX)
 {
 	auto* padding = new wxBoxSizer(wxVERTICAL);
 	m_top_box = new wxBoxSizer(wxVERTICAL);
 
-    auto* book = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
+    book = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
     auto* m_general_panel = new GeneralTab(book);
     book->AddPage(m_general_panel, "General", true);
 
-    for (int port = 0; port < 2; port++)
-    {
-        for (int slot = 0; slot < 4; slot++)
-        {
-            wxString title;
-
-            // Uncomment when it actually puts *any* pads as not disabled.
-            //if (config.padConfigs[port][slot].type == DisabledPad) continue;
-            if (!GetPadName(title, port, slot)) continue;
-
-            auto* m_pad_panel = new PadTab(book, port, slot);
-            book->AddPage(m_pad_panel, title, true);
-        }
-    }
+    CreatePadTabs();
+    book->SetSelection(0);
 
     m_top_box->Add(book, wxSizerFlags().Centre().Expand());
     padding->Add(m_top_box, wxSizerFlags().Centre().Expand().Border(wxALL, 5));
 
 	m_top_box->Add(CreateStdDialogButtonSizer(wxOK | wxCANCEL), wxSizerFlags().Right());
 
-	SetSizerAndFit(padding);
+	SetSizer(padding);
 	Bind(wxEVT_CHECKBOX, &Dialog::CallUpdate, this);
+}
+
+void Dialog::CreatePadTabs()
+{
+    for (int port = 0; port < 2; port++)
+        {
+            for (int slot = 0; slot < 4; slot++)
+            {
+                wxString title;
+
+                if (config.padConfigs[port][slot].type == DisabledPad) continue;
+                if (!GetPadName(title, port, slot)) continue;
+
+                auto* m_pad_panel = new PadTab(book, port, slot);
+                book->AddPage(m_pad_panel, title, true);
+            }
+        }
 }
 
 Dialog::~Dialog()
