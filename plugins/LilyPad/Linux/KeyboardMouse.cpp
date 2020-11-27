@@ -21,7 +21,7 @@
 #define MAX_KEYCODE (0xFF)
 
 LinuxKeyboard::LinuxKeyboard()
-    : Device(LNX_KEYBOARD, KEYBOARD, L"displayName", L"instanceID", L"deviceID")
+    : Device(LNX_KEYBOARD, KEYBOARD, L"keyboard", L"0", L"0")
 {
     for (int i = 0; i < MAX_KEYCODE; i++) {
         AddPhysicalControl(PSHBTN, i, i);

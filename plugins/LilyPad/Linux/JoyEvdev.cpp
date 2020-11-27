@@ -21,10 +21,10 @@
 #include "Linux/bitmaskros.h"
 
 JoyEvdev::JoyEvdev(int fd, bool ds3, const wchar_t *id)
-    : Device(LNX_JOY, OTHER, id, id)
+    : Device(LNX_EVDEV, OTHER, id, id)
     , m_fd(fd)
 {
-    // XXX LNX_JOY => DS3 or ???
+    // XXX LNX_EVDEV => DS3 or ???
 
     m_abs.clear();
     m_btn.clear();
