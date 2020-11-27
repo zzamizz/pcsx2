@@ -473,6 +473,7 @@ int LoadSettings(int force, wchar_t *file)
     //TODO RefreshEnabledDevicesAndDisplay(1);
     RefreshEnabledDevices(1); // XXX For the moment only a subfonction
 
+    SaveSettings();
     return 0;
 }
 
