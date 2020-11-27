@@ -302,12 +302,9 @@ void GeneralTab::UpdateCheck()
 PadTab::PadTab(NoteBook* parent, unsigned int port, unsigned int slot)
 	: wxPanel(parent, wxID_ANY)
 {
-	auto* tab_box = new wxBoxSizer(wxVERTICAL);
+	auto* tab_box = new wxBoxSizer(wxHORIZONTAL);
     wxString title;
     GetPadName(title, port, slot);
-
-	auto* temp_text = new wxStaticText(this, wxID_ANY, "This is a placeholder for " + title + " settings.");
-	tab_box->Add(temp_text);
 
     pad_list = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(360,200));
     pad_list->AppendTextColumn("Device", wxDATAVIEW_CELL_INERT, 120);
@@ -315,9 +312,109 @@ PadTab::PadTab(NoteBook* parent, unsigned int port, unsigned int slot)
     pad_list->AppendTextColumn("PS2", wxDATAVIEW_CELL_INERT, 120);
 
     Update();
+    tab_box->Add(pad_list);
+    auto* control_grid = new wxFlexGridSizer(2, 0, 0);
+
+    auto* shoulder_box = new wxStaticBoxSizer(wxHORIZONTAL, this, "Shoulder Buttons");
+    auto* shoulder_grid = new wxFlexGridSizer(2, 0, 0);
+
+    auto* l1_button = new wxButton(this, wxID_ANY, "L1");
+    auto* r1_button = new wxButton(this, wxID_ANY, "R1");
+    auto* l2_button = new wxButton(this, wxID_ANY, "L2");
+    auto* r2_button = new wxButton(this, wxID_ANY, "R2");
+
+    shoulder_grid->Add(l1_button);
+    shoulder_grid->Add(r1_button);
+    shoulder_grid->Add(l2_button);
+    shoulder_grid->Add(r2_button);
+
+    shoulder_box->Add(shoulder_grid);
+    control_grid->Add(shoulder_box);
+
+    auto* select_box = new wxStaticBoxSizer(wxHORIZONTAL, this);
+    auto* select_grid = new wxFlexGridSizer(2, 0, 0);
+
+    auto* select_button = new wxButton(this, wxID_ANY, "Select");
+    auto* start_button = new wxButton(this, wxID_ANY, "Start");
+    auto* analog_button = new wxButton(this, wxID_ANY, "Analog");
+    auto* mouse_button = new wxButton(this, wxID_ANY, "Mouse");
+
+    select_grid->Add(select_button);
+    select_grid->Add(start_button);
+    select_grid->Add(analog_button);
+    select_grid->Add(mouse_button);
+
+    select_box->Add(select_grid);
+    control_grid->Add(select_box);
+
+    auto* d_box = new wxStaticBoxSizer(wxVERTICAL, this, "D-Pad");
+    auto* mid_d_box = new wxBoxSizer(wxHORIZONTAL);
+
+    auto* up_button = new wxButton(this, wxID_ANY, "Up");
+    auto* left_button = new wxButton(this, wxID_ANY, "Left");
+    auto* right_button = new wxButton(this, wxID_ANY, "Right");
+    auto* down_button = new wxButton(this, wxID_ANY, "Down");
+
+    d_box->Add(up_button, wxSizerFlags().Centre());
+    mid_d_box->Add(left_button);
+    mid_d_box->Add(right_button);
+    d_box->Add(mid_d_box);
+    d_box->Add(down_button, wxSizerFlags().Centre());
+
+    control_grid->Add(d_box);
+
+    auto* face_box = new wxStaticBoxSizer(wxVERTICAL, this, "Face Buttons");
+    auto* face_mid_box = new wxBoxSizer(wxHORIZONTAL);
+
+    auto* triangle_button = new wxButton(this, wxID_ANY, "Triangle");
+    auto* square_button = new wxButton(this, wxID_ANY, "Square");
+    auto* circle_button = new wxButton(this, wxID_ANY, "Circle");
+    auto* cross_button = new wxButton(this, wxID_ANY, "Cross");
+
+    face_box->Add(triangle_button, wxSizerFlags().Centre());
+    face_mid_box->Add(square_button);
+    face_mid_box->Add(circle_button);
+    face_box->Add(face_mid_box);
+    face_box->Add(cross_button, wxSizerFlags().Centre());
+
+    control_grid->Add(face_box);
+
+    auto* l_stick_box = new wxStaticBoxSizer(wxVERTICAL, this, "Left Analog Stick");
+    auto* l_stick_mid_box = new wxBoxSizer(wxHORIZONTAL);
+
+    auto* l_stick_up_button = new wxButton(this, wxID_ANY, "Up");
+    auto* l_stick_left_button = new wxButton(this, wxID_ANY, "Left");
+    auto* l_stick_right_button = new wxButton(this, wxID_ANY, "Right");
+    auto* l_stick_down_button = new wxButton(this, wxID_ANY, "Down");
+
+    l_stick_box->Add(l_stick_up_button, wxSizerFlags().Centre());
+    l_stick_mid_box->Add(l_stick_left_button);
+    l_stick_mid_box->Add(l_stick_right_button);
+    l_stick_box->Add(l_stick_mid_box);
+    l_stick_box->Add(l_stick_down_button, wxSizerFlags().Centre());
+
+    control_grid->Add(l_stick_box);
+
+    auto* r_stick_box = new wxStaticBoxSizer(wxVERTICAL, this, "Left Analog Stick");
+    auto* r_stick_mid_box = new wxBoxSizer(wxHORIZONTAL);
+
+    auto* r_stick_up_button = new wxButton(this, wxID_ANY, "Up");
+    auto* r_stick_left_button = new wxButton(this, wxID_ANY, "Left");
+    auto* r_stick_right_button = new wxButton(this, wxID_ANY, "Right");
+    auto* r_stick_down_button = new wxButton(this, wxID_ANY, "Down");
+
+    r_stick_box->Add(r_stick_up_button, wxSizerFlags().Centre());
+    r_stick_mid_box->Add(r_stick_left_button);
+    r_stick_mid_box->Add(r_stick_right_button);
+    r_stick_box->Add(r_stick_mid_box);
+    r_stick_box->Add(r_stick_down_button, wxSizerFlags().Centre());
+
+    control_grid->Add(r_stick_box);
+    tab_box->Add(control_grid, wxSizerFlags().Centre().Expand());
 
 	SetSizerAndFit(tab_box);
 	Bind(wxEVT_CHECKBOX, &PadTab::CallUpdate, this);
+	Bind(wxEVT_BUTTON, &PadTab::CallUpdate, this);
 }
 
 void PadTab::CallUpdate(wxCommandEvent& /*event*/)
@@ -384,48 +481,6 @@ void PadTab::Update()
             Populate(i & 1, i >> 1, j);
         }
     }
-    //for (unsigned int port = 0; port < 2; port++)
-    //{
-    //    for (unsigned int slot = 0; slot < 4; slot++)
-    //    {
-            /*wxString title;
-            wxVector<wxVariant> data;
-
-            if (!GetPadName(title, port, slot)) continue;
-
-            data.push_back(wxVariant(title));
-            data.push_back(wxVariant(padTypes[config.padConfigs[port][slot].type]));
-            data.push_back(wxVariant(wxString::Format("%d", CountBindings(port, slot))));
-            pad_list->AppendItem(data);
-            loc.push_back({port, slot});*/
-    //    }
-    //}
-
-/*     if (populate) {
-        for (int j = 0; j < numPadTypes; j++) {
-            for (int i = 0; i < 8; i++) {
-                Populate(i & 1, i >> 1, j);
-            }
-        }
-    } */
-    /* -- Populate
-    int multipleBinding = config.multipleBinding;
-    config.multipleBinding = 1;
-    int selectedDevice = config.deviceSelect[port][slot];
-    for (int j = 0; j < dm->numDevices; j++) {
-        Device *dev = dm->devices[j];
-        if (!dev->enabled || selectedDevice >= 0 && dm->devices[selectedDevice] != dev)
-            continue;
-        for (int i = 0; i < dev->pads[port][slot][padtype].numBindings; i++) {
-            ListBoundCommand(port, slot, dev, dev->pads[port][slot][padtype].bindings + i);
-        }
-        for (int i = 0; i < dev->pads[port][slot][padtype].numFFBindings; i++) {
-            ListBoundEffect(port, slot, dev, dev->pads[port][slot][padtype].ffBindings + i);
-        }
-    }
-    config.multipleBinding = multipleBinding; */
-
-
 }
 
 NoteBook::NoteBook(wxWindow* parent) : wxNotebook(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize)
@@ -467,7 +522,7 @@ NoteBook::~NoteBook()
 }
 
 Dialog::Dialog()
-	: wxDialog(nullptr, wxID_ANY, "Controller Config", wxDefaultPosition, wxSize(750, -1), wxCAPTION | wxCLOSE_BOX)
+	: wxDialog(nullptr, wxID_ANY, "Controller Config", wxDefaultPosition, wxSize(750, 475), wxCAPTION | wxCLOSE_BOX)
 {
 	auto* padding = new wxBoxSizer(wxVERTICAL);
 	m_top_box = new wxBoxSizer(wxVERTICAL);
