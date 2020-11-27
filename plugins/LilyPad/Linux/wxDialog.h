@@ -72,9 +72,13 @@ public:
 
 class PadTab : public wxPanel
 {
-public:
+private:
+    wxDataViewListCtrl *pad_list;
 
+public:
 	PadTab(NoteBook* parent, unsigned int port, unsigned int slot);
 	void Update();
 	void CallUpdate(wxCommandEvent& event);
+    void Populate(int port, int slot, int padtype);
+    int ListBoundCommand(int port, int slot, Device *dev, Binding *b);
 };

@@ -74,6 +74,112 @@ unsigned int CountBindings(unsigned int port, unsigned int slot)
     return count;
 }
 
+int GetItemIndex(int port, int slot, Device *dev, ForceFeedbackBinding *binding)
+{
+    int count = 0;
+    int padtype = config.padConfigs[port][slot].type;
+    int selectedDevice = config.deviceSelect[port][slot];
+    for (int i = 0; i < dm->numDevices; i++) {
+        Device *dev2 = dm->devices[i];
+        if (!dev2->enabled || selectedDevice >= 0 && dm->devices[selectedDevice] != dev2)
+            continue;
+        if (dev2 != dev) {
+            count += dev2->pads[port][slot][padtype].numBindings + dev2->pads[port][slot][padtype].numFFBindings;
+            continue;
+        }
+        return count += dev2->pads[port][slot][padtype].numBindings + (binding - dev2->pads[port][slot][padtype].ffBindings);
+    }
+    return -1;
+}
+
+int GetItemIndex(int port, int slot, Device *dev, Binding *binding)
+{
+    int count = 0;
+    int padtype = config.padConfigs[port][slot].type;
+    int selectedDevice = config.deviceSelect[port][slot];
+    for (int i = 0; i < dm->numDevices; i++) {
+        Device *dev2 = dm->devices[i];
+        if (!dev2->enabled || selectedDevice >= 0 && dm->devices[selectedDevice] != dev2)
+            continue;
+        if (dev2 != dev) {
+            count += dev2->pads[port][slot][padtype].numBindings + dev2->pads[port][slot][padtype].numFFBindings;
+            continue;
+        }
+        return count += binding - dev->pads[port][slot][padtype].bindings;
+    }
+    return -1;
+}
+
+const wchar_t *GetCommandStringW(u8 command, int port, int slot)
+{
+    int padtype = config.padConfigs[port][slot].type;
+    static wchar_t temp[34];
+
+    if (command >= 0x20 && command <= 0x27)
+    {
+        //if (padtype == GuitarPad && (command == 0x20 || command == 0x22))
+        //{
+            //HWND hWnd = GetDlgItem(hWnds[port][slot][padtype], 0x10F0 + command);
+            //int res = GetWindowTextW(hWnd, temp, 20);
+            //if ((unsigned int)res - 1 <= 18)
+            //    return temp;
+        //}
+        static const wchar_t *stick[2] = {L"L-Stick", L"R-Stick"};
+        static const wchar_t *dir[] = {
+            L"Up", L"Right",
+            L"Down", L"Left"};
+        wsprintfW(temp, L"%s %s", padtype == neGconPad ? L"Rotate" : stick[(command - 0x20) / 4], dir[command & 3]);
+        return temp;
+    }
+    /* Get text from the buttons. */
+    if (command >= 0x0F && command <= 0x2D)
+    {
+        //HWND hWnd = GetDlgItem(hWnds[port][slot][padtype], 0x10F0 + command);
+        if /*(!hWnd ||*/ ((padtype == Dualshock2Pad || padtype == neGconPad) && command >= 0x14 && command <= 0x17) //)
+        {
+            const wchar_t *strings[] =
+            {
+                L"Mouse",          // 0x0F (15)
+                L"Select",         // 0x10 (16)
+                L"L3",             // 0x11 (17)
+                L"R3",             // 0x12 (18)
+                L"Start",          // 0x13 (19)
+                L"D-Pad Up",       // 0x14 (20)
+                L"D-Pad Right",    // 0x15 (21)
+                L"D-Pad Down",     // 0x16 (22)
+                L"D-Pad Left",     // 0x17 (23)
+                L"L2",             // 0x18 (24)
+                L"R2",             // 0x19 (25)
+                L"L1",             // 0x1A (26)
+                L"R1",             // 0x1B (27)
+                L"Triangle",       // 0x1C (28)
+                L"Circle",         // 0x1D (29)
+                L"Square",         // 0x1E (30)
+                L"Cross",          // 0x1F (31)
+                L"L-Stick Up",     // 0x20 (32)
+                L"L-Stick Right",  // 0x21 (33)
+                L"L-Stick Down",   // 0x22 (34)
+                L"L-Stick Left",   // 0x23 (35)
+                L"R-Stick Up",     // 0x24 (36)
+                L"R-Stick Right",  // 0x25 (37)
+                L"R-Stick Down",   // 0x26 (38)
+                L"R-Stick Left",   // 0x27 (39)
+                L"Analog",         // 0x28 (40)
+                L"Excluded Input", // 0x29 (41)
+                L"Lock Buttons",   // 0x2A (42)
+                L"Lock Input",     // 0x2B (43)
+                L"Lock Direction", // 0x2C (44)
+                L"Turbo",          // 0x2D (45)
+            };
+            return strings[command - 0xF];
+        }
+        //int res = GetWindowTextW(hWnd, temp, 20);
+        //if ((unsigned int)res - 1 <= 18)
+        //    return temp;
+    }
+    return L"";
+}
+
 GeneralTab::GeneralTab(NoteBook* parent)
 	: wxPanel(parent, wxID_ANY)
 {
@@ -203,6 +309,13 @@ PadTab::PadTab(NoteBook* parent, unsigned int port, unsigned int slot)
 	auto* temp_text = new wxStaticText(this, wxID_ANY, "This is a placeholder for " + title + " settings.");
 	tab_box->Add(temp_text);
 
+    pad_list = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(360,200));
+    pad_list->AppendTextColumn("Device", wxDATAVIEW_CELL_INERT, 120);
+    pad_list->AppendTextColumn("PC", wxDATAVIEW_CELL_INERT, 120);
+    pad_list->AppendTextColumn("PS2", wxDATAVIEW_CELL_INERT, 120);
+
+    Update();
+
 	SetSizerAndFit(tab_box);
 	Bind(wxEVT_CHECKBOX, &PadTab::CallUpdate, this);
 }
@@ -212,8 +325,106 @@ void PadTab::CallUpdate(wxCommandEvent& /*event*/)
 	Update();
 }
 
+// Doesn't check if already displayed.
+int PadTab::ListBoundCommand(int port, int slot, Device *dev, Binding *b)
+{
+    //int padtype = config.padConfigs[port][slot].type;
+    //if (!hWnds[port][slot][padtype])
+    //    return -1;
+    //HWND hWndList = GetDlgItem(hWnds[port][slot][padtype], IDC_BINDINGS_LIST);
+    int index = -1;
+    //if (hWndList) 
+    //{
+        index = GetItemIndex(port, slot, dev, b);
+        if (index >= 0)
+        {
+            wxVector<wxVariant> data;
+
+            data.push_back(wxVariant(dev->displayName));
+            data.push_back(wxVariant(dev->GetVirtualControlName(&dev->virtualControls[b->controlIndex])));
+            data.push_back(GetCommandStringW(b->command, port, slot));
+        }
+    //}
+    return index;
+}
+
+void PadTab::Populate(int port, int slot, int padtype)
+{
+    int multipleBinding = config.multipleBinding;
+    config.multipleBinding = 1;
+    int selectedDevice = config.deviceSelect[port][slot];
+
+    for (int j = 0; j < dm->numDevices; j++)
+    {
+        Device *dev = dm->devices[j];
+
+        if (!dev->enabled || selectedDevice >= 0 && dm->devices[selectedDevice] != dev)
+            continue;
+
+        for (int i = 0; i < dev->pads[port][slot][padtype].numBindings; i++)
+        {
+            ListBoundCommand(port, slot, dev, dev->pads[port][slot][padtype].bindings + i);
+        }
+
+        /*for (int i = 0; i < dev->pads[port][slot][padtype].numFFBindings; i++)
+        {
+            ListBoundEffect(port, slot, dev, dev->pads[port][slot][padtype].ffBindings + i);
+        }*/
+    }
+    config.multipleBinding = multipleBinding;
+
+}
+
 void PadTab::Update()
 {
+    for (int j = 0; j < numPadTypes; j++)
+    {
+        for (int i = 0; i < 8; i++)
+        {
+            Populate(i & 1, i >> 1, j);
+        }
+    }
+    //for (unsigned int port = 0; port < 2; port++)
+    //{
+    //    for (unsigned int slot = 0; slot < 4; slot++)
+    //    {
+            /*wxString title;
+            wxVector<wxVariant> data;
+
+            if (!GetPadName(title, port, slot)) continue;
+
+            data.push_back(wxVariant(title));
+            data.push_back(wxVariant(padTypes[config.padConfigs[port][slot].type]));
+            data.push_back(wxVariant(wxString::Format("%d", CountBindings(port, slot))));
+            pad_list->AppendItem(data);
+            loc.push_back({port, slot});*/
+    //    }
+    //}
+
+/*     if (populate) {
+        for (int j = 0; j < numPadTypes; j++) {
+            for (int i = 0; i < 8; i++) {
+                Populate(i & 1, i >> 1, j);
+            }
+        }
+    } */
+    /* -- Populate
+    int multipleBinding = config.multipleBinding;
+    config.multipleBinding = 1;
+    int selectedDevice = config.deviceSelect[port][slot];
+    for (int j = 0; j < dm->numDevices; j++) {
+        Device *dev = dm->devices[j];
+        if (!dev->enabled || selectedDevice >= 0 && dm->devices[selectedDevice] != dev)
+            continue;
+        for (int i = 0; i < dev->pads[port][slot][padtype].numBindings; i++) {
+            ListBoundCommand(port, slot, dev, dev->pads[port][slot][padtype].bindings + i);
+        }
+        for (int i = 0; i < dev->pads[port][slot][padtype].numFFBindings; i++) {
+            ListBoundEffect(port, slot, dev, dev->pads[port][slot][padtype].ffBindings + i);
+        }
+    }
+    config.multipleBinding = multipleBinding; */
+
 
 }
 
