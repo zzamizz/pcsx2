@@ -21,6 +21,7 @@
 #include "Config.h"
 #include "DeviceEnumerator.h"
 #include "Linux/ConfigHelper.h"
+#include "Linux/wxDialog.h"
 
 GeneralConfig config;
 
@@ -313,8 +314,7 @@ int LoadSettings(int force, wchar_t *file)
     }
 
     config.keyboardApi = (DeviceAPI)cfg.ReadInt(L"General Settings", L"Keyboard Mode", LNX_KEYBOARD);
-    if (!config.keyboardApi)
-        config.keyboardApi = LNX_KEYBOARD;
+    if (!config.keyboardApi) config.keyboardApi = LNX_KEYBOARD;
     config.mouseApi = (DeviceAPI)cfg.ReadInt(L"General Settings", L"Mouse Mode");
 
     for (int port = 0; port < 2; port++) {
@@ -532,9 +532,14 @@ void RefreshEnabledDevices(int updateDeviceList)
 
 void Configure()
 {
+	Dialog LilySettingsDialog;
+
     // Can end up here without PADinit() being called first.
     LoadSettings();
+
     // Can also end up here after running emulator a bit, and possibly
     // disabling some devices due to focus changes, or releasing mouse.
     RefreshEnabledDevices(0);
+
+	if (LilySettingsDialog.ShowModal() == wxID_OK) SaveSettings();
 }

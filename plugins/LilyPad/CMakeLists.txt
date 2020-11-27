@@ -38,6 +38,7 @@ set(lilypadHeaders
     Linux/ConfigHelper.h
     Linux/JoyEvdev.h
     Linux/KeyboardMouse.h
+    Linux/wxDialog.h
     RawInput.h
     resource.h
     Tooltips.h
@@ -74,6 +75,7 @@ else()
         Linux/JoyEvdev.cpp
         Linux/KeyboardMouse.cpp
         Linux/KeyboardQueue.cpp
+        Linux/wxDialog.cpp
         )
 endif()
 
@@ -88,6 +90,7 @@ else()
 endif()
 
 set(lilypadFinalLibs
+    ${wxWidgets_LIBRARIES}
     #${lilypadFinalLibs}
     #${GTK2_LIBRARIES}
     #${X11_LIBRARIES}
