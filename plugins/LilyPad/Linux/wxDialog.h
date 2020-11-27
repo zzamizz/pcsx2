@@ -18,6 +18,25 @@
 #pragma once
 
 #include <wx/wx.h>
+#include <wx/notebook.h>
+
+class GeneralTab : public wxPanel
+{
+public:
+
+	GeneralTab(wxWindow* parent);
+	void Update();
+	void CallUpdate(wxCommandEvent& event);
+};
+
+class PadTab : public wxPanel
+{
+public:
+
+	PadTab(wxWindow* parent, unsigned int port, unsigned int slot);
+	void Update();
+	void CallUpdate(wxCommandEvent& event);
+};
 
 class Dialog : public wxDialog
 {
@@ -27,8 +46,6 @@ private:
 public:
 	Dialog();
 	~Dialog();
-	void Load();
-	void Save();
 	void Update();
 	void CallUpdate(wxCommandEvent& event);
 };
