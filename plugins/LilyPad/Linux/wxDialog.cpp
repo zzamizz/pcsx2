@@ -59,9 +59,10 @@ int GetPadTypeName(wxString &string, unsigned int port, unsigned int slot, unsig
     return 1;
 }
 
-GeneralTab::GeneralTab(wxWindow* parent)
+GeneralTab::GeneralTab(NoteBook* parent)
 	: wxPanel(parent, wxID_ANY)
 {
+    book = parent;
 	auto* tab_box = new wxBoxSizer(wxHORIZONTAL);
     auto* pad_box = new wxStaticBoxSizer(wxHORIZONTAL, this, "Pads");
     auto* pad_options = new wxBoxSizer(wxVERTICAL);
@@ -173,9 +174,11 @@ void GeneralTab::UpdateCheck()
     config.multipleBinding = multiple_bindings_check->GetValue();
     config.bools[7] = multitap_1_check->GetValue();
     config.bools[8] = multitap_2_check->GetValue();
+    RefreshList();
+    book->RecreatePadTabs();
 }
 
-PadTab::PadTab(wxWindow* parent, unsigned int port, unsigned int slot)
+PadTab::PadTab(NoteBook* parent, unsigned int port, unsigned int slot)
 	: wxPanel(parent, wxID_ANY)
 {
 	auto* tab_box = new wxBoxSizer(wxVERTICAL);
@@ -199,18 +202,51 @@ void PadTab::Update()
 
 }
 
+NoteBook::NoteBook(wxWindow* parent) : wxNotebook(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize)
+{
+    auto* m_general_panel = new GeneralTab(this);
+    AddPage(m_general_panel, "General", true);
+
+    RecreatePadTabs();
+}
+
+void NoteBook::RecreatePadTabs()
+{
+    SetSelection(0);
+    if (GetPageCount() > 1)
+    {
+        while(GetPageCount()>1)
+            RemovePage(1);
+        SendSizeEvent();
+    }
+
+    for (int port = 0; port < 2; port++)
+    {
+        for (int slot = 0; slot < 4; slot++)
+        {
+            wxString title;
+
+            if (config.padConfigs[port][slot].type == DisabledPad) continue;
+            if (!GetPadName(title, port, slot)) continue;
+
+            auto* m_pad_panel = new PadTab(this, port, slot);
+            AddPage(m_pad_panel, title, false);
+        }
+    }
+}
+
+NoteBook::~NoteBook()
+{
+
+}
+
 Dialog::Dialog()
 	: wxDialog(nullptr, wxID_ANY, "Controller Config", wxDefaultPosition, wxSize(750, -1), wxCAPTION | wxCLOSE_BOX)
 {
 	auto* padding = new wxBoxSizer(wxVERTICAL);
 	m_top_box = new wxBoxSizer(wxVERTICAL);
 
-    book = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
-    auto* m_general_panel = new GeneralTab(book);
-    book->AddPage(m_general_panel, "General", true);
-
-    CreatePadTabs();
-    book->SetSelection(0);
+    book = new NoteBook(this);
 
     m_top_box->Add(book, wxSizerFlags().Centre().Expand());
     padding->Add(m_top_box, wxSizerFlags().Centre().Expand().Border(wxALL, 5));
@@ -219,23 +255,6 @@ Dialog::Dialog()
 
 	SetSizer(padding);
 	Bind(wxEVT_CHECKBOX, &Dialog::CallUpdate, this);
-}
-
-void Dialog::CreatePadTabs()
-{
-    for (int port = 0; port < 2; port++)
-        {
-            for (int slot = 0; slot < 4; slot++)
-            {
-                wxString title;
-
-                if (config.padConfigs[port][slot].type == DisabledPad) continue;
-                if (!GetPadName(title, port, slot)) continue;
-
-                auto* m_pad_panel = new PadTab(book, port, slot);
-                book->AddPage(m_pad_panel, title, true);
-            }
-        }
 }
 
 Dialog::~Dialog()

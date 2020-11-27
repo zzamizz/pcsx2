@@ -23,6 +23,28 @@
 #include <wx/arrstr.h>
 #include <vector>
 
+class NoteBook : public wxNotebook
+{
+private:
+public:
+    NoteBook(wxWindow* parent);
+    ~NoteBook();
+    void RecreatePadTabs();
+};
+
+class Dialog : public wxDialog
+{
+private:
+	wxBoxSizer* m_top_box;
+    NoteBook* book;
+
+public:
+	Dialog();
+	~Dialog();
+	void Update();
+	void CallUpdate(wxCommandEvent& event);
+};
+
 struct pad_location
 {
     unsigned int port;
@@ -36,10 +58,10 @@ private:
     wxChoice *choice;
     wxDataViewListCtrl *pad_list;
     std::vector<pad_location> loc;
+    NoteBook *book;
 
 public:
-
-	GeneralTab(wxWindow* parent);
+	GeneralTab(NoteBook* parent);
 	void RefreshList();
 	void CallRefreshList(wxCommandEvent& event);
 	void UpdateType();
@@ -52,21 +74,7 @@ class PadTab : public wxPanel
 {
 public:
 
-	PadTab(wxWindow* parent, unsigned int port, unsigned int slot);
-	void Update();
-	void CallUpdate(wxCommandEvent& event);
-};
-
-class Dialog : public wxDialog
-{
-private:
-	wxBoxSizer* m_top_box;
-    wxNotebook* book;
-    
-public:
-	Dialog();
-	~Dialog();
-    void CreatePadTabs();
+	PadTab(NoteBook* parent, unsigned int port, unsigned int slot);
 	void Update();
 	void CallUpdate(wxCommandEvent& event);
 };
