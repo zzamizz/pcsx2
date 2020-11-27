@@ -59,6 +59,21 @@ int GetPadTypeName(wxString &string, unsigned int port, unsigned int slot, unsig
     return 1;
 }
 
+unsigned int CountBindings(unsigned int port, unsigned int slot)
+{
+    unsigned int count = 0;
+    const int padtype = config.padConfigs[port][slot].type;
+
+    for (int i = 0; i < dm->numDevices; i++)
+    {
+        Device *dev = dm->devices[i];
+        if (!dev->enabled) continue;
+
+        count += dev->pads[port][slot][padtype].numBindings + dev->pads[port][slot][padtype].numFFBindings;
+    }
+    return count;
+}
+
 GeneralTab::GeneralTab(NoteBook* parent)
 	: wxPanel(parent, wxID_ANY)
 {
@@ -146,7 +161,7 @@ void GeneralTab::RefreshList()
 
             data.push_back(wxVariant(title));
             data.push_back(wxVariant(padTypes[config.padConfigs[port][slot].type]));
-            data.push_back(wxVariant("0"));
+            data.push_back(wxVariant(wxString::Format("%d", CountBindings(port, slot))));
             pad_list->AppendItem(data);
             loc.push_back({port, slot});
         }
