@@ -313,6 +313,10 @@ PadTab::PadTab(NoteBook* parent, unsigned int port, unsigned int slot)
 
     Update();
     tab_box->Add(pad_list);
+    auto* right_box = new wxBoxSizer(wxVERTICAL);
+    status_bar = new wxTextCtrl(this, wxID_ANY, "Lilypad Settings", wxDefaultPosition, wxDefaultSize, wxTE_READONLY | wxTE_CENTRE);
+    right_box->Add(status_bar, wxSizerFlags().Expand());
+
     auto* control_grid = new wxFlexGridSizer(2, 0, 0);
 
     auto* shoulder_box = new wxStaticBoxSizer(wxHORIZONTAL, this, "Shoulder Buttons");
@@ -410,16 +414,20 @@ PadTab::PadTab(NoteBook* parent, unsigned int port, unsigned int slot)
     r_stick_box->Add(r_stick_down_button, wxSizerFlags().Centre());
 
     control_grid->Add(r_stick_box);
-    tab_box->Add(control_grid, wxSizerFlags().Centre().Expand());
+    right_box->Add(control_grid, wxSizerFlags().Centre().Expand());
+    tab_box->Add(right_box, wxSizerFlags().Centre().Expand());
 
 	SetSizerAndFit(tab_box);
+
 	Bind(wxEVT_CHECKBOX, &PadTab::CallUpdate, this);
 	Bind(wxEVT_BUTTON, &PadTab::CallUpdate, this);
 }
 
-void PadTab::CallUpdate(wxCommandEvent& /*event*/)
+void PadTab::CallUpdate(wxCommandEvent& event)
 {
 	Update();
+
+    status_bar->SetValue("Configuration not currently implemented.");
 }
 
 // Doesn't check if already displayed.

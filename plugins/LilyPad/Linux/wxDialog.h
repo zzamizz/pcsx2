@@ -18,9 +18,13 @@
 #pragma once
 
 #include <wx/wx.h>
+#include <wx/arrstr.h>
+
 #include <wx/notebook.h>
 #include <wx/dataview.h>
-#include <wx/arrstr.h>
+
+#include <wx/textctrl.h>
+
 #include <vector>
 
 class NoteBook : public wxNotebook
@@ -74,6 +78,7 @@ class PadTab : public wxPanel
 {
 private:
     wxDataViewListCtrl *pad_list;
+	wxTextCtrl *status_bar;
 
 public:
 	PadTab(NoteBook* parent, unsigned int port, unsigned int slot);
