@@ -137,41 +137,7 @@ const wchar_t *GetCommandStringW(u8 command, int port, int slot)
         //HWND hWnd = GetDlgItem(hWnds[port][slot][padtype], 0x10F0 + command);
         if /*(!hWnd ||*/ ((padtype == Dualshock2Pad || padtype == neGconPad) && command >= 0x14 && command <= 0x17) //)
         {
-            const wchar_t *strings[] =
-            {
-                L"Mouse",          // 0x0F (15)
-                L"Select",         // 0x10 (16)
-                L"L3",             // 0x11 (17)
-                L"R3",             // 0x12 (18)
-                L"Start",          // 0x13 (19)
-                L"D-Pad Up",       // 0x14 (20)
-                L"D-Pad Right",    // 0x15 (21)
-                L"D-Pad Down",     // 0x16 (22)
-                L"D-Pad Left",     // 0x17 (23)
-                L"L2",             // 0x18 (24)
-                L"R2",             // 0x19 (25)
-                L"L1",             // 0x1A (26)
-                L"R1",             // 0x1B (27)
-                L"Triangle",       // 0x1C (28)
-                L"Circle",         // 0x1D (29)
-                L"Square",         // 0x1E (30)
-                L"Cross",          // 0x1F (31)
-                L"L-Stick Up",     // 0x20 (32)
-                L"L-Stick Right",  // 0x21 (33)
-                L"L-Stick Down",   // 0x22 (34)
-                L"L-Stick Left",   // 0x23 (35)
-                L"R-Stick Up",     // 0x24 (36)
-                L"R-Stick Right",  // 0x25 (37)
-                L"R-Stick Down",   // 0x26 (38)
-                L"R-Stick Left",   // 0x27 (39)
-                L"Analog",         // 0x28 (40)
-                L"Excluded Input", // 0x29 (41)
-                L"Lock Buttons",   // 0x2A (42)
-                L"Lock Input",     // 0x2B (43)
-                L"Lock Direction", // 0x2C (44)
-                L"Turbo",          // 0x2D (45)
-            };
-            return strings[command - 0xF];
+            return pad_labels[command - 0xF];
         }
         //int res = GetWindowTextW(hWnd, temp, 20);
         //if ((unsigned int)res - 1 <= 18)
@@ -338,8 +304,8 @@ PadTab::PadTab(NoteBook* parent, unsigned int port, unsigned int slot)
     auto* select_box = new wxStaticBoxSizer(wxHORIZONTAL, this);
     auto* select_grid = new wxFlexGridSizer(2, 0, 0);
 
-    auto* select_button = new wxButton(this, wxBTN_PAD_ID_START, "Select");
-    auto* start_button = new wxButton(this, wxBTN_PAD_ID_SELECT, "Start");
+    auto* select_button = new wxButton(this, wxBTN_PAD_ID_SELECT, "Select");
+    auto* start_button = new wxButton(this, wxBTN_PAD_ID_START, "Start");
     auto* analog_button = new wxButton(this, wxBTN_PAD_ID_ANALOG, "Analog");
     auto* mouse_button = new wxButton(this, wxBTN_PAD_ID_MOUSE, "Mouse");
 
@@ -423,12 +389,11 @@ PadTab::PadTab(NoteBook* parent, unsigned int port, unsigned int slot)
 
 void PadTab::CallUpdate(wxCommandEvent& event)
 {
-    /*switch(event.GetId())
-    {
-    }*/
+    const int control = event.GetId() - (wxID_HIGHEST + 1);
+
 	Update();
 
-    status_bar->SetValue("Configuration not currently implemented.");
+    status_bar->SetValue(wxString::Format("[%s]: Configuration not currently implemented.", pad_labels[control]));
 }
 
 // Doesn't check if already displayed.
@@ -531,7 +496,7 @@ NoteBook::~NoteBook()
 }
 
 Dialog::Dialog()
-	: wxDialog(nullptr, wxID_ANY, "Controller Config", wxDefaultPosition, wxSize(750, 475), wxCAPTION | wxCLOSE_BOX)
+	: wxDialog(nullptr, wxID_ANY, "Controller Config", wxDefaultPosition, wxSize(750, 500), wxCAPTION | wxCLOSE_BOX)
 {
 	auto* padding = new wxBoxSizer(wxVERTICAL);
 	m_top_box = new wxBoxSizer(wxVERTICAL);
