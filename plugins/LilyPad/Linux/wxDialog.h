@@ -87,3 +87,36 @@ public:
     void Populate(int port, int slot, int padtype);
     int ListBoundCommand(int port, int slot, Device *dev, Binding *b);
 };
+
+enum
+{
+    wxBTN_PAD_ID_L1 = wxID_HIGHEST + 1,
+    wxBTN_PAD_ID_R1 = wxID_HIGHEST + 2,
+    wxBTN_PAD_ID_L2 = wxID_HIGHEST + 3,
+    wxBTN_PAD_ID_R2 = wxID_HIGHEST + 4,
+
+    wxBTN_PAD_ID_START = wxID_HIGHEST + 5,
+    wxBTN_PAD_ID_SELECT = wxID_HIGHEST + 6,
+    wxBTN_PAD_ID_ANALOG = wxID_HIGHEST + 7,
+    wxBTN_PAD_ID_MOUSE = wxID_HIGHEST + 8,
+
+    wxBTN_PAD_ID_D_PAD_U = wxID_HIGHEST + 9,
+    wxBTN_PAD_ID_D_PAD_L = wxID_HIGHEST + 10,
+    wxBTN_PAD_ID_D_PAD_R = wxID_HIGHEST + 11,
+    wxBTN_PAD_ID_D_PAD_D = wxID_HIGHEST + 12,
+
+    wxBTN_PAD_ID_TRIANGLE = wxID_HIGHEST + 13,
+    wxBTN_PAD_ID_SQUARE = wxID_HIGHEST + 14,
+    wxBTN_PAD_ID_CIRCLE = wxID_HIGHEST + 15,
+    wxBTN_PAD_ID_CROSS = wxID_HIGHEST + 16,
+
+    wxBTN_PAD_ID_L_STICK_U = wxID_HIGHEST + 17,
+    wxBTN_PAD_ID_L_STICK_L = wxID_HIGHEST + 18,
+    wxBTN_PAD_ID_L_STICK_R = wxID_HIGHEST + 19,
+    wxBTN_PAD_ID_L_STICK_D = wxID_HIGHEST + 20,
+
+    wxBTN_PAD_ID_R_STICK_U = wxID_HIGHEST + 21,
+    wxBTN_PAD_ID_R_STICK_L = wxID_HIGHEST + 22,
+    wxBTN_PAD_ID_R_STICK_R = wxID_HIGHEST + 23,
+    wxBTN_PAD_ID_R_STICK_D = wxID_HIGHEST + 24
+};

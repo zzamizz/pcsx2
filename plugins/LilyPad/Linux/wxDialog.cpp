@@ -322,10 +322,10 @@ PadTab::PadTab(NoteBook* parent, unsigned int port, unsigned int slot)
     auto* shoulder_box = new wxStaticBoxSizer(wxHORIZONTAL, this, "Shoulder Buttons");
     auto* shoulder_grid = new wxFlexGridSizer(2, 0, 0);
 
-    auto* l1_button = new wxButton(this, wxID_ANY, "L1");
-    auto* r1_button = new wxButton(this, wxID_ANY, "R1");
-    auto* l2_button = new wxButton(this, wxID_ANY, "L2");
-    auto* r2_button = new wxButton(this, wxID_ANY, "R2");
+    auto* l1_button = new wxButton(this, wxBTN_PAD_ID_L1, "L1");
+    auto* r1_button = new wxButton(this, wxBTN_PAD_ID_R1, "R1");
+    auto* l2_button = new wxButton(this, wxBTN_PAD_ID_L2, "L2");
+    auto* r2_button = new wxButton(this, wxBTN_PAD_ID_R2, "R2");
 
     shoulder_grid->Add(l1_button);
     shoulder_grid->Add(r1_button);
@@ -338,10 +338,10 @@ PadTab::PadTab(NoteBook* parent, unsigned int port, unsigned int slot)
     auto* select_box = new wxStaticBoxSizer(wxHORIZONTAL, this);
     auto* select_grid = new wxFlexGridSizer(2, 0, 0);
 
-    auto* select_button = new wxButton(this, wxID_ANY, "Select");
-    auto* start_button = new wxButton(this, wxID_ANY, "Start");
-    auto* analog_button = new wxButton(this, wxID_ANY, "Analog");
-    auto* mouse_button = new wxButton(this, wxID_ANY, "Mouse");
+    auto* select_button = new wxButton(this, wxBTN_PAD_ID_START, "Select");
+    auto* start_button = new wxButton(this, wxBTN_PAD_ID_SELECT, "Start");
+    auto* analog_button = new wxButton(this, wxBTN_PAD_ID_ANALOG, "Analog");
+    auto* mouse_button = new wxButton(this, wxBTN_PAD_ID_MOUSE, "Mouse");
 
     select_grid->Add(select_button);
     select_grid->Add(start_button);
@@ -354,10 +354,10 @@ PadTab::PadTab(NoteBook* parent, unsigned int port, unsigned int slot)
     auto* d_box = new wxStaticBoxSizer(wxVERTICAL, this, "D-Pad");
     auto* mid_d_box = new wxBoxSizer(wxHORIZONTAL);
 
-    auto* up_button = new wxButton(this, wxID_ANY, "Up");
-    auto* left_button = new wxButton(this, wxID_ANY, "Left");
-    auto* right_button = new wxButton(this, wxID_ANY, "Right");
-    auto* down_button = new wxButton(this, wxID_ANY, "Down");
+    auto* up_button = new wxButton(this, wxBTN_PAD_ID_D_PAD_U, "Up");
+    auto* left_button = new wxButton(this, wxBTN_PAD_ID_D_PAD_L, "Left");
+    auto* right_button = new wxButton(this, wxBTN_PAD_ID_D_PAD_R, "Right");
+    auto* down_button = new wxButton(this, wxBTN_PAD_ID_D_PAD_D, "Down");
 
     d_box->Add(up_button, wxSizerFlags().Centre());
     mid_d_box->Add(left_button);
@@ -370,10 +370,10 @@ PadTab::PadTab(NoteBook* parent, unsigned int port, unsigned int slot)
     auto* face_box = new wxStaticBoxSizer(wxVERTICAL, this, "Face Buttons");
     auto* face_mid_box = new wxBoxSizer(wxHORIZONTAL);
 
-    auto* triangle_button = new wxButton(this, wxID_ANY, "Triangle");
-    auto* square_button = new wxButton(this, wxID_ANY, "Square");
-    auto* circle_button = new wxButton(this, wxID_ANY, "Circle");
-    auto* cross_button = new wxButton(this, wxID_ANY, "Cross");
+    auto* triangle_button = new wxButton(this, wxBTN_PAD_ID_TRIANGLE, "Triangle");
+    auto* square_button = new wxButton(this, wxBTN_PAD_ID_SQUARE, "Square");
+    auto* circle_button = new wxButton(this, wxBTN_PAD_ID_CIRCLE, "Circle");
+    auto* cross_button = new wxButton(this, wxBTN_PAD_ID_CROSS, "Cross");
 
     face_box->Add(triangle_button, wxSizerFlags().Centre());
     face_mid_box->Add(square_button);
@@ -386,10 +386,10 @@ PadTab::PadTab(NoteBook* parent, unsigned int port, unsigned int slot)
     auto* l_stick_box = new wxStaticBoxSizer(wxVERTICAL, this, "Left Analog Stick");
     auto* l_stick_mid_box = new wxBoxSizer(wxHORIZONTAL);
 
-    auto* l_stick_up_button = new wxButton(this, wxID_ANY, "Up");
-    auto* l_stick_left_button = new wxButton(this, wxID_ANY, "Left");
-    auto* l_stick_right_button = new wxButton(this, wxID_ANY, "Right");
-    auto* l_stick_down_button = new wxButton(this, wxID_ANY, "Down");
+    auto* l_stick_up_button = new wxButton(this, wxBTN_PAD_ID_L_STICK_U, "Up");
+    auto* l_stick_left_button = new wxButton(this, wxBTN_PAD_ID_L_STICK_L, "Left");
+    auto* l_stick_right_button = new wxButton(this, wxBTN_PAD_ID_L_STICK_R, "Right");
+    auto* l_stick_down_button = new wxButton(this, wxBTN_PAD_ID_L_STICK_D, "Down");
 
     l_stick_box->Add(l_stick_up_button, wxSizerFlags().Centre());
     l_stick_mid_box->Add(l_stick_left_button);
@@ -402,10 +402,10 @@ PadTab::PadTab(NoteBook* parent, unsigned int port, unsigned int slot)
     auto* r_stick_box = new wxStaticBoxSizer(wxVERTICAL, this, "Left Analog Stick");
     auto* r_stick_mid_box = new wxBoxSizer(wxHORIZONTAL);
 
-    auto* r_stick_up_button = new wxButton(this, wxID_ANY, "Up");
-    auto* r_stick_left_button = new wxButton(this, wxID_ANY, "Left");
-    auto* r_stick_right_button = new wxButton(this, wxID_ANY, "Right");
-    auto* r_stick_down_button = new wxButton(this, wxID_ANY, "Down");
+    auto* r_stick_up_button = new wxButton(this, wxBTN_PAD_ID_R_STICK_U, "Up");
+    auto* r_stick_left_button = new wxButton(this, wxBTN_PAD_ID_R_STICK_L, "Left");
+    auto* r_stick_right_button = new wxButton(this, wxBTN_PAD_ID_R_STICK_R, "Right");
+    auto* r_stick_down_button = new wxButton(this, wxBTN_PAD_ID_R_STICK_D, "Down");
 
     r_stick_box->Add(r_stick_up_button, wxSizerFlags().Centre());
     r_stick_mid_box->Add(r_stick_left_button);
@@ -418,13 +418,14 @@ PadTab::PadTab(NoteBook* parent, unsigned int port, unsigned int slot)
     tab_box->Add(right_box, wxSizerFlags().Centre().Expand());
 
 	SetSizerAndFit(tab_box);
-
-	Bind(wxEVT_CHECKBOX, &PadTab::CallUpdate, this);
 	Bind(wxEVT_BUTTON, &PadTab::CallUpdate, this);
 }
 
 void PadTab::CallUpdate(wxCommandEvent& event)
 {
+    /*switch(event.GetId())
+    {
+    }*/
 	Update();
 
     status_bar->SetValue("Configuration not currently implemented.");
