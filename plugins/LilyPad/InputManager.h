@@ -19,11 +19,12 @@
 #define INPUT_MANAGER_H
 
 #include "Devices.h"
+#include <vector>
 
 class InputDeviceManager
 {
 public:
-    Device **devices;
+    std::vector<Device*> devices;
     int numDevices;
 
     void ClearDevices();
@@ -35,7 +36,7 @@ public:
     // When old devices are missing, I do a slightly more careful search
     // using productIDs and then (in desperation) displayName.
     // Finally create new dummy devices if no matches found.
-    void CopyBindings(int numDevices, Device **devices);
+    void CopyBindings(int numDevices, std::vector<Device*> devices);
 
 
     InputDeviceManager();

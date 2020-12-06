@@ -24,16 +24,12 @@ InputDeviceManager *dm = 0;
 
 InputDeviceManager::InputDeviceManager()
 {
-    memset(this, 0, sizeof(*this));
+    ClearDevices();
 }
 
 void InputDeviceManager::ClearDevices()
 {
-    for (int i = 0; i < numDevices; i++) {
-        delete devices[i];
-    }
-    free(devices);
-    devices = 0;
+    devices.clear();
     numDevices = 0;
 }
 
@@ -44,8 +40,8 @@ InputDeviceManager::~InputDeviceManager()
 
 void InputDeviceManager::AddDevice(Device *d)
 {
-    devices = (Device **)realloc(devices, sizeof(Device *) * (numDevices + 1));
-    devices[numDevices++] = d;
+    devices.emplace_back(d);
+    numDevices++;
 }
 
 void InputDeviceManager::Update(InitInfo *info)
@@ -184,7 +180,7 @@ ForceFeedbackAxis *Device::GetForceFeedbackAxis(int id)
     return 0;
 }
 
-void InputDeviceManager::CopyBindings(int numOldDevices, Device **oldDevices)
+void InputDeviceManager::CopyBindings(int numOldDevices, std::vector<Device*> oldDevices)
 {
     int *oldMatches = (int *)malloc(sizeof(int) * numOldDevices);
     int *matches = (int *)malloc(sizeof(int) * numDevices);
