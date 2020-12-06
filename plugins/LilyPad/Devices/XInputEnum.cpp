@@ -18,7 +18,7 @@
 #include "Global.h"
 #include <VersionHelpers.h>
 #include <xinput.h>
-#include "VKey.h"
+#include "Windows/VKey.h"
 #include "InputManager.h"
 #include "XInputEnum.h"
 #include "Config.h"

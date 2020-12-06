@@ -18,9 +18,9 @@
 #include "Global.h"
 #include "InputManager.h"
 #include "WindowsMessaging.h"
-#include "VKey.h"
+#include "Windows/VKey.h"
 #include "DeviceEnumerator.h"
-#include "WndProcEater.h"
+#include "Windows/WndProcEater.h"
 #include "WindowsKeyboard.h"
 #include "WindowsMouse.h"
 

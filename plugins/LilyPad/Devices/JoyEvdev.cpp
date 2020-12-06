@@ -17,7 +17,7 @@
 
 #include "Global.h"
 #include "InputManager.h"
-#include "Linux/JoyEvdev.h"
+#include "JoyEvdev.h"
 #include "Linux/bitmaskros.h"
 
 JoyEvdev::JoyEvdev(int fd, bool ds3, const wchar_t *id)

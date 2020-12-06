@@ -27,52 +27,52 @@ set(lilypadSources
 set(lilypadHeaders
     Config.h
     DeviceEnumerator.h
-    Diagnostics.h
-    DirectInput.h
-    DualShock3.h
+    Windows/Diagnostics.h
+    Devices/DirectInput.h
+    Devices/DualShock3.h
     Global.h
-    HidDevice.h
+    Devices/HidDevice.h
     InputManager.h
     KeyboardQueue.h
     Linux/bitmaskros.h
     Linux/ConfigHelper.h
-    Linux/JoyEvdev.h
-    Linux/KeyboardMouse.h
-    RawInput.h
+    Devices/JoyEvdev.h
+    Devices/LinuxKeyboardMouse.h
+    Devices/RawInput.h
     resource.h
-    Tooltips.h
-    usb.h
-    VKey.h
-    WindowsKeyboard.h
-    WindowsMessaging.h
-    WindowsMouse.h
-    WndProcEater.h
-    XInputEnum.h
+    Windows/Tooltips.h
+    Devices/usb.h
+    Windows/VKey.h
+    Devices/WindowsKeyboard.h
+    Devices/WindowsMessaging.h
+    Devices/WindowsMouse.h
+    Windows/WndProcEater.h
+    Devices/XInputEnum.h
 )
 
 if(Windows)
     LIST(APPEND lilypadSources
-        Diagnostics.cpp
-        DirectInput.cpp
-        DualShock3.cpp
+    Windows/Diagnostics.cpp
+        Devices/DirectInput.cpp
+        Devices/DualShock3.cpp
         Global.cpp
-        HidDevice.cpp
-        RawInput.cpp
-        Tooltips.cpp
-        VKey.cpp
-        WindowsKeyboard.cpp
-        WindowsMessaging.cpp
-        WindowsMouse.cpp
-        WndProcEater.cpp
-        XInputEnum.cpp
+        Devices/HidDevice.cpp
+        Devices/RawInput.cpp
+        Windows/Tooltips.cpp
+        Windows/VKey.cpp
+        Devices/WindowsKeyboard.cpp
+        Devices/WindowsMessaging.cpp
+        Devices/WindowsMouse.cpp
+        Windows/WndProcEater.cpp
+        Devices/XInputEnum.cpp
         )
 
 else()
     LIST(APPEND lilypadSources
         Linux/Config.cpp
         Linux/ConfigHelper.cpp
-        Linux/JoyEvdev.cpp
-        Linux/KeyboardMouse.cpp
+        Devices/JoyEvdev.cpp
+        Devices/LinuxKeyboardMouse.cpp
         Linux/KeyboardQueue.cpp
         )
 endif()

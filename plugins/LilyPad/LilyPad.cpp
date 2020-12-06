@@ -31,11 +31,11 @@
 #include "DeviceEnumerator.h"
 #ifdef _MSC_VER
 #include "WndProcEater.h"
-#include "HidDevice.h"
+#include "Devices/HidDevice.h"
 #endif
 #include "KeyboardQueue.h"
 #include "svnrev.h"
-#include "DualShock3.h"
+#include "Devices/DualShock3.h"
 
 #define WMA_FORCE_UPDATE (WM_APP + 0x537)
 #define FORCE_UPDATE_WPARAM ((WPARAM)0x74328943)

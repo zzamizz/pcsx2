@@ -24,7 +24,7 @@
     <ClCompile Include="Config.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Diagnostics.cpp">
+    <ClCompile Include="Windows\Diagnostics.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="LilyPad.cpp">
@@ -33,28 +33,28 @@
     <ClCompile Include="Global.cpp">
       <Filter>Header Files</Filter>
     </ClCompile>
-    <ClCompile Include="DirectInput.cpp">
+    <ClCompile Include="Devices\DirectInput.cpp">
       <Filter>InputAPIs</Filter>
     </ClCompile>
-    <ClCompile Include="DualShock3.cpp">
+    <ClCompile Include="Devices\DualShock3.cpp">
       <Filter>InputAPIs</Filter>
     </ClCompile>
-    <ClCompile Include="HidDevice.cpp">
+    <ClCompile Include="Devices\HidDevice.cpp">
       <Filter>InputAPIs</Filter>
     </ClCompile>
     <ClCompile Include="KeyboardQueue.cpp">
       <Filter>InputAPIs</Filter>
     </ClCompile>
-    <ClCompile Include="RawInput.cpp">
+    <ClCompile Include="Devices\RawInput.cpp">
       <Filter>InputAPIs</Filter>
     </ClCompile>
-    <ClCompile Include="WindowsKeyboard.cpp">
+    <ClCompile Include="Devices\WindowsKeyboard.cpp">
       <Filter>InputAPIs</Filter>
     </ClCompile>
-    <ClCompile Include="WindowsMessaging.cpp">
+    <ClCompile Include="Devices\WindowsMessaging.cpp">
       <Filter>InputAPIs</Filter>
     </ClCompile>
-    <ClCompile Include="WindowsMouse.cpp">
+    <ClCompile Include="Devices\WindowsMouse.cpp">
       <Filter>InputAPIs</Filter>
     </ClCompile>
     <ClCompile Include="DeviceEnumerator.cpp">
@@ -63,16 +63,16 @@
     <ClCompile Include="InputManager.cpp">
       <Filter>Input</Filter>
     </ClCompile>
-    <ClCompile Include="VKey.cpp">
+    <ClCompile Include="Windows\VKey.cpp">
       <Filter>Input</Filter>
     </ClCompile>
-    <ClCompile Include="WndProcEater.cpp">
+    <ClCompile Include="Windows\WndProcEater.cpp">
       <Filter>Input</Filter>
     </ClCompile>
-    <ClCompile Include="XInputEnum.cpp">
+    <ClCompile Include="Devices\XInputEnum.cpp">
       <Filter>InputAPIs</Filter>
     </ClCompile>
-    <ClCompile Include="Tooltips.cpp">
+    <ClCompile Include="Windows\Tooltips.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -80,7 +80,7 @@
     <ClInclude Include="Config.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="Diagnostics.h">
+    <ClInclude Include="Windows\Diagnostics.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="Global.h">
@@ -89,31 +89,31 @@
     <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DirectInput.h">
+    <ClInclude Include="Devices\DirectInput.h">
       <Filter>InputAPIs</Filter>
     </ClInclude>
-    <ClInclude Include="DualShock3.h">
+    <ClInclude Include="Devices\DualShock3.h">
       <Filter>InputAPIs</Filter>
     </ClInclude>
-    <ClInclude Include="HidDevice.h">
+    <ClInclude Include="Devices\HidDevice.h">
       <Filter>InputAPIs</Filter>
     </ClInclude>
     <ClInclude Include="KeyboardQueue.h">
       <Filter>InputAPIs</Filter>
     </ClInclude>
-    <ClInclude Include="RawInput.h">
+    <ClInclude Include="Devices\RawInput.h">
       <Filter>InputAPIs</Filter>
     </ClInclude>
-    <ClInclude Include="usb.h">
+    <ClInclude Include="Devices\usb.h">
       <Filter>InputAPIs</Filter>
     </ClInclude>
-    <ClInclude Include="WindowsKeyboard.h">
+    <ClInclude Include="Devices\WindowsKeyboard.h">
       <Filter>InputAPIs</Filter>
     </ClInclude>
-    <ClInclude Include="WindowsMessaging.h">
+    <ClInclude Include="Devices\WindowsMessaging.h">
       <Filter>InputAPIs</Filter>
     </ClInclude>
-    <ClInclude Include="WindowsMouse.h">
+    <ClInclude Include="Devices\WindowsMouse.h">
       <Filter>InputAPIs</Filter>
     </ClInclude>
     <ClInclude Include="DeviceEnumerator.h">
@@ -122,16 +122,16 @@
     <ClInclude Include="InputManager.h">
       <Filter>Input</Filter>
     </ClInclude>
-    <ClInclude Include="VKey.h">
+    <ClInclude Include="Windows\VKey.h">
       <Filter>Input</Filter>
     </ClInclude>
-    <ClInclude Include="WndProcEater.h">
+    <ClInclude Include="Windows\WndProcEater.h">
       <Filter>Input</Filter>
     </ClInclude>
-    <ClInclude Include="XInputEnum.h">
+    <ClInclude Include="Devices\XInputEnum.h">
       <Filter>InputAPIs</Filter>
     </ClInclude>
-    <ClInclude Include="Tooltips.h">
+    <ClInclude Include="Windows\Tooltips.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

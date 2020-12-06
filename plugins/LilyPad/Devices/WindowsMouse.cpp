@@ -17,7 +17,7 @@
 
 #include "Global.h"
 #include "InputManager.h"
-#include "VKey.h"
+#include "Windows/VKey.h"
 #include "WindowsMouse.h"
 
 POINT WindowsMouse::origCursorPos;

@@ -59,46 +59,46 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Config.cpp" />
-    <ClCompile Include="Diagnostics.cpp" />
+    <ClCompile Include="Windows\Diagnostics.cpp" />
     <ClCompile Include="LilyPad.cpp" />
     <ClCompile Include="Global.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="DirectInput.cpp" />
-    <ClCompile Include="DualShock3.cpp" />
-    <ClCompile Include="HidDevice.cpp" />
+    <ClCompile Include="Devices\DirectInput.cpp" />
+    <ClCompile Include="Devices\DualShock3.cpp" />
+    <ClCompile Include="Devices\HidDevice.cpp" />
     <ClCompile Include="KeyboardQueue.cpp" />
-    <ClCompile Include="RawInput.cpp" />
-    <ClCompile Include="Tooltips.cpp" />
-    <ClCompile Include="WindowsKeyboard.cpp" />
-    <ClCompile Include="WindowsMessaging.cpp" />
-    <ClCompile Include="WindowsMouse.cpp" />
-    <ClCompile Include="XInputEnum.cpp" />
+    <ClCompile Include="Devices\RawInput.cpp" />
+    <ClCompile Include="Windows\Tooltips.cpp" />
+    <ClCompile Include="Devices\WindowsKeyboard.cpp" />
+    <ClCompile Include="Devices\WindowsMessaging.cpp" />
+    <ClCompile Include="Devices\WindowsMouse.cpp" />
+    <ClCompile Include="Devices\XInputEnum.cpp" />
     <ClCompile Include="DeviceEnumerator.cpp" />
     <ClCompile Include="InputManager.cpp" />
-    <ClCompile Include="VKey.cpp" />
-    <ClCompile Include="WndProcEater.cpp" />
+    <ClCompile Include="Windows\VKey.cpp" />
+    <ClCompile Include="Windows\WndProcEater.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Config.h" />
-    <ClInclude Include="Diagnostics.h" />
+    <ClInclude Include="Windows\Diagnostics.h" />
     <ClInclude Include="Global.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="DirectInput.h" />
-    <ClInclude Include="DualShock3.h" />
-    <ClInclude Include="HidDevice.h" />
+    <ClInclude Include="Devices\DirectInput.h" />
+    <ClInclude Include="Devices\DualShock3.h" />
+    <ClInclude Include="Devices\HidDevice.h" />
     <ClInclude Include="KeyboardQueue.h" />
-    <ClInclude Include="RawInput.h" />
-    <ClInclude Include="Tooltips.h" />
-    <ClInclude Include="usb.h" />
-    <ClInclude Include="WindowsKeyboard.h" />
-    <ClInclude Include="WindowsMessaging.h" />
-    <ClInclude Include="WindowsMouse.h" />
-    <ClInclude Include="XInputEnum.h" />
+    <ClInclude Include="Devices\RawInput.h" />
+    <ClInclude Include="Windows\Tooltips.h" />
+    <ClInclude Include="Devices\usb.h" />
+    <ClInclude Include="Devices\WindowsKeyboard.h" />
+    <ClInclude Include="Devices\WindowsMessaging.h" />
+    <ClInclude Include="Devices\WindowsMouse.h" />
+    <ClInclude Include="Devices\XInputEnum.h" />
     <ClInclude Include="DeviceEnumerator.h" />
     <ClInclude Include="InputManager.h" />
-    <ClInclude Include="VKey.h" />
-    <ClInclude Include="WndProcEater.h" />
+    <ClInclude Include="Windows\VKey.h" />
+    <ClInclude Include="Windows\WndProcEater.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Default.ini" />

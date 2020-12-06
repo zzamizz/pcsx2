@@ -21,7 +21,7 @@
 #include "InputManager.h"
 #include "Config.h"
 
-#include "VKey.h"
+#include "Windows/VKey.h"
 #include "DirectInput.h"
 #include "DeviceEnumerator.h"
 #include "PS2Etypes.h"

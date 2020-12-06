@@ -15,7 +15,7 @@
  *  with PCSX2.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "Linux/KeyboardMouse.h"
+#include "LinuxKeyboardMouse.h"
 
 // actually it is even more but it is enough to distinguish different key
 #define MAX_KEYCODE (0xFF)

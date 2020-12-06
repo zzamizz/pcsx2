@@ -20,17 +20,17 @@
 
 #include "DeviceEnumerator.h"
 #ifdef _WIN32
-#include "WindowsMessaging.h"
-#include "DirectInput.h"
-#include "RawInput.h"
-#include "XInputEnum.h"
-#include "HidDevice.h"
-#include "DualShock3.h"
+#include "Devices/WindowsMessaging.h"
+#include "Devices/DirectInput.h"
+#include "Device/RawInput.h"
+#include "Devices/XInputEnum.h"
+#include "Devices/HidDevice.h"
+#include "Devices/DualShock3.h"
 #endif
 
 #ifdef __linux__
-#include "Linux/KeyboardMouse.h"
-#include "Linux/JoyEvdev.h"
+#include "Devices/LinuxKeyboardMouse.h"
+#include "Devices/JoyEvdev.h"
 #endif
 
 void EnumDevices(int hideDXXinput)
