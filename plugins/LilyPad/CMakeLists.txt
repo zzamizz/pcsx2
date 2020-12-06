@@ -19,6 +19,7 @@ set(lilypadFinalFlags
 set(lilypadSources
     DeviceEnumerator.cpp
     InputManager.cpp
+    Devices.cpp
     KeyboardQueue.cpp
     LilyPad.cpp
     )
@@ -33,6 +34,7 @@ set(lilypadHeaders
     Global.h
     Devices/HidDevice.h
     InputManager.h
+    Devices.h
     KeyboardQueue.h
     Linux/bitmaskros.h
     Linux/ConfigHelper.h

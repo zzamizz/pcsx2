@@ -63,6 +63,9 @@
     <ClCompile Include="InputManager.cpp">
       <Filter>Input</Filter>
     </ClCompile>
+    <ClCompile Include="Devices.cpp">
+      <Filter>Input</Filter>
+    </ClCompile>
     <ClCompile Include="Windows\VKey.cpp">
       <Filter>Input</Filter>
     </ClCompile>
@@ -120,6 +123,9 @@
       <Filter>Input</Filter>
     </ClInclude>
     <ClInclude Include="InputManager.h">
+      <Filter>Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Devices.h">
       <Filter>Input</Filter>
     </ClInclude>
     <ClInclude Include="Windows\VKey.h">
