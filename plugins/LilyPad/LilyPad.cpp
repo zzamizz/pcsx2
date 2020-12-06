@@ -30,7 +30,7 @@
 
 #include "DeviceEnumerator.h"
 #ifdef _MSC_VER
-#include "WndProcEater.h"
+#include "Windows/WndProcEater.h"
 #include "Devices/HidDevice.h"
 #endif
 #include "KeyboardQueue.h"

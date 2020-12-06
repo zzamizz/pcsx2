@@ -21,17 +21,17 @@
 #include "InputManager.h"
 #include "Config.h"
 
-#include "Tooltips.h"
-#include "Diagnostics.h"
+#include "Windows/Tooltips.h"
+#include "Windows/Diagnostics.h"
 #include "DeviceEnumerator.h"
 #include "KeyboardQueue.h"
-#include "WndProcEater.h"
-#include "DualShock3.h"
+#include "Windows/WndProcEater.h"
+#include "Devices/DualShock3.h"
 
 #include <Shlwapi.h>
 
 // Needed to know if raw input is available.  It requires XP or higher.
-#include "RawInput.h"
+#include "Devices/RawInput.h"
 
 //max len 24 wchar_t
 const wchar_t *padTypes[] = {
