@@ -487,7 +487,8 @@ set(pcsx2PADSources
     PAD/Linux/controller.cpp
     PAD/Linux/GamePad.cpp
     PAD/Linux/SDL/joystick.cpp
-    PAD/Linux/keyboard.cpp
+    PAD/Linux/X11Keyboard.cpp
+    PAD/Linux/MacKeyboard.cpp
     PAD/Linux/KeyStatus.cpp
     PAD/Linux/PAD.cpp
     PAD/Linux/state_management.cpp
