@@ -21,6 +21,7 @@
 extern void set_keyboard_key(int pad, int keysym, int index);
 extern int get_keyboard_key(int pad, int keysym);
 extern bool IsAnalogKey(int index);
+extern void PressButton(u32 pad, u32 button);
 
 class PADconf
 {

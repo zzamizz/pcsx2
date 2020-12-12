@@ -29,6 +29,8 @@
 extern void AnalyzeKeyEvent(keyEvent& evt);
 extern void UpdateKeyboardInput();
 extern bool PollForNewKeyboardKeys(u32& pkey);
+extern std::string KeyName(int pad, int key, int keysym);
+
 #ifndef __APPLE__
 extern Display* GSdsp;
 extern Window GSwin;
