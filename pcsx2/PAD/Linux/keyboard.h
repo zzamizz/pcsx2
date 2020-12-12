@@ -33,13 +33,5 @@ extern bool PollForNewKeyboardKeys(u32& pkey);
 extern Display* GSdsp;
 extern Window GSwin;
 #endif
-
-#else
-
-extern char* KeysymToChar(int keysym);
-extern WNDPROC GSwndProc;
-extern HWND GShwnd;
-
 #endif
-
 #endif

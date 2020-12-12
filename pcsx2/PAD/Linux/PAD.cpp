@@ -27,9 +27,6 @@
 #ifdef __linux__
 #include <unistd.h>
 #endif
-#ifdef _MSC_VER
-#define snprintf sprintf_s
-#endif
 
 const u32 revision = 3;
 const u32 build = 0; // increase that with each version
