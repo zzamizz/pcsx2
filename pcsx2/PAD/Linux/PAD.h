@@ -24,6 +24,7 @@
 #include <wx/filename.h>
 #include "Utilities/pxStreams.h"
 #include "Utilities/Console.h"
+#include "DebugTools/Debug.h"
 #include <stdio.h>
 #include <assert.h>
 
@@ -114,9 +115,6 @@ enum gamePadValues
 
 extern FILE* padLog;
 extern void initLogging();
-
-//#define PAD_LOG __Log
-//#define PAD_LOG __LogToConsole
 
 extern keyEvent event;
 extern MtQueue<keyEvent> g_ev_fifo;

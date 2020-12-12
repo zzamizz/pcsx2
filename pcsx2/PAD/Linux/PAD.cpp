@@ -39,60 +39,13 @@ PADconf g_conf;
 keyEvent event;
 
 static keyEvent s_event;
-std::string s_padstrLogPath("logs/");
-
-FILE* padLog = NULL;
 
 KeyStatus g_key_status;
 
 MtQueue<keyEvent> g_ev_fifo;
 
-
-void __LogToConsole(const char* fmt, ...)
-{
-	va_list list;
-
-	va_start(list, fmt);
-
-	if (padLog != NULL)
-		vfprintf(padLog, fmt, list);
-
-	printf("OnePAD: ");
-	vprintf(fmt, list);
-	va_end(list);
-}
-
-void initLogging()
-{
-#ifdef PAD_LOG
-	if (padLog)
-		return;
-
-	const std::string LogFile(s_padstrLogPath + "padLog.txt");
-	padLog = fopen(LogFile.c_str(), "w");
-
-	if (padLog)
-		setvbuf(padLog, NULL, _IONBF, 0);
-
-	PAD_LOG("PADinit\n");
-#endif
-}
-
-void CloseLogging()
-{
-#ifdef PAD_LOG
-	if (padLog)
-	{
-		fclose(padLog);
-		padLog = NULL;
-	}
-#endif
-}
-
 s32 PADinit()
 {
-	initLogging();
-
 	PADLoadConfig();
 
 	Pad::reset_all();
@@ -107,7 +60,6 @@ s32 PADinit()
 
 void PADshutdown()
 {
-	CloseLogging();
 }
 
 s32 PADopen(void* pDsp)
@@ -125,12 +77,6 @@ s32 PADopen(void* pDsp)
 
 void PADsetLogDir(const char* dir)
 {
-	// Get the path to the log directory.
-	s_padstrLogPath = (dir == NULL) ? "logs/" : dir;
-
-	// Reload the log file after updated the path
-	CloseLogging();
-	initLogging();
 }
 
 void PADclose()
