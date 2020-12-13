@@ -257,6 +257,11 @@ size_t SDL2Gamepad::GetUniqueIdentifier()
 	return m_unique_id;
 }
 
+const char* SDL2Gamepad::GetBindingName(int key)
+{
+	return sdl2_key_names[m_bindings[key]];
+}
+
 bool SDL2Gamepad::TestForce(float strength = 0.60)
 {
 	// This code just use standard rumble to check that SDL handles the pad correctly! --3kinox

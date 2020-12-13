@@ -141,14 +141,16 @@ GamepadPanel::GamepadPanel(wxNotebook* parent, unsigned int port, unsigned int s
 
 	auto* delete_button = new wxButton(this, wxBTN_PAD_ID_DELETE, "Delete");
 	auto* clear_all_button = new wxButton(this, wxBTN_PAD_ID_CLEAR, "Clear All");
+	auto* reset_button = new wxButton(this, wxBTN_PAD_ID_CLEAR, "Reset To Defaults");
 	auto* quick_setup_button = new wxButton(this, wxBTN_PAD_ID_QUICK, "Quick Setup");
 
 	delete_button->Disable();
-	//quick_setup_button->Disable();
+	reset_button->Disable();
 	auto* button_box = new wxBoxSizer(wxHORIZONTAL);
 
 	button_box->Add(delete_button);
 	button_box->Add(clear_all_button);
+	button_box->Add(reset_button);
 	button_box->Add(quick_setup_button);
 	left_box->Add(button_box, wxSizerFlags().Expand());
 
@@ -175,20 +177,19 @@ void GamepadPanel::Update()
 		pad_list->AppendItem(data);
 	}
 
-	/*for(auto const& device : s_vgamePad)
+	for(auto const& device : s_vgamePad)
     {
-        fprintf(stderr, "Pulling\n");
         for(int i = 0; i < MAX_KEYS; i++)
         {
+			//fprintf(stderr, "Device %d : '%s (%s) (%s)'\n", i, device->m_device_name.c_str(), device->GetBindingName(i), pad_labels[i]);
             wxVector<wxVariant> data;
 
-            data.push_back(wxVariant(device->m_device_name));
-            
-            data.push_back(wxVariant(wxString(KeyName(m_port, 0, i))));
+            data.push_back(wxVariant(device->m_device_name.c_str()));
+            data.push_back(wxVariant(wxString(device->GetBindingName(i))));
             data.push_back(wxVariant(wxString(pad_labels[i])));
             pad_list->AppendItem(data);
         }
-    }*/
+    }
     wxYieldIfNeeded();
 }
 

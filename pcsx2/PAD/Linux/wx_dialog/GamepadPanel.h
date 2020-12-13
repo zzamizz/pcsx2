@@ -80,7 +80,8 @@ enum
 	wxBTN_PAD_ID_ANALOG = wxID_HIGHEST + 26,
     wxBTN_PAD_ID_DELETE = wxID_HIGHEST + 27,
     wxBTN_PAD_ID_CLEAR = wxID_HIGHEST + 28,
-    wxBTN_PAD_ID_QUICK = wxID_HIGHEST + 29
+    wxBTN_PAD_ID_QUICK = wxID_HIGHEST + 29,
+	wxBTN_PAD_ID_RESET = wxID_HIGHEST + 30
 };
 
 [[maybe_unused]]static std::map<int, gamePadValues> btn_to_pad =
@@ -144,31 +145,3 @@ enum
 		"R-Stick Down",
 		"R-Stick Left"
 };
-
-/*enum gamePadValues
-{
-	PAD_L2 = 0,   // L2 button
-	PAD_R2,       // R2 button
-	PAD_L1,       // L1 button
-	PAD_R1,       // R1 button
-	PAD_TRIANGLE, // Triangle button ▲
-	PAD_CIRCLE,   // Circle button ●
-	PAD_CROSS,    // Cross button ✖
-	PAD_SQUARE,   // Square button ■
-	PAD_SELECT,   // Select button
-	PAD_L3,       // Left joystick button (L3)
-	PAD_R3,       // Right joystick button (R3)
-	PAD_START,    // Start button
-	PAD_UP,       // Directional pad ↑
-	PAD_RIGHT,    // Directional pad →
-	PAD_DOWN,     // Directional pad ↓
-	PAD_LEFT,     // Directional pad ←
-	PAD_L_UP,     // Left joystick (Up) ↑
-	PAD_L_RIGHT,  // Left joystick (Right) →
-	PAD_L_DOWN,   // Left joystick (Down) ↓
-	PAD_L_LEFT,   // Left joystick (Left) ←
-	PAD_R_UP,     // Right joystick (Up) ↑
-	PAD_R_RIGHT,  // Right joystick (Right) →
-	PAD_R_DOWN,   // Right joystick (Down) ↓
-	PAD_R_LEFT    // Right joystick (Left) ←
-};*/

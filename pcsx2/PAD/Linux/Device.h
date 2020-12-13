@@ -66,6 +66,8 @@ public:
 
 	virtual int GetInput(gamePadValues input) = 0;
 
+	virtual const char* GetBindingName(int key) = 0;
+
 	int GetDeadzone()
 	{
 		return m_deadzone;

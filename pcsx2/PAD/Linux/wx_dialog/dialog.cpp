@@ -188,6 +188,7 @@ PADDialog::PADDialog()
 	top_box->Add(CreateStdDialogButtonSizer(wxOK | wxAPPLY |wxCANCEL), wxSizerFlags().Right());
 
 	Bind(wxEVT_BUTTON, &PADDialog::OnButtonClicked, this);
+	Bind(wxEVT_SHOW, &PADDialog::OnWindowShown, this);
 	SetSizerAndFit(top_box);
 }
 
@@ -210,6 +211,11 @@ void PADDialog::Update()
 /****************************************/
 /*********** Events functions ***********/
 /****************************************/
+
+void PADDialog::OnWindowShown(wxShowEvent&)
+{
+	Update();
+}
 
 void PADDialog::OnButtonClicked(wxCommandEvent& event)
 {

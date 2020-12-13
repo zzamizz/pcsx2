@@ -104,6 +104,7 @@ class PADDialog : public wxDialog
 	// Events
 	void OnButtonClicked(wxCommandEvent&);
 	void JoystickEvent(wxTimerEvent&);
+	void OnWindowShown(wxShowEvent&);
 
 	// Make a member variable temporarily.
 	int padding[BUTTONS_LENGHT][4];
