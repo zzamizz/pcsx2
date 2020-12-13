@@ -198,7 +198,7 @@ void UpdateKeyboardInput()
 				state = CGEventSourceButtonState(kCGEventSourceStateHIDSystemState, (CGMouseButton)(key.first & 0xFFFF));
 			}
 			if (state)
-				PressButton(pad, key.second);
+				g_key_status.press_button(pad, key.second);
 		}
 	}
 }

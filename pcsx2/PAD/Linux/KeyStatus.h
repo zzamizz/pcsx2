@@ -17,6 +17,7 @@
 #define __KEYSTATUS_H__
 
 #include "PAD.h"
+#include "config.h"
 
 typedef struct
 {
@@ -60,6 +61,7 @@ public:
 	void joystick_state_acces(u32 pad) { m_state_acces[pad] = false; }
 
 	void press(u32 pad, u32 index, s32 value = 0xFF);
+	void press_button(u32 pad, u32 index);
 	void release(u32 pad, u32 index);
 
 	u16 get(u32 pad);

@@ -76,6 +76,34 @@ void KeyStatus::press(u32 pad, u32 index, s32 value)
 	}
 }
 
+///  but with proper handling for analog buttons
+void KeyStatus::press_button(u32 pad, u32 button)
+{
+	// Analog controls.
+	if (IsAnalogKey(button))
+	{
+		switch (button)
+		{
+			case PAD_R_LEFT:
+			case PAD_R_UP:
+			case PAD_L_LEFT:
+			case PAD_L_UP:
+				press(pad, button, -MAX_ANALOG_VALUE);
+				break;
+			case PAD_R_RIGHT:
+			case PAD_R_DOWN:
+			case PAD_L_RIGHT:
+			case PAD_L_DOWN:
+				press(pad, button, MAX_ANALOG_VALUE);
+				break;
+		}
+	}
+	else
+	{
+		press(pad, button);
+	}
+}
+
 void KeyStatus::release(u32 pad, u32 index)
 {
 	if (!IsAnalogKey(index))

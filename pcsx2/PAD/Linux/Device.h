@@ -16,7 +16,6 @@
 #pragma once
 
 #include "PAD.h"
-#include "controller.h"
 
 #ifdef SDL_BUILD
 #include <SDL.h>

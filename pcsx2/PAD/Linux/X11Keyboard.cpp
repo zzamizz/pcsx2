@@ -96,7 +96,7 @@ void AnalyzeKeyEvent(keyEvent& evt)
 			}
 
 			if (index != -1)
-				PressButton(pad, index);
+				g_key_status.press_button(pad, index);
 
 			//PAD_LOG("Key pressed:%d\n", index);
 

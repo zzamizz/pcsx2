@@ -17,6 +17,7 @@
 #define __KEYBOARD_H__
 
 #include "PAD.h"
+#include "config.h"
 
 #if defined(__unix__) || defined(__APPLE__)
 

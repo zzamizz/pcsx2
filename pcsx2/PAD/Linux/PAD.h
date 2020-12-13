@@ -17,6 +17,8 @@
 
 #define GAMEPAD_NUMBER 2 // numbers of gamepad
 
+#include "PS2Edefs.h"
+
 #include <wx/string.h>
 #include <wx/tokenzr.h>
 #include <wx/intl.h>
@@ -92,11 +94,17 @@ enum gamePadValues
 	PAD_R_LEFT    // Right joystick (Left) ←
 };
 
+#define MAX_KEYS 24
+
+static bool IsAnalogKey(int index)
+{
+	return ((index >= PAD_L_UP) && (index <= PAD_R_LEFT));
+}
+
 #if defined(__unix__) || defined(__APPLE__)
 #include "Device.h"
 #endif
 #include "bitwise.h"
-#include "controller.h"
 #include "KeyStatus.h"
 #include "mt_queue.h"
 

@@ -484,7 +484,6 @@ add_custom_command(
 
 # PAD/Linux sources 
 set(pcsx2PADSources
-    PAD/Linux/controller.cpp
     PAD/Linux/Device.cpp
     PAD/Linux/SDL/SDL2Gamepad.cpp
     PAD/Linux/X11Keyboard.cpp
@@ -504,7 +503,6 @@ set(pcsx2PADSources
 # PAD/Linux headers
 set(pcsx2PADHeaders
     PAD/Linux/bitwise.h
-    PAD/Linux/controller.h
     PAD/Linux/config.h
     PAD/Linux/Device.h
     PAD/Linux/SDL/SDL2Gamepad.h
