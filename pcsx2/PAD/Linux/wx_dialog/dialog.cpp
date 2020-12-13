@@ -16,7 +16,7 @@
 #include "dialog.h"
 
 
-// Construtor of Dialog
+// Constructor of Dialog
 PADDialog::PADDialog()
 	: wxDialog(NULL,                                  // Parent
 			   wxID_ANY,                              // ID
@@ -241,15 +241,11 @@ PADDialog::PADDialog()
 			wxID_ANY,
 			wxDefaultPosition,
 			wxSize(DEFAULT_WIDTH, DEFAULT_HEIGHT));
-		// Add new page
-		// Define label
-		std::stringstream sstm;
-		std::string label = "Gamepad ";
-		sstm << label << i;
+
 		// New page creation
 		m_tab_gamepad->AddPage(
 			m_pan_tabs[i],                           // Parent
-			wxString(sstm.str().c_str(), wxConvUTF8) // Title
+			wxString::Format("Gamepad %d", i) // Title
 		);
 
 		for (int j = 0; j < BUTTONS_LENGHT; ++j)

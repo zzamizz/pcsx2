@@ -29,7 +29,6 @@
 #include <wx/timer.h>
 
 #include <string>
-#include <sstream>
 
 #include "../Device.h"
 #include "../keyboard.h"
