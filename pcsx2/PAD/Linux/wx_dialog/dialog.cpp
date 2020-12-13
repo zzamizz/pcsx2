@@ -15,6 +15,9 @@
 
 #include "dialog.h"
 
+// Contain all simulated key
+u32 m_simulatedKeys[GAMEPAD_NUMBER][MAX_KEYS];
+
 GeneralPanel::GeneralPanel(wxWindow* parent) 
 	: wxPanel(parent, wxID_ANY)
 {
@@ -117,7 +120,7 @@ PADDialog::PADDialog()
 
 	// create a new Notebook
 	m_tab_gamepad = new wxNotebook(this, wxID_ANY);
-	GeneralPanel* general_panel = new GeneralPanel(m_tab_gamepad);
+	general_panel = new GeneralPanel(m_tab_gamepad);
 	m_tab_gamepad->AddPage(general_panel, "General");
 
     for (int port = 0; port < 2; port++)
@@ -130,8 +133,8 @@ PADDialog::PADDialog()
 			if (slot > 0) continue;
             if (!GetPadName(title, port, slot)) continue;
 
-            auto* m_pad_panel = new GamepadPanel(m_tab_gamepad, port, slot);
-            m_tab_gamepad->AddPage(m_pad_panel, title, false);
+            m_gamepad_tabs.emplace_back(new GamepadPanel(m_tab_gamepad, port, slot));
+            m_tab_gamepad->AddPage(m_gamepad_tabs.back(), title, false);
         }
     }
 
@@ -192,7 +195,17 @@ void PADDialog::InitDialog()
 {
 	EnumerateDevices();			// activate gamepads
 	PADLoadConfig();                        // Load configuration from the ini file
-	//repopulate();                           // Set label and fit simulated key array
+	general_panel->Update();                           // Set label and fit simulated key array
+}
+
+void PADDialog::Update()
+{
+	general_panel->RefreshList();
+	for(auto& tab : m_gamepad_tabs)
+	{
+		tab->Update();
+	}
+
 }
 
 /****************************************/

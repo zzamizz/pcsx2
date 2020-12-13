@@ -84,13 +84,12 @@ class PADDialog : public wxDialog
 {
 	// Panels
 	opPanel* m_pan_tabs[GAMEPAD_NUMBER]; // Gamepad Tabs box
+	std::vector<GamepadPanel*> m_gamepad_tabs;
 	// Notebooks
 	wxNotebook* m_tab_gamepad; // Joysticks Tabs
 	// Buttons
 	wxButton* m_bt_gamepad[GAMEPAD_NUMBER][BUTTONS_LENGHT]; // Joystick button use to modify the button mapping
 
-	// Contain all simulated key
-	u32 m_simulatedKeys[GAMEPAD_NUMBER][MAX_KEYS];
 	// Timer
 	wxTimer m_time_update_gui;
 	// Check if the gui must display feddback image
@@ -113,8 +112,13 @@ public:
 	PADDialog();
 	void InitDialog();
 	void show();
+	void Update();
+	GeneralPanel* general_panel;
 };
 
 extern void DisplayDialog(); // Main function
+
+// Contain all simulated key
+extern u32 m_simulatedKeys[GAMEPAD_NUMBER][MAX_KEYS];;
 
 #endif // __DIALOG_H__

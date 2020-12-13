@@ -18,18 +18,24 @@
 #include <wx/panel.h>
 #include <wx/dataview.h>
 
+#include "../keyboard.h"
+
+extern u32 m_simulatedKeys[GAMEPAD_NUMBER][MAX_KEYS];
 
 class GamepadPanel : public wxPanel
 {
 private:
 	wxDataViewListCtrl* pad_list;
 	wxTextCtrl* status_bar;
+    unsigned int m_port;
+    unsigned int m_slot;
 
 public:
 	GamepadPanel(wxNotebook* parent, unsigned int port, unsigned int slot);
 	void Update();
 	void CallUpdate(wxCommandEvent& event);
 	void Populate(int port, int slot, int padtype);
+    void ButtonPressed(wxCommandEvent& event);
 };
 
 enum
@@ -68,37 +74,92 @@ enum
 	wxBTN_PAD_ID_ANALOG = wxID_HIGHEST + 26,
 };
 
-[[maybe_unused]]static const wchar_t* pad_labels[] =
-	{
-		L"Mouse",          // 0x0F (15)
-		L"Select",         // 0x10 (16)
-		L"L3",             // 0x11 (17)
-		L"R3",             // 0x12 (18)
-		L"Start",          // 0x13 (19)
-		L"D-Pad Up",       // 0x14 (20)
-		L"D-Pad Right",    // 0x15 (21)
-		L"D-Pad Down",     // 0x16 (22)
-		L"D-Pad Left",     // 0x17 (23)
-		L"L2",             // 0x18 (24)
-		L"R2",             // 0x19 (25)
-		L"L1",             // 0x1A (26)
-		L"R1",             // 0x1B (27)
-		L"Triangle",       // 0x1C (28)
-		L"Circle",         // 0x1D (29)
-		L"Square",         // 0x1E (30)
-		L"Cross",          // 0x1F (31)
-		L"L-Stick Up",     // 0x20 (32)
-		L"L-Stick Right",  // 0x21 (33)
-		L"L-Stick Down",   // 0x22 (34)
-		L"L-Stick Left",   // 0x23 (35)
-		L"R-Stick Up",     // 0x24 (36)
-		L"R-Stick Right",  // 0x25 (37)
-		L"R-Stick Down",   // 0x26 (38)
-		L"R-Stick Left",   // 0x27 (39)
-		L"Analog",         // 0x28 (40)
-		L"Excluded Input", // 0x29 (41)
-		L"Lock Buttons",   // 0x2A (42)
-		L"Lock Input",     // 0x2B (43)
-		L"Lock Direction", // 0x2C (44)
-		L"Turbo",          // 0x2D (45)
+[[maybe_unused]]static std::map<int, gamePadValues> btn_to_pad =
+{
+	//wxBTN_PAD_ID_MOUSE, 
+	{wxBTN_PAD_ID_SELECT, PAD_SELECT},
+	{wxBTN_PAD_ID_L3, PAD_L3},
+	{wxBTN_PAD_ID_R3, PAD_R3},
+	{wxBTN_PAD_ID_START, PAD_START},
+
+	{wxBTN_PAD_ID_D_PAD_U, PAD_UP},
+	{wxBTN_PAD_ID_D_PAD_R, PAD_RIGHT},
+	{wxBTN_PAD_ID_D_PAD_D, PAD_DOWN},
+	{wxBTN_PAD_ID_D_PAD_L, PAD_LEFT},
+
+	{wxBTN_PAD_ID_L2, PAD_L2},
+	{wxBTN_PAD_ID_R2, PAD_R2},
+	{wxBTN_PAD_ID_L1, PAD_L1},
+	{wxBTN_PAD_ID_R1, PAD_R1},
+
+	{wxBTN_PAD_ID_TRIANGLE, PAD_TRIANGLE},
+	{wxBTN_PAD_ID_CIRCLE, PAD_CIRCLE},
+	{wxBTN_PAD_ID_SQUARE, PAD_SQUARE},
+	{wxBTN_PAD_ID_CROSS, PAD_CROSS},
+
+	{wxBTN_PAD_ID_L_STICK_U, PAD_L_UP},
+	{wxBTN_PAD_ID_L_STICK_R, PAD_L_RIGHT},
+	{wxBTN_PAD_ID_L_STICK_D, PAD_L_DOWN},
+	{wxBTN_PAD_ID_L_STICK_L, PAD_L_LEFT},
+
+	{wxBTN_PAD_ID_R_STICK_U, PAD_R_UP},
+	{wxBTN_PAD_ID_R_STICK_R, PAD_R_RIGHT},
+	{wxBTN_PAD_ID_R_STICK_D, PAD_R_DOWN},
+	{wxBTN_PAD_ID_R_STICK_L, PAD_R_LEFT}
 };
+
+[[maybe_unused]]static const char* pad_labels[] =
+	{
+		"L2",
+		"R2",
+		"L1",
+		"R1",
+		"Triangle",
+		"Circle",
+		"Cross",
+		"Square",
+		"Select",
+		"L3",
+		"R3",
+		"Start",
+		"D-Pad Up",
+		"D-Pad Right",
+		"D-Pad Down",
+		"D-Pad Left",
+		"L-Stick Up",
+		"L-Stick Right",
+		"L-Stick Down",
+		"L-Stick Left",
+		"R-Stick Up",
+		"R-Stick Right",
+		"R-Stick Down",
+		"R-Stick Left"
+};
+
+/*enum gamePadValues
+{
+	PAD_L2 = 0,   // L2 button
+	PAD_R2,       // R2 button
+	PAD_L1,       // L1 button
+	PAD_R1,       // R1 button
+	PAD_TRIANGLE, // Triangle button ▲
+	PAD_CIRCLE,   // Circle button ●
+	PAD_CROSS,    // Cross button ✖
+	PAD_SQUARE,   // Square button ■
+	PAD_SELECT,   // Select button
+	PAD_L3,       // Left joystick button (L3)
+	PAD_R3,       // Right joystick button (R3)
+	PAD_START,    // Start button
+	PAD_UP,       // Directional pad ↑
+	PAD_RIGHT,    // Directional pad →
+	PAD_DOWN,     // Directional pad ↓
+	PAD_LEFT,     // Directional pad ←
+	PAD_L_UP,     // Left joystick (Up) ↑
+	PAD_L_RIGHT,  // Left joystick (Right) →
+	PAD_L_DOWN,   // Left joystick (Down) ↓
+	PAD_L_LEFT,   // Left joystick (Left) ←
+	PAD_R_UP,     // Right joystick (Up) ↑
+	PAD_R_RIGHT,  // Right joystick (Right) →
+	PAD_R_DOWN,   // Right joystick (Down) ↓
+	PAD_R_LEFT    // Right joystick (Left) ←
+};*/
