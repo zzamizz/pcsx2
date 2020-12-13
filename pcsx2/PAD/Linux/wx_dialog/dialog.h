@@ -59,6 +59,13 @@ enum gui_buttons
 #define DEFAULT_WIDTH 1000
 #define DEFAULT_HEIGHT 740
 
+class GeneralPanel : public wxPanel
+{
+public:
+	GeneralPanel(wxWindow* parent);
+	~GeneralPanel();
+};
+
 class PADDialog : public wxDialog
 {
 	// Panels
@@ -78,10 +85,14 @@ class PADDialog : public wxDialog
 	void config_key(int, int);
 	void clear_key(int, int);
 	void repopulate();
+	void set_padding();
 
 	// Events
 	void OnButtonClicked(wxCommandEvent&);
 	void JoystickEvent(wxTimerEvent&);
+
+	// Make a member variable temporarily.
+	int padding[BUTTONS_LENGHT][4];
 
 public:
 	PADDialog();
