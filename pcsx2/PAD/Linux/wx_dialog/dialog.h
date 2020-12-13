@@ -27,6 +27,7 @@
 #include <wx/rawbmp.h>
 #include <wx/graphics.h>
 #include <wx/timer.h>
+#include <wx/dataview.h>
 
 #include <string>
 
@@ -59,11 +60,25 @@ enum gui_buttons
 #define DEFAULT_WIDTH 1000
 #define DEFAULT_HEIGHT 740
 
+[[maybe_unused]]static const char* padTypes[] = {
+	"Unplugged",
+	"Dualshock 2",
+	"Guitar",
+	"Pop'n Music controller",
+	"PS1 Mouse",
+	"neGcon"};
+
 class GeneralPanel : public wxPanel
 {
+private:
+	wxCheckBox *multitap_1_check, *multitap_2_check, *multiple_bindings_check;
+	wxChoice* choice;
+	wxDataViewListCtrl* pad_list;
+
 public:
 	GeneralPanel(wxWindow* parent);
 	~GeneralPanel();
+	void RefreshList();
 };
 
 class PADDialog : public wxDialog
@@ -74,6 +89,7 @@ class PADDialog : public wxDialog
 	wxNotebook* m_tab_gamepad; // Joysticks Tabs
 	// Buttons
 	wxButton* m_bt_gamepad[GAMEPAD_NUMBER][BUTTONS_LENGHT]; // Joystick button use to modify the button mapping
+
 	// Contain all simulated key
 	u32 m_simulatedKeys[GAMEPAD_NUMBER][MAX_KEYS];
 	// Timer

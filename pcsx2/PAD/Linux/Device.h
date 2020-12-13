@@ -20,8 +20,8 @@
 #ifdef SDL_BUILD
 #include <SDL.h>
 #endif
-#include <string>
 #include <array>
+#include <string>
 
 class Device
 {

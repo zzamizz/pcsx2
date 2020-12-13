@@ -15,15 +15,100 @@
 
 #include "dialog.h"
 
+// Returns 0 if pad doesn't exist due to mtap settings, as a convenience.
+int GetPadName(wxString &string, unsigned int port, unsigned int slot)
+{
+    if (!slot /*&& !config.multitap[port]*/) {
+        string = wxString::Format(L"Pad %i", port + 1);
+
+    } else {
+        string = wxString::Format(L"Pad %i%c", port + 1, 'A' + slot);
+
+        /*if (!config.multitap[port])*/ return 0;
+    }
+    return 1;
+}
 
 GeneralPanel::GeneralPanel(wxWindow* parent) 
 	: wxPanel(parent, wxID_ANY)
 {
-	auto* top_box = new wxBoxSizer(wxVERTICAL);
-	auto* text = new wxStaticText(this, wxID_ANY, "This is a placeholder!");
-	top_box->Add(text);
-	SetSizerAndFit(top_box);
+	auto* tab_box = new wxBoxSizer(wxHORIZONTAL);
+    auto* pad_box = new wxStaticBoxSizer(wxHORIZONTAL, this, "Pads");
+    auto* pad_options = new wxBoxSizer(wxVERTICAL);
+
+    multitap_1_check = new wxCheckBox(this, wxID_ANY, "Port 1 Multitap");
+    multitap_2_check = new wxCheckBox(this, wxID_ANY, "Port 2 Multitap");
+    multiple_bindings_check = new wxCheckBox(this, wxID_ANY, "Multiple Bindings");
+
+    //multiple_bindings_check->SetValue(config.multipleBinding);
+    //multitap_1_check->SetValue(config.bools[7]);
+    //multitap_2_check->SetValue(config.bools[8]);
+
+    pad_options->Add(multitap_1_check);
+    pad_options->Add(multitap_2_check);
+    pad_options->Add(multiple_bindings_check);
+
+    pad_box->Add(pad_options);
+
+    pad_list = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(350,100));
+    pad_list->AppendTextColumn("Pad", wxDATAVIEW_CELL_INERT, 60);
+    pad_list->AppendTextColumn("Type", wxDATAVIEW_CELL_INERT, 186);
+    pad_list->AppendTextColumn("Bindings", wxDATAVIEW_CELL_INERT, 40);
+
+    pad_box->Add(pad_list, wxSizerFlags().Expand());
+
+    wxArrayString why;
+    for(auto str : padTypes)
+    {
+        why.Add(str);
+    }
+
+    choice = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, why);
+    pad_box->Add(choice);
+
+    RefreshList();
+    
+    tab_box->Add(pad_box, wxSizerFlags().Centre().Expand());
+
+	SetSizerAndFit(tab_box);
+	//Bind(wxEVT_CHOICE, &GeneralTab::CallRefreshList, this);
+	//Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &GeneralTab::CallUpdateType, this);
+	//Bind(wxEVT_CHECKBOX, &GeneralTab::CallCheck, this);
 };
+
+// Updates the list with the current information.
+void GeneralPanel::RefreshList()
+{
+    //int list_selection = pad_list->GetSelectedRow();
+    //int choice_selection = choice->GetSelection();
+
+    //if (choice_selection >= 0)
+    //{
+    //    config.padConfigs[loc[list_selection].port][loc[list_selection].slot].type = (PadType)choice_selection; 
+    //}
+
+    pad_list->DeleteAllItems();
+    //loc.clear();
+    
+    for (unsigned int port = 0; port < 2; port++)
+    {
+        for (unsigned int slot = 0; slot < 4; slot++)
+        {
+            wxString title;
+            wxVector<wxVariant> data;
+
+            if (!GetPadName(title, port, slot)) continue;
+
+            data.push_back(wxVariant(title));
+			data.push_back(wxVariant(wxString("Placeholder")));
+            data.push_back(wxVariant(wxString::Format("%d", 0)));
+            //data.push_back(wxVariant(padTypes[config.padConfigs[port][slot].type]));
+            //data.push_back(wxVariant(wxString::Format("%d", CountBindings(port, slot))));
+            pad_list->AppendItem(data);
+            //loc.push_back({port, slot});
+        }
+    }
+}
 
 GeneralPanel::~GeneralPanel()
 {
