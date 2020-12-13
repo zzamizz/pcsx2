@@ -20,12 +20,15 @@
 #ifdef SDL_BUILD
 #include <SDL.h>
 #endif
+#include <string>
 
 class Device
 {
 public:
 	Device()
-		: m_deadzone(1500)
+		: m_unique_id(0)
+		, m_device_name("")
+		, m_deadzone(1500)
 		, m_no_error(false)
 	{
 	}
@@ -75,6 +78,9 @@ public:
 	{
 		return m_no_error;
 	}
+
+	size_t m_unique_id;
+	std::string m_device_name;
 
 protected:
 	int m_deadzone;

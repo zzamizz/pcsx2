@@ -15,7 +15,7 @@
 
 #include "Device.h"
 #ifdef SDL_BUILD
-#include "SDL/SDL2Gamepad.h"
+#include "Devices/SDL2Gamepad.h"
 #endif
 
 std::vector<std::unique_ptr<Device>> s_vgamePad;

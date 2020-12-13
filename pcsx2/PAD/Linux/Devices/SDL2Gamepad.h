@@ -53,6 +53,5 @@ private:
 	SDL_GameController* m_controller;
 	SDL_Haptic* m_haptic;
 	std::array<int, NB_EFFECT> m_effects_id;
-	size_t m_unique_id;
 	std::array<int, MAX_KEYS> m_pad_to_sdl;
 };

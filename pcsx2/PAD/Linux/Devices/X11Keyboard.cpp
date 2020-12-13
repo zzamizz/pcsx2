@@ -23,7 +23,7 @@
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
 
-#include "keyboard.h"
+#include "../keyboard.h"
 
 static bool s_grab_input = false;
 static bool s_Shift = false;

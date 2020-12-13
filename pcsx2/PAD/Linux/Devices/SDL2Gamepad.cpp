@@ -120,7 +120,6 @@ SDL2Gamepad::SDL2Gamepad(int id)
 	: Device()
 	, m_controller(nullptr)
 	, m_haptic(nullptr)
-	, m_unique_id(0)
 {
 	SDL_Joystick* joy = nullptr;
 	m_effects_id.fill(-1);
@@ -169,7 +168,7 @@ SDL2Gamepad::SDL2Gamepad(int id)
 	// Collect Device Information
 	char guid[64];
 	SDL_JoystickGetGUIDString(SDL_JoystickGetGUID(joy), guid, 64);
-	const char* devname = SDL_JoystickNameForIndex(id);
+	m_device_name = SDL_JoystickNameForIndex(id);
 
 	if (m_controller == nullptr)
 	{
@@ -177,7 +176,7 @@ SDL2Gamepad::SDL2Gamepad(int id)
 						"Fortunately you can use AntiMicro (https://github.com/AntiMicro/antimicro) or Steam to configure your joystick\n"
 						"The mapping can be stored in PAD.ini as 'SDL2 = <...mapping description...>'\n"
 						"Please report it to us (https://github.com/PCSX2/pcsx2/issues) so we can add your joystick to our internal database.",
-				devname, guid);
+				m_device_name.c_str(), guid);
 
 #if SDL_MINOR_VERSION >= 4 // Version before 2.0.4 are bugged, JoystickClose crashes randomly
 		SDL_JoystickClose(joy);
@@ -243,7 +242,7 @@ SDL2Gamepad::SDL2Gamepad(int id)
 	}
 
 	fprintf(stdout, "PAD: controller (%s) detected%s, GUID:%s\n",
-			devname, m_haptic ? " with rumble support" : "", guid);
+			m_device_name.c_str(), m_haptic ? " with rumble support" : "", guid);
 
 	m_no_error = true;
 }
