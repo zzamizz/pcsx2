@@ -28,10 +28,10 @@ std::vector<std::unique_ptr<Device>> s_vgamePad;
 /**
  * Find every interesting devices and create right structure for them(depend on backend)
  **/
-void EnumerateDevices(std::vector<std::unique_ptr<Device>>& vgamePad)
+void EnumerateDevices()
 {
 #ifdef SDL_BUILD
-	SDL2Gamepad::EnumerateJoysticks(vgamePad);
+	SDL2Gamepad::EnumerateJoysticks();
 #endif
 }
 

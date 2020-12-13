@@ -23,7 +23,7 @@
 //////////////////////////
 
 // opens handles to all possible joysticks
-void SDL2Gamepad::EnumerateJoysticks(std::vector<std::unique_ptr<Device>>& vjoysticks)
+void SDL2Gamepad::EnumerateJoysticks()
 {
 	uint32_t flag = SDL_INIT_JOYSTICK | SDL_INIT_HAPTIC | SDL_INIT_EVENTS | SDL_INIT_GAMECONTROLLER;
 
@@ -63,14 +63,14 @@ void SDL2Gamepad::EnumerateJoysticks(std::vector<std::unique_ptr<Device>>& vjoys
 		}
 	}
 
-	vjoysticks.clear();
+	s_vgamePad.clear();
 
 	for (int i = 0; i < SDL_NumJoysticks(); ++i)
 	{
-		vjoysticks.push_back(std::unique_ptr<Device>(new SDL2Gamepad(i)));
+		s_vgamePad.push_back(std::unique_ptr<Device>(new SDL2Gamepad(i)));
 		// Something goes wrong in the init, let's drop it
-		if (!vjoysticks.back()->IsProperlyInitialized())
-			vjoysticks.pop_back();
+		if (!s_vgamePad.back()->IsProperlyInitialized())
+			s_vgamePad.pop_back();
 	}
 }
 

@@ -67,7 +67,7 @@ s32 PADopen(void* pDsp)
 	g_ev_fifo.reset();
 
 #if defined(__unix__) || defined(__APPLE__)
-	EnumerateDevices(s_vgamePad);
+	EnumerateDevices();
 #endif
 	return _PADopen(pDsp);
 }
@@ -200,7 +200,7 @@ keyEvent* PADkeyEvent()
 		{
 			case SDL_CONTROLLERDEVICEADDED:
 			case SDL_CONTROLLERDEVICEREMOVED:
-				EnumerateDevices(s_vgamePad);
+				EnumerateDevices();
 				break;
 			default:
 				break;

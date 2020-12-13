@@ -34,7 +34,7 @@ public:
 
 
 	// opens handles to all possible joysticks
-	static void EnumerateJoysticks(std::vector<std::unique_ptr<Device>>& vjoysticks);
+	static void EnumerateJoysticks();
 
 	void Rumble(unsigned type, unsigned pad) override;
 

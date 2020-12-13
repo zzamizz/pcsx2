@@ -87,4 +87,4 @@ extern std::vector<std::unique_ptr<Device>> s_vgamePad;
 /*
  * Find every interesting device and create right structure for them(depends on backend)
  */
-extern void EnumerateDevices(std::vector<std::unique_ptr<Device>>& vgamePad);
+extern void EnumerateDevices();
