@@ -493,6 +493,7 @@ set(pcsx2PADSources
     PAD/Linux/state_management.cpp
     PAD/Linux/wx_dialog/dialog.cpp
     PAD/Linux/wx_dialog/opPanel.cpp
+    PAD/Linux/wx_dialog/GamepadPanel.cpp
     PAD/Linux/wx_dialog/GamepadConfiguration.cpp
     PAD/Linux/wx_dialog/JoystickConfiguration.cpp
     PAD/Linux/config.cpp
@@ -511,6 +512,7 @@ set(pcsx2PADHeaders
     PAD/Linux/PAD.h
     PAD/Linux/state_management.h
     PAD/Linux/wx_dialog/opPanel.h
+    PAD/Linux/wx_dialog/GamepadPanel.h
     PAD/Linux/wx_dialog/GamepadConfiguration.h
     PAD/Linux/wx_dialog/JoystickConfiguration.h
     ${CMAKE_BINARY_DIR}/pcsx2/PAD/Linux/resources_pad.h

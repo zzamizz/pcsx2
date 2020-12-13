@@ -17,19 +17,14 @@
 
 #define GAMEPAD_NUMBER 2 // numbers of gamepad
 
-#include "PS2Edefs.h"
-
 #include <wx/string.h>
 #include <wx/tokenzr.h>
 #include <wx/intl.h>
 #include <wx/log.h>
 #include <wx/filename.h>
-#include "Utilities/pxStreams.h"
-#include "Utilities/Console.h"
-#include "DebugTools/Debug.h"
+
 #include <stdio.h>
 #include <assert.h>
-
 #include <array>
 #include <vector>
 #include <map>
@@ -37,6 +32,13 @@
 #include <memory>
 #include <mutex>
 #include <queue>
+
+#include "Utilities/pxStreams.h"
+#include "Utilities/Console.h"
+#include "DebugTools/Debug.h"
+
+#include "PS2Edefs.h"
+#include "config.h"
 
 #define PADdefs
 
@@ -99,6 +101,20 @@ enum gamePadValues
 static bool IsAnalogKey(int index)
 {
 	return ((index >= PAD_L_UP) && (index <= PAD_R_LEFT));
+}
+
+// Returns 0 if pad doesn't exist due to mtap settings, as a convenience.
+static int GetPadName(wxString &string, unsigned int port, unsigned int slot)
+{
+    if (!slot && !g_conf.multitap[port]) {
+        string = wxString::Format(L"Pad %i", port + 1);
+
+    } else {
+        string = wxString::Format(L"Pad %i%c", port + 1, 'A' + slot);
+
+        if (!g_conf.multitap[port]) return 0;
+    }
+    return 1;
 }
 
 #if defined(__unix__) || defined(__APPLE__)

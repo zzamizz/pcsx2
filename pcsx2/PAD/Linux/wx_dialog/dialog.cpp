@@ -15,20 +15,6 @@
 
 #include "dialog.h"
 
-// Returns 0 if pad doesn't exist due to mtap settings, as a convenience.
-int GetPadName(wxString &string, unsigned int port, unsigned int slot)
-{
-    if (!slot /*&& !config.multitap[port]*/) {
-        string = wxString::Format(L"Pad %i", port + 1);
-
-    } else {
-        string = wxString::Format(L"Pad %i%c", port + 1, 'A' + slot);
-
-        /*if (!config.multitap[port])*/ return 0;
-    }
-    return 1;
-}
-
 GeneralPanel::GeneralPanel(wxWindow* parent) 
 	: wxPanel(parent, wxID_ANY)
 {
@@ -134,7 +120,22 @@ PADDialog::PADDialog()
 	GeneralPanel* general_panel = new GeneralPanel(m_tab_gamepad);
 	m_tab_gamepad->AddPage(general_panel, "General");
 
-	for (int i = 0; i < GAMEPAD_NUMBER; ++i)
+    for (int port = 0; port < 2; port++)
+    {
+        for (int slot = 0; slot < 4; slot++)
+        {
+            wxString title;
+
+            //if (config.padConfigs[port][slot].type == DisabledPad) continue;
+			if (slot > 0) continue;
+            if (!GetPadName(title, port, slot)) continue;
+
+            auto* m_pad_panel = new GamepadPanel(m_tab_gamepad, port, slot);
+            m_tab_gamepad->AddPage(m_pad_panel, title, false);
+        }
+    }
+
+	/*for (int i = 0; i < GAMEPAD_NUMBER; ++i)
 	{
 		// Tabs panels
 		m_pan_tabs[i] = new opPanel(
@@ -179,7 +180,7 @@ PADDialog::PADDialog()
 		{
 			m_pressed[i][j] = false;
 		}
-	}
+	}*/
 	top_box->Add(m_tab_gamepad);
 	top_box->Add(CreateStdDialogButtonSizer(wxOK | wxAPPLY |wxCANCEL), wxSizerFlags().Right());
 
@@ -191,7 +192,7 @@ void PADDialog::InitDialog()
 {
 	EnumerateDevices();			// activate gamepads
 	PADLoadConfig();                        // Load configuration from the ini file
-	repopulate();                           // Set label and fit simulated key array
+	//repopulate();                           // Set label and fit simulated key array
 }
 
 /****************************************/

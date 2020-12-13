@@ -34,6 +34,7 @@
 #include "../Device.h"
 #include "../keyboard.h"
 #include "../PAD.h"
+#include "GamepadPanel.h"
 #include "opPanel.h"
 
 #include "GamepadConfiguration.h"
