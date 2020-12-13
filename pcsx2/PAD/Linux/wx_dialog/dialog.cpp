@@ -437,7 +437,7 @@ void PADDialog::config_key(int pad, int key)
 			if (key_pressed != UINT32_MAX)
 			{
 				clear_key(pad, key);
-				set_keyboard_key(pad, key_pressed, key);
+				g_conf.set_keyboard_key(pad, key_pressed, key);
 				m_simulatedKeys[pad][key] = key_pressed;
 			}
 			captured = true;

@@ -19,23 +19,24 @@
 #include "keyboard.h"
 #include "AppConfig.h"
 #include "PAD.h"
+#include "config.h"
 
 void DefaultKeyboardValues()
 {
-	set_keyboard_key(0, XK_a, PAD_L2);
-	set_keyboard_key(0, XK_semicolon, PAD_R2);
-	set_keyboard_key(0, XK_w, PAD_L1);
-	set_keyboard_key(0, XK_p, PAD_R1);
-	set_keyboard_key(0, XK_i, PAD_TRIANGLE);
-	set_keyboard_key(0, XK_l, PAD_CIRCLE);
-	set_keyboard_key(0, XK_k, PAD_CROSS);
-	set_keyboard_key(0, XK_j, PAD_SQUARE);
-	set_keyboard_key(0, XK_v, PAD_SELECT);
-	set_keyboard_key(0, XK_n, PAD_START);
-	set_keyboard_key(0, XK_e, PAD_UP);
-	set_keyboard_key(0, XK_f, PAD_RIGHT);
-	set_keyboard_key(0, XK_d, PAD_DOWN);
-	set_keyboard_key(0, XK_s, PAD_LEFT);
+	g_conf.set_keyboard_key(0, XK_a, PAD_L2);
+	g_conf.set_keyboard_key(0, XK_semicolon, PAD_R2);
+	g_conf.set_keyboard_key(0, XK_w, PAD_L1);
+	g_conf.set_keyboard_key(0, XK_p, PAD_R1);
+	g_conf.set_keyboard_key(0, XK_i, PAD_TRIANGLE);
+	g_conf.set_keyboard_key(0, XK_l, PAD_CIRCLE);
+	g_conf.set_keyboard_key(0, XK_k, PAD_CROSS);
+	g_conf.set_keyboard_key(0, XK_j, PAD_SQUARE);
+	g_conf.set_keyboard_key(0, XK_v, PAD_SELECT);
+	g_conf.set_keyboard_key(0, XK_n, PAD_START);
+	g_conf.set_keyboard_key(0, XK_e, PAD_UP);
+	g_conf.set_keyboard_key(0, XK_f, PAD_RIGHT);
+	g_conf.set_keyboard_key(0, XK_d, PAD_DOWN);
+	g_conf.set_keyboard_key(0, XK_s, PAD_LEFT);
 }
 
 void PADSaveConfig()
@@ -115,7 +116,7 @@ void PADLoadConfig()
 	u32 index;
 	while (fscanf(f, "PAD %u:KEYSYM 0x%x = %u\n", &pad, &keysym, &index) == 3)
 	{
-		set_keyboard_key(pad & 1, keysym, index);
+		g_conf.set_keyboard_key(pad & 1, keysym, index);
 		if (pad == 0)
 			have_user_setting = true;
 	}

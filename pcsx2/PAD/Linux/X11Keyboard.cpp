@@ -61,7 +61,7 @@ void AnalyzeKeyEvent(keyEvent& evt)
 
 	for (int cpad = 0; cpad < GAMEPAD_NUMBER; cpad++)
 	{
-		int tmp_index = get_keyboard_key(cpad, key);
+		int tmp_index = g_conf.get_keyboard_key(cpad, key);
 		if (tmp_index != -1)
 		{
 			pad = cpad;
