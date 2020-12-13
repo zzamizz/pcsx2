@@ -124,30 +124,30 @@ SDL2Gamepad::SDL2Gamepad(int id)
 	SDL_Joystick* joy = nullptr;
 	m_effects_id.fill(-1);
 	// Values are hardcoded currently but it could be later extended to allow remapping of the buttons
-	m_pad_to_sdl[PAD_L2] = SDL_CONTROLLER_AXIS_TRIGGERLEFT;
-	m_pad_to_sdl[PAD_R2] = SDL_CONTROLLER_AXIS_TRIGGERRIGHT;
-	m_pad_to_sdl[PAD_L1] = SDL_CONTROLLER_BUTTON_LEFTSHOULDER;
-	m_pad_to_sdl[PAD_R1] = SDL_CONTROLLER_BUTTON_RIGHTSHOULDER;
-	m_pad_to_sdl[PAD_TRIANGLE] = SDL_CONTROLLER_BUTTON_Y;
-	m_pad_to_sdl[PAD_CIRCLE] = SDL_CONTROLLER_BUTTON_B;
-	m_pad_to_sdl[PAD_CROSS] = SDL_CONTROLLER_BUTTON_A;
-	m_pad_to_sdl[PAD_SQUARE] = SDL_CONTROLLER_BUTTON_X;
-	m_pad_to_sdl[PAD_SELECT] = SDL_CONTROLLER_BUTTON_BACK;
-	m_pad_to_sdl[PAD_L3] = SDL_CONTROLLER_BUTTON_LEFTSTICK;
-	m_pad_to_sdl[PAD_R3] = SDL_CONTROLLER_BUTTON_RIGHTSTICK;
-	m_pad_to_sdl[PAD_START] = SDL_CONTROLLER_BUTTON_START;
-	m_pad_to_sdl[PAD_UP] = SDL_CONTROLLER_BUTTON_DPAD_UP;
-	m_pad_to_sdl[PAD_RIGHT] = SDL_CONTROLLER_BUTTON_DPAD_RIGHT;
-	m_pad_to_sdl[PAD_DOWN] = SDL_CONTROLLER_BUTTON_DPAD_DOWN;
-	m_pad_to_sdl[PAD_LEFT] = SDL_CONTROLLER_BUTTON_DPAD_LEFT;
-	m_pad_to_sdl[PAD_L_UP] = SDL_CONTROLLER_AXIS_LEFTY;
-	m_pad_to_sdl[PAD_L_RIGHT] = SDL_CONTROLLER_AXIS_LEFTX;
-	m_pad_to_sdl[PAD_L_DOWN] = SDL_CONTROLLER_AXIS_LEFTY;
-	m_pad_to_sdl[PAD_L_LEFT] = SDL_CONTROLLER_AXIS_LEFTX;
-	m_pad_to_sdl[PAD_R_UP] = SDL_CONTROLLER_AXIS_RIGHTY;
-	m_pad_to_sdl[PAD_R_RIGHT] = SDL_CONTROLLER_AXIS_RIGHTX;
-	m_pad_to_sdl[PAD_R_DOWN] = SDL_CONTROLLER_AXIS_RIGHTY;
-	m_pad_to_sdl[PAD_R_LEFT] = SDL_CONTROLLER_AXIS_RIGHTX;
+	m_bindings[PAD_L2] = SDL_CONTROLLER_AXIS_TRIGGERLEFT;
+	m_bindings[PAD_R2] = SDL_CONTROLLER_AXIS_TRIGGERRIGHT;
+	m_bindings[PAD_L1] = SDL_CONTROLLER_BUTTON_LEFTSHOULDER;
+	m_bindings[PAD_R1] = SDL_CONTROLLER_BUTTON_RIGHTSHOULDER;
+	m_bindings[PAD_TRIANGLE] = SDL_CONTROLLER_BUTTON_Y;
+	m_bindings[PAD_CIRCLE] = SDL_CONTROLLER_BUTTON_B;
+	m_bindings[PAD_CROSS] = SDL_CONTROLLER_BUTTON_A;
+	m_bindings[PAD_SQUARE] = SDL_CONTROLLER_BUTTON_X;
+	m_bindings[PAD_SELECT] = SDL_CONTROLLER_BUTTON_BACK;
+	m_bindings[PAD_L3] = SDL_CONTROLLER_BUTTON_LEFTSTICK;
+	m_bindings[PAD_R3] = SDL_CONTROLLER_BUTTON_RIGHTSTICK;
+	m_bindings[PAD_START] = SDL_CONTROLLER_BUTTON_START;
+	m_bindings[PAD_UP] = SDL_CONTROLLER_BUTTON_DPAD_UP;
+	m_bindings[PAD_RIGHT] = SDL_CONTROLLER_BUTTON_DPAD_RIGHT;
+	m_bindings[PAD_DOWN] = SDL_CONTROLLER_BUTTON_DPAD_DOWN;
+	m_bindings[PAD_LEFT] = SDL_CONTROLLER_BUTTON_DPAD_LEFT;
+	m_bindings[PAD_L_UP] = SDL_CONTROLLER_AXIS_LEFTY;
+	m_bindings[PAD_L_RIGHT] = SDL_CONTROLLER_AXIS_LEFTX;
+	m_bindings[PAD_L_DOWN] = SDL_CONTROLLER_AXIS_LEFTY;
+	m_bindings[PAD_L_LEFT] = SDL_CONTROLLER_AXIS_LEFTX;
+	m_bindings[PAD_R_UP] = SDL_CONTROLLER_AXIS_RIGHTY;
+	m_bindings[PAD_R_RIGHT] = SDL_CONTROLLER_AXIS_RIGHTX;
+	m_bindings[PAD_R_DOWN] = SDL_CONTROLLER_AXIS_RIGHTY;
+	m_bindings[PAD_R_LEFT] = SDL_CONTROLLER_AXIS_RIGHTX;
 
 	if (SDL_IsGameController(id))
 	{
@@ -282,7 +282,7 @@ int SDL2Gamepad::GetInput(gamePadValues input)
 	// Handle analog inputs which range from -32k to +32k. Range conversion is handled later in the controller
 	if (IsAnalogKey(input))
 	{
-		int value = SDL_GameControllerGetAxis(m_controller, (SDL_GameControllerAxis)m_pad_to_sdl[input]);
+		int value = SDL_GameControllerGetAxis(m_controller, (SDL_GameControllerAxis)m_bindings[input]);
 		value *= k;
 		return (abs(value) > m_deadzone) ? value : 0;
 	}
@@ -290,12 +290,12 @@ int SDL2Gamepad::GetInput(gamePadValues input)
 	// Handle triggers which range from 0 to +32k. They must be converted to 0-255 range
 	if (input == PAD_L2 || input == PAD_R2)
 	{
-		int value = SDL_GameControllerGetAxis(m_controller, (SDL_GameControllerAxis)m_pad_to_sdl[input]);
+		int value = SDL_GameControllerGetAxis(m_controller, (SDL_GameControllerAxis)m_bindings[input]);
 		return (value > m_deadzone) ? value / 128 : 0;
 	}
 
 	// Remain buttons
-	int value = SDL_GameControllerGetButton(m_controller, (SDL_GameControllerButton)m_pad_to_sdl[input]);
+	int value = SDL_GameControllerGetButton(m_controller, (SDL_GameControllerButton)m_bindings[input]);
 	return value ? 0xFF : 0; // Max pressure
 }
 
