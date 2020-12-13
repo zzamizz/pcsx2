@@ -41,8 +41,8 @@ GeneralPanel::GeneralPanel(wxWindow* parent)
     multiple_bindings_check = new wxCheckBox(this, wxID_ANY, "Multiple Bindings");
 
     //multiple_bindings_check->SetValue(config.multipleBinding);
-    //multitap_1_check->SetValue(config.bools[7]);
-    //multitap_2_check->SetValue(config.bools[8]);
+    multitap_1_check->SetValue(g_conf.multitap[0]);
+    multitap_2_check->SetValue(g_conf.multitap[1]);
 
     pad_options->Add(multitap_1_check);
     pad_options->Add(multitap_2_check);
@@ -55,7 +55,7 @@ GeneralPanel::GeneralPanel(wxWindow* parent)
     pad_list->AppendTextColumn("Type", wxDATAVIEW_CELL_INERT, 186);
     pad_list->AppendTextColumn("Bindings", wxDATAVIEW_CELL_INERT, 40);
 
-    pad_box->Add(pad_list);//, wxSizerFlags().Expand());
+    pad_box->Add(pad_list);
 
     wxArrayString why;
     for(auto str : padTypes)
@@ -68,14 +68,21 @@ GeneralPanel::GeneralPanel(wxWindow* parent)
 
     RefreshList();
     
-    tab_box->Add(pad_box, wxSizerFlags().Centre().Expand());
+    tab_box->Add(pad_box);
 
 	SetSizerAndFit(tab_box);
 	//Bind(wxEVT_CHOICE, &GeneralTab::CallRefreshList, this);
 	//Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &GeneralTab::CallUpdateType, this);
-	//Bind(wxEVT_CHECKBOX, &GeneralTab::CallCheck, this);
+	Bind(wxEVT_CHECKBOX, &GeneralPanel::CallCheck, this);
 };
 
+void GeneralPanel::CallCheck(wxCommandEvent& /*event*/)
+{
+	g_conf.multitap[0] = multitap_1_check->GetValue();
+	g_conf.multitap[1] = multitap_2_check->GetValue();
+	//g_conf.multipleBinding = multiple_bindings_check->GetValue();
+
+}
 // Updates the list with the current information.
 void GeneralPanel::RefreshList()
 {
@@ -193,7 +200,6 @@ void PADDialog::InitDialog()
 
 void PADDialog::OnButtonClicked(wxCommandEvent& event)
 {
-	fprintf(stderr, "Button pressed!\n");
 	// Affichage d'un message à chaque clic sur le bouton
 	wxButton* bt_tmp = (wxButton*)event.GetEventObject(); // get the button object
 	int actual_id = bt_tmp->GetId();

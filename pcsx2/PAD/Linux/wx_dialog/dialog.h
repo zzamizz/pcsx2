@@ -76,6 +76,7 @@ public:
 	GeneralPanel(wxWindow* parent);
 	~GeneralPanel();
 	void RefreshList();
+	void CallCheck(wxCommandEvent& /*event*/);
 };
 
 class PADDialog : public wxDialog
