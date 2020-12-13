@@ -93,7 +93,7 @@ enum gamePadValues
 };
 
 #if defined(__unix__) || defined(__APPLE__)
-#include "GamePad.h"
+#include "Device.h"
 #endif
 #include "bitwise.h"
 #include "controller.h"

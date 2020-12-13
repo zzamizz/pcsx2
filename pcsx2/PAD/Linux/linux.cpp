@@ -14,7 +14,7 @@
  */
 
 #include "AppCoreThread.h"
-#include "GamePad.h"
+#include "Device.h"
 #include "PAD.h"
 #include "keyboard.h"
 #include "state_management.h"
@@ -60,13 +60,13 @@ void _PADclose()
 
 void PollForJoystickInput(int cpad)
 {
-	int index = GamePad::uid_to_index(cpad);
+	int index = Device::uid_to_index(cpad);
 	if (index < 0)
 		return;
 
 	auto& gamePad = s_vgamePad[index];
 
-	gamePad->UpdateGamePadState();
+	gamePad->UpdateDeviceState();
 
 	for (int i = 0; i < MAX_KEYS; i++)
 	{

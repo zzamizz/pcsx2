@@ -13,12 +13,12 @@
  *  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "GamePad.h"
+#include "Device.h"
 #ifdef SDL_BUILD
-#include "SDL/joystick.h"
+#include "SDL/SDL2Gamepad.h"
 #endif
 
-std::vector<std::unique_ptr<GamePad>> s_vgamePad;
+std::vector<std::unique_ptr<Device>> s_vgamePad;
 
 /**
  * Following static methods are just forwarders to their backend
@@ -28,24 +28,24 @@ std::vector<std::unique_ptr<GamePad>> s_vgamePad;
 /**
  * Find every interesting devices and create right structure for them(depend on backend)
  **/
-void GamePad::EnumerateGamePads(std::vector<std::unique_ptr<GamePad>>& vgamePad)
+void EnumerateDevices(std::vector<std::unique_ptr<Device>>& vgamePad)
 {
 #ifdef SDL_BUILD
-	JoystickInfo::EnumerateJoysticks(vgamePad);
+	SDL2Gamepad::EnumerateJoysticks(vgamePad);
 #endif
 }
 
 /**
  * Safely dispatch to the Rumble method above
  **/
-void GamePad::DoRumble(unsigned type, unsigned pad)
+void Device::DoRumble(unsigned type, unsigned pad)
 {
 	int index = uid_to_index(pad);
 	if (index >= 0)
 		s_vgamePad[index]->Rumble(type, pad);
 }
 
-size_t GamePad::index_to_uid(int index)
+size_t Device::index_to_uid(int index)
 {
 	if ((index >= 0) && (index < (int)s_vgamePad.size()))
 		return s_vgamePad[index]->GetUniqueIdentifier();
@@ -53,7 +53,7 @@ size_t GamePad::index_to_uid(int index)
 		return 0;
 }
 
-int GamePad::uid_to_index(int pad)
+int Device::uid_to_index(int pad)
 {
 	size_t uid = g_conf.get_joy_uid(pad);
 

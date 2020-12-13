@@ -160,7 +160,7 @@ void GamepadConfiguration::OnChoiceChange(wxCommandEvent& event)
 	int id = choice_tmp->GetSelection();
 	if (id != wxNOT_FOUND)
 	{
-		g_conf.set_joy_uid(m_pad_id, GamePad::index_to_uid(id));
+		g_conf.set_joy_uid(m_pad_id, Device::index_to_uid(id));
 	}
 }
 
@@ -176,7 +176,7 @@ void GamepadConfiguration::repopulate()
 	m_sl_rumble_intensity->SetValue(g_conf.get_ff_intensity());
 	m_sl_joystick_sensibility->SetValue(g_conf.get_sensibility());
 
-	u32 joyid = GamePad::uid_to_index(m_pad_id);
+	u32 joyid = Device::uid_to_index(m_pad_id);
 	if (joyid < m_joy_map->GetCount() && !m_joy_map->IsEmpty())
 		m_joy_map->SetSelection(joyid);
 

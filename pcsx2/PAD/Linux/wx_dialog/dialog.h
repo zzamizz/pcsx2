@@ -31,7 +31,7 @@
 #include <string>
 #include <sstream>
 
-#include "../GamePad.h"
+#include "../Device.h"
 #include "../keyboard.h"
 #include "../PAD.h"
 #include "opPanel.h"

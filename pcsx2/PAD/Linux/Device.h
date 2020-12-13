@@ -22,31 +22,26 @@
 #include <SDL.h>
 #endif
 
-class GamePad
+class Device
 {
 public:
-	GamePad()
+	Device()
 		: m_deadzone(1500)
 		, m_no_error(false)
 	{
 	}
 
-	virtual ~GamePad()
+	virtual ~Device()
 	{
 	}
 
-	GamePad(const GamePad&);            // copy constructor
-	GamePad& operator=(const GamePad&); // assignment
-
-	/*
-     * Find every interesting devices and create right structure for them(depend on backend)
-     */
-	static void EnumerateGamePads(std::vector<std::unique_ptr<GamePad>>& vgamePad);
+	Device(const Device&);            // copy constructor
+	Device& operator=(const Device&); // assignment
 
 	/*
      * Update state of every attached devices
      */
-	virtual void UpdateGamePadState() = 0;
+	virtual void UpdateDeviceState() = 0;
 
 	/*
      * Causes devices to rumble
@@ -87,4 +82,9 @@ protected:
 	bool m_no_error;
 };
 
-extern std::vector<std::unique_ptr<GamePad>> s_vgamePad;
+extern std::vector<std::unique_ptr<Device>> s_vgamePad;
+
+/*
+ * Find every interesting device and create right structure for them(depends on backend)
+ */
+extern void EnumerateDevices(std::vector<std::unique_ptr<Device>>& vgamePad);

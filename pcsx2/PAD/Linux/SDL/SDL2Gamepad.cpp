@@ -13,7 +13,8 @@
  *  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "joystick.h"
+
+#include "SDL2Gamepad.h"
 #include "resources_pad.h"
 #include <signal.h> // sigaction
 
@@ -22,7 +23,7 @@
 //////////////////////////
 
 // opens handles to all possible joysticks
-void JoystickInfo::EnumerateJoysticks(std::vector<std::unique_ptr<GamePad>>& vjoysticks)
+void SDL2Gamepad::EnumerateJoysticks(std::vector<std::unique_ptr<Device>>& vjoysticks)
 {
 	uint32_t flag = SDL_INIT_JOYSTICK | SDL_INIT_HAPTIC | SDL_INIT_EVENTS | SDL_INIT_GAMECONTROLLER;
 
@@ -66,14 +67,14 @@ void JoystickInfo::EnumerateJoysticks(std::vector<std::unique_ptr<GamePad>>& vjo
 
 	for (int i = 0; i < SDL_NumJoysticks(); ++i)
 	{
-		vjoysticks.push_back(std::unique_ptr<GamePad>(new JoystickInfo(i)));
+		vjoysticks.push_back(std::unique_ptr<Device>(new SDL2Gamepad(i)));
 		// Something goes wrong in the init, let's drop it
 		if (!vjoysticks.back()->IsProperlyInitialized())
 			vjoysticks.pop_back();
 	}
 }
 
-void JoystickInfo::Rumble(unsigned type, unsigned pad)
+void SDL2Gamepad::Rumble(unsigned type, unsigned pad)
 {
 	if (type >= m_effects_id.size())
 		return;
@@ -91,7 +92,7 @@ void JoystickInfo::Rumble(unsigned type, unsigned pad)
 	}
 }
 
-JoystickInfo::~JoystickInfo()
+SDL2Gamepad::~SDL2Gamepad()
 {
 	// Haptic must be closed before the joystick
 	if (m_haptic != nullptr)
@@ -115,8 +116,8 @@ JoystickInfo::~JoystickInfo()
 	}
 }
 
-JoystickInfo::JoystickInfo(int id)
-	: GamePad()
+SDL2Gamepad::SDL2Gamepad(int id)
+	: Device()
 	, m_controller(nullptr)
 	, m_haptic(nullptr)
 	, m_unique_id(0)
@@ -247,17 +248,17 @@ JoystickInfo::JoystickInfo(int id)
 	m_no_error = true;
 }
 
-const char* JoystickInfo::GetName()
+const char* SDL2Gamepad::GetName()
 {
 	return SDL_JoystickName(SDL_GameControllerGetJoystick(m_controller));
 }
 
-size_t JoystickInfo::GetUniqueIdentifier()
+size_t SDL2Gamepad::GetUniqueIdentifier()
 {
 	return m_unique_id;
 }
 
-bool JoystickInfo::TestForce(float strength = 0.60)
+bool SDL2Gamepad::TestForce(float strength = 0.60)
 {
 	// This code just use standard rumble to check that SDL handles the pad correctly! --3kinox
 	if (m_haptic == nullptr)
@@ -275,7 +276,7 @@ bool JoystickInfo::TestForce(float strength = 0.60)
 	return true;
 }
 
-int JoystickInfo::GetInput(gamePadValues input)
+int SDL2Gamepad::GetInput(gamePadValues input)
 {
 	float k = g_conf.get_sensibility() / 100.0; // convert sensibility to float
 
@@ -299,7 +300,7 @@ int JoystickInfo::GetInput(gamePadValues input)
 	return value ? 0xFF : 0; // Max pressure
 }
 
-void JoystickInfo::UpdateGamePadState()
+void SDL2Gamepad::UpdateDeviceState()
 {
 	SDL_GameControllerUpdate();
 }
