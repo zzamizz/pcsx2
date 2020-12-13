@@ -55,7 +55,7 @@ GeneralPanel::GeneralPanel(wxWindow* parent)
     pad_list->AppendTextColumn("Type", wxDATAVIEW_CELL_INERT, 186);
     pad_list->AppendTextColumn("Bindings", wxDATAVIEW_CELL_INERT, 40);
 
-    pad_box->Add(pad_list, wxSizerFlags().Expand());
+    pad_box->Add(pad_list);//, wxSizerFlags().Expand());
 
     wxArrayString why;
     for(auto str : padTypes)
@@ -158,15 +158,13 @@ PADDialog::PADDialog()
 		m_bt_gamepad[i][JoyR_config]->SetLabel(_T("&Right Joystick Config"));
 		m_bt_gamepad[i][Gamepad_config]->SetLabel(_T("&Gamepad Configuration"));
 		m_bt_gamepad[i][Set_all]->SetLabel(_T("&Set All Buttons"));
-		m_bt_gamepad[i][Cancel]->SetLabel(_T("&Cancel"));
-		m_bt_gamepad[i][Apply]->SetLabel(_T("&Apply"));
-		m_bt_gamepad[i][Ok]->SetLabel(_T("&Ok"));
+		//m_bt_gamepad[i][Cancel]->SetLabel(_T("&Cancel"));
+		//m_bt_gamepad[i][Apply]->SetLabel(_T("&Apply"));
+		//m_bt_gamepad[i][Ok]->SetLabel(_T("&Ok"));
 
 		// Disable analog button (not yet supported)
 		m_bt_gamepad[i][Analog]->Disable();
 	}
-
-	Bind(wxEVT_BUTTON, &PADDialog::OnButtonClicked, this);
 
 	for (int i = 0; i < GAMEPAD_NUMBER; ++i)
 	{
@@ -176,6 +174,9 @@ PADDialog::PADDialog()
 		}
 	}
 	top_box->Add(m_tab_gamepad);
+	top_box->Add(CreateStdDialogButtonSizer(wxOK | wxAPPLY |wxCANCEL), wxSizerFlags().Right());
+
+	Bind(wxEVT_BUTTON, &PADDialog::OnButtonClicked, this);
 	SetSizerAndFit(top_box);
 }
 
@@ -192,9 +193,11 @@ void PADDialog::InitDialog()
 
 void PADDialog::OnButtonClicked(wxCommandEvent& event)
 {
+	fprintf(stderr, "Button pressed!\n");
 	// Affichage d'un message à chaque clic sur le bouton
 	wxButton* bt_tmp = (wxButton*)event.GetEventObject(); // get the button object
-	int bt_id = bt_tmp->GetId() - wxID_HIGHEST - 1;       // get the real ID
+	int actual_id = bt_tmp->GetId();
+	int bt_id = actual_id - wxID_HIGHEST - 1;       // get what we use as an ID
 	int gamepad_id = m_tab_gamepad->GetSelection();       // get the tab ID (equivalent to the gamepad id)
 	if (bt_id >= 0 && bt_id <= PAD_R_LEFT)
 	{                      // if the button ID is a gamepad button
@@ -296,18 +299,24 @@ void PADDialog::OnButtonClicked(wxCommandEvent& event)
 			usleep(500000); // give enough time to the user to release the button
 		}
 	}
-	else if (bt_id == Ok)
-	{                    // If the button ID is equals to the Ok button ID
-		PADSaveConfig(); // Save the configuration
-		Close();         // Close the window
-	}
-	else if (bt_id == Apply)
-	{                    // If the button ID is equals to the Apply button ID
-		PADSaveConfig(); // Save the configuration
-	}
-	else if (bt_id == Cancel)
-	{            // If the button ID is equals to the cancel button ID
-		Close(); // Close the window
+	
+	switch(actual_id)
+	{
+		case wxID_OK:		 	 // If the button ID is equals to the Ok button ID
+			PADSaveConfig();	 // Save the configuration
+			EndModal(1);
+			break;
+
+		case wxID_APPLY:		 // If the button ID is equals to the Apply button ID
+				PADSaveConfig(); // Save the configuration
+			break;
+
+		case wxID_CANCEL:		 // If the button ID is equals to the cancel button ID
+				EndModal(0);
+			break;
+		
+		default:
+			break;
 	}
 }
 
@@ -574,22 +583,4 @@ void PADDialog::set_padding()
 	padding[Set_all][1] = 28;  // Height
 	padding[Set_all][2] = 764; // X
 	padding[Set_all][3] = 585; // Y
-
-	// Apply modifications without exit
-	padding[Apply][0] = 70;  // Width
-	padding[Apply][1] = 28;  // Height
-	padding[Apply][2] = 833; // X
-	padding[Apply][3] = 642; // Y
-
-	// Ok button
-	padding[Ok][0] = 70;  // Width
-	padding[Ok][1] = 28;  // Height
-	padding[Ok][2] = 913; // X
-	padding[Ok][3] = 642; // Y
-
-	// Cancel button
-	padding[Cancel][0] = 70;  // Width
-	padding[Cancel][1] = 28;  // Height
-	padding[Cancel][2] = 753; // X
-	padding[Cancel][3] = 642; // Y
 }

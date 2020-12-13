@@ -49,13 +49,10 @@ enum gui_buttons
 	JoyL_config,             // Left Joystick Configuration
 	JoyR_config,             // Right Joystick Configuration
 	Gamepad_config,          // Gamepad Configuration
-	Set_all,                 // Set all buttons
-	Apply,                   // Apply modifications without exit
-	Ok,                      // Apply modifications and exit
-	Cancel                   // Exit without apply modificatons
+	Set_all                  // Set all buttons
 };
 
-#define BUTTONS_LENGHT 32 // numbers of buttons on the gamepad
+#define BUTTONS_LENGHT 29 // numbers of buttons on the gamepad
 #define UPDATE_TIME 5
 #define DEFAULT_WIDTH 1000
 #define DEFAULT_HEIGHT 740
