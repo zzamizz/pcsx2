@@ -144,7 +144,7 @@ GamepadPanel::GamepadPanel(wxNotebook* parent, unsigned int port, unsigned int s
 	auto* quick_setup_button = new wxButton(this, wxBTN_PAD_ID_QUICK, "Quick Setup");
 
 	delete_button->Disable();
-	quick_setup_button->Disable();
+	//quick_setup_button->Disable();
 	auto* button_box = new wxBoxSizer(wxHORIZONTAL);
 
 	button_box->Add(delete_button);
@@ -204,7 +204,7 @@ void GamepadPanel::ClearGamepadKey(gamePadValues pad_key)
 	m_simulatedKeys[m_port][pad_key] = 0;
 
 	// erase gamepad entry (keysim map)
-	g_conf.keysym_map[pad_key].erase(keysim);
+	if (g_conf.keysym_map[m_port].count(keysim) > 0) g_conf.keysym_map[m_port].erase(keysim);
 }
 
 void GamepadPanel::ConfigureGamepadKey(gamePadValues pad_key)
