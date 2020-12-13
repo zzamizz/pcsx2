@@ -33,7 +33,7 @@ GamepadPanel::GamepadPanel(wxNotebook* parent, unsigned int port, unsigned int s
 	pad_list->AppendTextColumn("PS2", wxDATAVIEW_CELL_INERT, 120);
 
 	Update();
-    left_box->Add(pad_list, wxSizerFlags().Expand());
+	left_box->Add(pad_list, wxSizerFlags().Expand());
 	auto* right_box = new wxBoxSizer(wxVERTICAL);
 	status_bar = new wxTextCtrl(this, wxID_ANY, "Gamepad Settings", wxDefaultPosition, wxSize(400, -1), wxTE_READONLY | wxTE_CENTRE);
 	right_box->Add(status_bar, wxSizerFlags().Expand());
@@ -63,8 +63,8 @@ GamepadPanel::GamepadPanel(wxNotebook* parent, unsigned int port, unsigned int s
 	auto* start_button = new wxButton(this, wxBTN_PAD_ID_START, "Start");
 	auto* analog_button = new wxButton(this, wxBTN_PAD_ID_ANALOG, "Analog");
 	auto* mouse_button = new wxButton(this, wxBTN_PAD_ID_MOUSE, "Mouse");
-    analog_button->Disable();
-    mouse_button->Disable();
+	analog_button->Disable();
+	mouse_button->Disable();
 
 	select_grid->Add(select_button);
 	select_grid->Add(start_button);
@@ -139,15 +139,18 @@ GamepadPanel::GamepadPanel(wxNotebook* parent, unsigned int port, unsigned int s
 	control_grid->Add(r_stick_box);
 	right_box->Add(control_grid, wxSizerFlags().Centre().Expand());
 
-    auto* delete_button = new wxButton(this, wxBTN_PAD_ID_TRIANGLE, "Delete");
-    auto* quick_setup_button = new wxButton(this, wxBTN_PAD_ID_TRIANGLE, "Quick Setup");
-    delete_button->Disable();
-    quick_setup_button->Disable();
+	auto* delete_button = new wxButton(this, wxBTN_PAD_ID_DELETE, "Delete");
+	auto* clear_all_button = new wxButton(this, wxBTN_PAD_ID_CLEAR, "Clear All");
+	auto* quick_setup_button = new wxButton(this, wxBTN_PAD_ID_QUICK, "Quick Setup");
+
+	delete_button->Disable();
+	quick_setup_button->Disable();
 	auto* button_box = new wxBoxSizer(wxHORIZONTAL);
 
-    button_box->Add(delete_button);
-    button_box->Add(quick_setup_button);
-    left_box->Add(button_box, wxSizerFlags().Expand());
+	button_box->Add(delete_button);
+	button_box->Add(clear_all_button);
+	button_box->Add(quick_setup_button);
+	left_box->Add(button_box, wxSizerFlags().Expand());
 
 	tab_box->Add(left_box, wxSizerFlags().Expand());
 	tab_box->Add(right_box, wxSizerFlags().Centre().Expand());
@@ -186,11 +189,78 @@ void GamepadPanel::Update()
             pad_list->AppendItem(data);
         }
     }*/
+    wxYieldIfNeeded();
 }
 
 void GamepadPanel::CallUpdate(wxCommandEvent& event)
 {
 	Update();
+}
+
+void GamepadPanel::ClearGamepadKey(gamePadValues pad_key)
+{
+	// Erase the keyboard binded key
+	u32 keysim = m_simulatedKeys[m_port][pad_key];
+	m_simulatedKeys[m_port][pad_key] = 0;
+
+	// erase gamepad entry (keysim map)
+	g_conf.keysym_map[pad_key].erase(keysim);
+}
+
+void GamepadPanel::ConfigureGamepadKey(gamePadValues pad_key)
+{
+	bool captured = false;
+	u32 key_pressed = 0;
+
+	while (!captured)
+	{
+		if (PollForNewKeyboardKeys(key_pressed))
+		{
+			// special case for keyboard/mouse to handle multiple keys
+			// Note: key_pressed == UINT32_MAX when ESC is hit to abort the capture
+			if (key_pressed != UINT32_MAX)
+			{
+				ClearGamepadKey(pad_key);
+
+				g_conf.set_keyboard_key(m_port, key_pressed, pad_key);
+				m_simulatedKeys[m_port][pad_key] = key_pressed;
+			}
+			captured = true;
+		}
+	}
+}
+
+void GamepadPanel::DeleteBinding()
+{
+    int list_selection = pad_list->GetSelectedRow();
+
+    if (list_selection >= 0)
+    {
+        // Delete this entry. To be implemented.
+    }
+}
+
+void GamepadPanel::ClearAll()
+{
+	g_conf.keysym_map[m_port].clear();
+        
+    for(int i = 0; i < MAX_KEYS; i++)
+    {
+        m_simulatedKeys[m_port][i] = 0;
+    }
+}
+
+void GamepadPanel::QuickBindings()
+{
+    for(int i = 0; i < MAX_KEYS; i++)
+    {
+		status_bar->SetValue(wxString::Format("Press a key to set '%s' to, or Escape to cancel.", pad_labels[i]));
+		wxYieldIfNeeded();
+
+		ConfigureGamepadKey((gamePadValues)i);
+    }
+
+	status_bar->SetValue(wxString("Gamepad Configuration."));
 }
 
 void GamepadPanel::ButtonPressed(wxCommandEvent& event)
@@ -200,37 +270,19 @@ void GamepadPanel::ButtonPressed(wxCommandEvent& event)
 
 	if (btn_to_pad.count(button_id) > 0)
 	{
-		bool captured = false;
-	    u32 key_pressed = 0;
-
 		gamePadValues pad_key = btn_to_pad[button_id];
 
 		status_bar->SetValue(wxString::Format("Press a key to set '%s' to, or Escape to cancel.", pad_labels[pad_key]));
-        wxYieldIfNeeded();
+		wxYieldIfNeeded();
 
-		while (!captured)
-		{
-			if (PollForNewKeyboardKeys(key_pressed))
-			{
-				// special case for keyboard/mouse to handle multiple keys
-				// Note: key_pressed == UINT32_MAX when ESC is hit to abort the capture
-				if (key_pressed != UINT32_MAX)
-				{
-                    // Erase the keyboard binded key
-                    u32 keysim = m_simulatedKeys[m_port][pad_key];
-                    m_simulatedKeys[m_port][pad_key] = 0;
+		ConfigureGamepadKey(pad_key);
 
-                    // erase gamepad entry (keysim map)
-                    g_conf.keysym_map[pad_key].erase(keysim);
-
-					g_conf.set_keyboard_key(m_port, key_pressed, pad_key);
-					m_simulatedKeys[m_port][pad_key] = key_pressed;
-				}
-				captured = true;
-			}
-		}
-        status_bar->SetValue(wxString("Gamepad Configuration."));
+		status_bar->SetValue(wxString("Gamepad Configuration."));
 	}
+
+    if (button_id == wxBTN_PAD_ID_DELETE) DeleteBinding();
+    if (button_id == wxBTN_PAD_ID_QUICK) QuickBindings();
+    if (button_id == wxBTN_PAD_ID_CLEAR) ClearAll();
 
 	Update();
 }

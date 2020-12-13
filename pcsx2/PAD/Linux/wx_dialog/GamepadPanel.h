@@ -36,6 +36,12 @@ public:
 	void CallUpdate(wxCommandEvent& event);
 	void Populate(int port, int slot, int padtype);
     void ButtonPressed(wxCommandEvent& event);
+    void ConfigureGamepadKey(gamePadValues pad_key);
+    void ClearGamepadKey(gamePadValues pad_key);
+    void ClearAllKeys(gamePadValues pad_key);
+    void DeleteBinding();
+    void ClearAll();
+    void QuickBindings();
 };
 
 enum
@@ -72,6 +78,9 @@ enum
 	wxBTN_PAD_ID_R_STICK_L = wxID_HIGHEST + 25,
 
 	wxBTN_PAD_ID_ANALOG = wxID_HIGHEST + 26,
+    wxBTN_PAD_ID_DELETE = wxID_HIGHEST + 27,
+    wxBTN_PAD_ID_CLEAR = wxID_HIGHEST + 28,
+    wxBTN_PAD_ID_QUICK = wxID_HIGHEST + 29
 };
 
 [[maybe_unused]]static std::map<int, gamePadValues> btn_to_pad =
