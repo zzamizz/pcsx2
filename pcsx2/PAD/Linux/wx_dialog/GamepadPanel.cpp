@@ -16,6 +16,8 @@
 #include "GamepadPanel.h"
 #include "../PAD.h"
 
+std::vector<device_binding_list> dev_bind;
+
 GamepadPanel::GamepadPanel(wxNotebook* parent, unsigned int port, unsigned int slot)
 	: wxPanel(parent)
 {
@@ -151,7 +153,7 @@ GamepadPanel::GamepadPanel(wxNotebook* parent, unsigned int port, unsigned int s
 	auto* reset_button = new wxButton(this, wxBTN_PAD_ID_RESET, "Reset To Defaults");
 	auto* quick_setup_button = new wxButton(this, wxBTN_PAD_ID_QUICK, "Quick Setup");
 
-	delete_button->Disable();
+	//delete_button->Disable();
 	//reset_button->Disable();
 	auto* button_box = new wxBoxSizer(wxHORIZONTAL);
 
@@ -170,7 +172,10 @@ GamepadPanel::GamepadPanel(wxNotebook* parent, unsigned int port, unsigned int s
 
 void GamepadPanel::Update()
 {
+	int j = 0;
+
 	pad_list->DeleteAllItems();
+	dev_bind.clear();
 
 	for (auto const& it : g_conf.keysym_map[m_port])
 	{
@@ -184,6 +189,15 @@ void GamepadPanel::Update()
 			data.push_back(wxVariant(wxString(KeyName(m_port, 0, it.first))));
 			data.push_back(wxVariant(wxString(pad_labels[it.second])));
 			pad_list->AppendItem(data);
+
+			device_binding_list temp;
+			temp.keyboard = true;
+			temp.device = 0;
+			temp.port = m_port;
+			temp.slot = m_slot;
+			temp.key = it.first;
+			temp.value = it.second;
+			dev_bind.emplace_back(temp);
 		}
 	}
 
@@ -198,7 +212,17 @@ void GamepadPanel::Update()
 			data.push_back(wxVariant(wxString(device->GetBindingName(i))));
 			data.push_back(wxVariant(wxString(pad_labels[i])));
 			pad_list->AppendItem(data);
+
+			device_binding_list temp;
+			temp.keyboard = false;
+			temp.device = j;
+			temp.port = m_port;
+			temp.slot = m_slot;
+			temp.key = device->m_bindings[i];
+			temp.value = i;
+			dev_bind.emplace_back(temp);
 		}
+		j++;
 	}
 	wxYieldIfNeeded();
 }
@@ -244,11 +268,15 @@ void GamepadPanel::ConfigureGamepadKey(gamePadValues pad_key)
 
 void GamepadPanel::DeleteBinding()
 {
-	int list_selection = pad_list->GetSelectedRow();
+	int list_idx = pad_list->GetSelectedRow();
 
-	if (list_selection >= 0)
+	if (list_idx >= 0)
 	{
-		// Delete this entry. To be implemented.
+		if (dev_bind[list_idx].keyboard)
+		{
+			ClearGamepadKey((gamePadValues)dev_bind[list_idx].value);
+			Update();
+		}
 	}
 }
 

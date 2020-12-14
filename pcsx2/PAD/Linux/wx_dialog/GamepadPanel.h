@@ -152,3 +152,15 @@ enum
 		"R-Stick Down",
 		"R-Stick Left"
 };
+
+struct device_binding_list
+{
+	bool keyboard;
+	int device;
+	unsigned int port;
+	unsigned int slot;
+	int key;
+	int value;
+};
+
+extern std::vector<device_binding_list> dev_bind;
