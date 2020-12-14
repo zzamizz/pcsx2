@@ -492,7 +492,6 @@ set(pcsx2PADSources
     PAD/Linux/PAD.cpp
     PAD/Linux/state_management.cpp
     PAD/Linux/wx_dialog/dialog.cpp
-    PAD/Linux/wx_dialog/opPanel.cpp
     PAD/Linux/wx_dialog/GamepadPanel.cpp
     PAD/Linux/wx_dialog/GamepadConfiguration.cpp
     PAD/Linux/wx_dialog/JoystickConfiguration.cpp
@@ -511,7 +510,6 @@ set(pcsx2PADHeaders
     PAD/Linux/KeyStatus.h
     PAD/Linux/PAD.h
     PAD/Linux/state_management.h
-    PAD/Linux/wx_dialog/opPanel.h
     PAD/Linux/wx_dialog/GamepadPanel.h
     PAD/Linux/wx_dialog/GamepadConfiguration.h
     PAD/Linux/wx_dialog/JoystickConfiguration.h

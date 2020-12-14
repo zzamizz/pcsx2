@@ -266,6 +266,7 @@ void GamepadPanel::QuickBindings()
 		wxYieldIfNeeded();
 
 		ConfigureGamepadKey((gamePadValues)i);
+		usleep(500000); // give enough time to the user to release the button
     }
 
 	status_bar->SetValue(wxString("Gamepad Configuration."));
