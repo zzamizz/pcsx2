@@ -113,31 +113,38 @@ GamepadPanel::GamepadPanel(wxNotebook* parent, unsigned int port, unsigned int s
 	auto* l_stick_left_button = new wxButton(this, wxBTN_PAD_ID_L_STICK_L, "Left");
 	auto* l_stick_right_button = new wxButton(this, wxBTN_PAD_ID_L_STICK_R, "Right");
 	auto* l_stick_down_button = new wxButton(this, wxBTN_PAD_ID_L_STICK_D, "Down");
+	auto* l_stick_config_button = new wxButton(this, wxBTN_PAD_ID_L_STICK_CONFIG, "Configure...");
 
 	l_stick_box->Add(l_stick_up_button, wxSizerFlags().Centre());
 	l_stick_mid_box->Add(l_stick_left_button);
 	l_stick_mid_box->Add(l_stick_right_button);
 	l_stick_box->Add(l_stick_mid_box);
 	l_stick_box->Add(l_stick_down_button, wxSizerFlags().Centre());
+	l_stick_box->Add(l_stick_config_button, wxSizerFlags().Centre().Expand());
 
 	control_grid->Add(l_stick_box);
 
-	auto* r_stick_box = new wxStaticBoxSizer(wxVERTICAL, this, "Left Analog Stick");
+	auto* r_stick_box = new wxStaticBoxSizer(wxVERTICAL, this, "Right Analog Stick");
 	auto* r_stick_mid_box = new wxBoxSizer(wxHORIZONTAL);
 
 	auto* r_stick_up_button = new wxButton(this, wxBTN_PAD_ID_R_STICK_U, "Up");
 	auto* r_stick_left_button = new wxButton(this, wxBTN_PAD_ID_R_STICK_L, "Left");
 	auto* r_stick_right_button = new wxButton(this, wxBTN_PAD_ID_R_STICK_R, "Right");
 	auto* r_stick_down_button = new wxButton(this, wxBTN_PAD_ID_R_STICK_D, "Down");
+	auto* r_stick_config_button = new wxButton(this, wxBTN_PAD_ID_R_STICK_CONFIG, "Configure...");
 
 	r_stick_box->Add(r_stick_up_button, wxSizerFlags().Centre());
 	r_stick_mid_box->Add(r_stick_left_button);
 	r_stick_mid_box->Add(r_stick_right_button);
 	r_stick_box->Add(r_stick_mid_box);
 	r_stick_box->Add(r_stick_down_button, wxSizerFlags().Centre());
+	r_stick_box->Add(r_stick_config_button, wxSizerFlags().Centre().Expand());
 
 	control_grid->Add(r_stick_box);
 	right_box->Add(control_grid, wxSizerFlags().Centre().Expand());
+
+	auto* controller_settings_button = new wxButton(this, wxBTN_GAMEPAD_CONFIG, "Gamepad Settings...");
+	right_box->Add(controller_settings_button, wxSizerFlags().Centre().Expand());
 
 	auto* delete_button = new wxButton(this, wxBTN_PAD_ID_DELETE, "Delete");
 	auto* clear_all_button = new wxButton(this, wxBTN_PAD_ID_CLEAR, "Clear All");
@@ -284,6 +291,30 @@ void GamepadPanel::ButtonPressed(wxCommandEvent& event)
     if (button_id == wxBTN_PAD_ID_DELETE) DeleteBinding();
     if (button_id == wxBTN_PAD_ID_QUICK) QuickBindings();
     if (button_id == wxBTN_PAD_ID_CLEAR) ClearAll();
+
+    if (button_id == wxBTN_PAD_ID_L_STICK_CONFIG)
+	{
+		JoystickConfiguration joystick_config(m_port, true, this);
+
+		joystick_config.InitJoystickConfiguration();
+		joystick_config.ShowModal();
+	}
+
+    if (button_id == wxBTN_PAD_ID_R_STICK_CONFIG)
+	{
+		JoystickConfiguration joystick_config(m_port, false, this);
+
+		joystick_config.InitJoystickConfiguration();
+		joystick_config.ShowModal();
+	}
+
+	if (button_id == wxBTN_GAMEPAD_CONFIG)
+	{
+		GamepadConfiguration gamepad_config(m_port, this);
+
+		gamepad_config.InitGamepadConfiguration();
+		gamepad_config.ShowModal();
+	}
 
 	Update();
 }
