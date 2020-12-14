@@ -36,5 +36,39 @@ extern std::string KeyName(int pad, int key, int keysym);
 extern Display* GSdsp;
 extern Window GSwin;
 #endif
+
+[[maybe_unused]]static std::map<int, int> keyboard_defaults =
+{
+	{PAD_L2, XK_a},
+	{PAD_R2, XK_semicolon},
+	{PAD_L1, XK_w},
+	{PAD_R1, XK_p},
+
+	{PAD_TRIANGLE, XK_i},
+	{PAD_CIRCLE, XK_l},
+	{PAD_CROSS, XK_k},
+	{PAD_SQUARE, XK_j},
+
+	{PAD_SELECT, XK_v},
+	//{PAD_L3, XK_KP_Enter},
+	//{PAD_R3, XK_KP_Add},
+	{PAD_START, XK_n},
+
+	{PAD_UP, XK_e},
+	{PAD_RIGHT, XK_f},
+	{PAD_DOWN, XK_d},
+	{PAD_LEFT, XK_s},
+
+	//{PAD_L_UP, XK_Up},
+	//{PAD_L_RIGHT, XK_Left},
+	//{PAD_L_DOWN, XK_Down},
+	//{PAD_L_LEFT, XK_Left},
+
+	//{PAD_R_UP, XK_KP_8},
+	//{PAD_R_RIGHT, XK_KP_6},
+	//{PAD_R_DOWN, XK_KP_2},
+	//{PAD_R_LEFT, XK_KP_4}
+};
+
 #endif
 #endif

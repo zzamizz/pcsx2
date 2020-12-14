@@ -43,6 +43,7 @@ public:
     void ClearAllKeys(gamePadValues pad_key);
     void DeleteBinding();
     void ClearAll();
+	void ResetToDefaults();
     void QuickBindings();
 };
 

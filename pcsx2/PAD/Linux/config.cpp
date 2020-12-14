@@ -21,22 +21,19 @@
 #include "PAD.h"
 #include "config.h"
 
+void ClearKeyboardValues()
+{
+	g_conf.keysym_map[0].clear();
+	g_conf.keysym_map[1].clear();
+}
+
 void DefaultKeyboardValues()
 {
-	g_conf.set_keyboard_key(0, XK_a, PAD_L2);
-	g_conf.set_keyboard_key(0, XK_semicolon, PAD_R2);
-	g_conf.set_keyboard_key(0, XK_w, PAD_L1);
-	g_conf.set_keyboard_key(0, XK_p, PAD_R1);
-	g_conf.set_keyboard_key(0, XK_i, PAD_TRIANGLE);
-	g_conf.set_keyboard_key(0, XK_l, PAD_CIRCLE);
-	g_conf.set_keyboard_key(0, XK_k, PAD_CROSS);
-	g_conf.set_keyboard_key(0, XK_j, PAD_SQUARE);
-	g_conf.set_keyboard_key(0, XK_v, PAD_SELECT);
-	g_conf.set_keyboard_key(0, XK_n, PAD_START);
-	g_conf.set_keyboard_key(0, XK_e, PAD_UP);
-	g_conf.set_keyboard_key(0, XK_f, PAD_RIGHT);
-	g_conf.set_keyboard_key(0, XK_d, PAD_DOWN);
-	g_conf.set_keyboard_key(0, XK_s, PAD_LEFT);
+	ClearKeyboardValues();
+	for(auto& it : keyboard_defaults)
+	{
+		g_conf.keysym_map[0][it.second] = it.first;
+	}
 }
 
 void PADSaveConfig()

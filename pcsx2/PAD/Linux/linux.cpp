@@ -78,6 +78,8 @@ void PollForJoystickInput(int cpad)
 	}
 }
 
+// Actually PADupdate is always call with pad == 0. So you need to update both
+// pads -- Gregory
 void PADupdate(int pad)
 {
 #ifndef __APPLE__
@@ -92,9 +94,6 @@ void PADupdate(int pad)
 		XResetScreenSaver(GSdsp);
 	}
 #endif
-
-	// Actually PADupdate is always call with pad == 0. So you need to update both
-	// pads -- Gregory
 
 	// Poll keyboard/mouse event. There is currently no way to separate pad0 from pad1 event.
 	// So we will populate both pad in the same time

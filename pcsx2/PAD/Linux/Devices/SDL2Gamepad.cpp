@@ -15,8 +15,8 @@
 
 
 #include "SDL2Gamepad.h"
-#include "resources_pad.h"
 #include <signal.h> // sigaction
+#include "resources_pad.h"
 
 //////////////////////////
 // Joystick definitions //
@@ -123,31 +123,9 @@ SDL2Gamepad::SDL2Gamepad(int id)
 {
 	SDL_Joystick* joy = nullptr;
 	m_effects_id.fill(-1);
-	// Values are hardcoded currently but it could be later extended to allow remapping of the buttons
-	m_bindings[PAD_L2] = SDL_CONTROLLER_AXIS_TRIGGERLEFT;
-	m_bindings[PAD_R2] = SDL_CONTROLLER_AXIS_TRIGGERRIGHT;
-	m_bindings[PAD_L1] = SDL_CONTROLLER_BUTTON_LEFTSHOULDER;
-	m_bindings[PAD_R1] = SDL_CONTROLLER_BUTTON_RIGHTSHOULDER;
-	m_bindings[PAD_TRIANGLE] = SDL_CONTROLLER_BUTTON_Y;
-	m_bindings[PAD_CIRCLE] = SDL_CONTROLLER_BUTTON_B;
-	m_bindings[PAD_CROSS] = SDL_CONTROLLER_BUTTON_A;
-	m_bindings[PAD_SQUARE] = SDL_CONTROLLER_BUTTON_X;
-	m_bindings[PAD_SELECT] = SDL_CONTROLLER_BUTTON_BACK;
-	m_bindings[PAD_L3] = SDL_CONTROLLER_BUTTON_LEFTSTICK;
-	m_bindings[PAD_R3] = SDL_CONTROLLER_BUTTON_RIGHTSTICK;
-	m_bindings[PAD_START] = SDL_CONTROLLER_BUTTON_START;
-	m_bindings[PAD_UP] = SDL_CONTROLLER_BUTTON_DPAD_UP;
-	m_bindings[PAD_RIGHT] = SDL_CONTROLLER_BUTTON_DPAD_RIGHT;
-	m_bindings[PAD_DOWN] = SDL_CONTROLLER_BUTTON_DPAD_DOWN;
-	m_bindings[PAD_LEFT] = SDL_CONTROLLER_BUTTON_DPAD_LEFT;
-	m_bindings[PAD_L_UP] = SDL_CONTROLLER_AXIS_LEFTY;
-	m_bindings[PAD_L_RIGHT] = SDL_CONTROLLER_AXIS_LEFTX;
-	m_bindings[PAD_L_DOWN] = SDL_CONTROLLER_AXIS_LEFTY;
-	m_bindings[PAD_L_LEFT] = SDL_CONTROLLER_AXIS_LEFTX;
-	m_bindings[PAD_R_UP] = SDL_CONTROLLER_AXIS_RIGHTY;
-	m_bindings[PAD_R_RIGHT] = SDL_CONTROLLER_AXIS_RIGHTX;
-	m_bindings[PAD_R_DOWN] = SDL_CONTROLLER_AXIS_RIGHTY;
-	m_bindings[PAD_R_LEFT] = SDL_CONTROLLER_AXIS_RIGHTX;
+
+	ClearBindings();
+	ResetBindingsToDefault();
 
 	if (SDL_IsGameController(id))
 	{
@@ -260,6 +238,21 @@ size_t SDL2Gamepad::GetUniqueIdentifier()
 const char* SDL2Gamepad::GetBindingName(int key)
 {
 	return sdl2_key_names[m_bindings[key]];
+}
+
+void SDL2Gamepad::ClearBindings()
+{
+	m_bindings.fill(0);
+}
+
+void SDL2Gamepad::ResetBindingsToDefault()
+{
+	// Values are hardcoded currently but it could be later extended to allow remapping of the buttons
+
+	for (auto& default_bind : sdl2_defaults)
+	{
+		m_bindings[default_bind.first] = default_bind.second;
+	}
 }
 
 bool SDL2Gamepad::TestForce(float strength = 0.60)

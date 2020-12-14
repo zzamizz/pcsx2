@@ -148,11 +148,11 @@ GamepadPanel::GamepadPanel(wxNotebook* parent, unsigned int port, unsigned int s
 
 	auto* delete_button = new wxButton(this, wxBTN_PAD_ID_DELETE, "Delete");
 	auto* clear_all_button = new wxButton(this, wxBTN_PAD_ID_CLEAR, "Clear All");
-	auto* reset_button = new wxButton(this, wxBTN_PAD_ID_CLEAR, "Reset To Defaults");
+	auto* reset_button = new wxButton(this, wxBTN_PAD_ID_RESET, "Reset To Defaults");
 	auto* quick_setup_button = new wxButton(this, wxBTN_PAD_ID_QUICK, "Quick Setup");
 
 	delete_button->Disable();
-	reset_button->Disable();
+	//reset_button->Disable();
 	auto* button_box = new wxBoxSizer(wxHORIZONTAL);
 
 	button_box->Add(delete_button);
@@ -177,27 +177,30 @@ void GamepadPanel::Update()
 		wxVector<wxVariant> data;
 
 		//fprintf(stderr, "PAD %d:KEYSYM 0x%x = %d\n", m_port, it.first, it.second);
-		data.push_back(wxVariant("Keyboard"));
+		if (it.second < MAX_KEYS)
+		{
+			data.push_back(wxVariant("Keyboard"));
 
-		data.push_back(wxVariant(wxString(KeyName(m_port, 0, it.first))));
-		data.push_back(wxVariant(wxString(pad_labels[it.second])));
-		pad_list->AppendItem(data);
+			data.push_back(wxVariant(wxString(KeyName(m_port, 0, it.first))));
+			data.push_back(wxVariant(wxString(pad_labels[it.second])));
+			pad_list->AppendItem(data);
+		}
 	}
 
-	for(auto const& device : s_vgamePad)
-    {
-        for(int i = 0; i < MAX_KEYS; i++)
-        {
+	for (auto const& device : s_vgamePad)
+	{
+		for (int i = 0; i < MAX_KEYS; i++)
+		{
 			//fprintf(stderr, "Device %d : '%s (%s) (%s)'\n", i, device->m_device_name.c_str(), device->GetBindingName(i), pad_labels[i]);
-            wxVector<wxVariant> data;
+			wxVector<wxVariant> data;
 
-            data.push_back(wxVariant(device->m_device_name.c_str()));
-            data.push_back(wxVariant(wxString(device->GetBindingName(i))));
-            data.push_back(wxVariant(wxString(pad_labels[i])));
-            pad_list->AppendItem(data);
-        }
-    }
-    wxYieldIfNeeded();
+			data.push_back(wxVariant(device->m_device_name.c_str()));
+			data.push_back(wxVariant(wxString(device->GetBindingName(i))));
+			data.push_back(wxVariant(wxString(pad_labels[i])));
+			pad_list->AppendItem(data);
+		}
+	}
+	wxYieldIfNeeded();
 }
 
 void GamepadPanel::CallUpdate(wxCommandEvent& event)
@@ -212,7 +215,8 @@ void GamepadPanel::ClearGamepadKey(gamePadValues pad_key)
 	m_simulatedKeys[m_port][pad_key] = 0;
 
 	// erase gamepad entry (keysim map)
-	if (g_conf.keysym_map[m_port].count(keysim) > 0) g_conf.keysym_map[m_port].erase(keysim);
+	if (g_conf.keysym_map[m_port].count(keysim) > 0)
+		g_conf.keysym_map[m_port].erase(keysim);
 }
 
 void GamepadPanel::ConfigureGamepadKey(gamePadValues pad_key)
@@ -240,38 +244,48 @@ void GamepadPanel::ConfigureGamepadKey(gamePadValues pad_key)
 
 void GamepadPanel::DeleteBinding()
 {
-    int list_selection = pad_list->GetSelectedRow();
+	int list_selection = pad_list->GetSelectedRow();
 
-    if (list_selection >= 0)
-    {
-        // Delete this entry. To be implemented.
-    }
+	if (list_selection >= 0)
+	{
+		// Delete this entry. To be implemented.
+	}
 }
 
 void GamepadPanel::ClearAll()
 {
 	g_conf.keysym_map[m_port].clear();
-        
-    for(int i = 0; i < MAX_KEYS; i++)
-    {
-        m_simulatedKeys[m_port][i] = 0;
-    }
+
+	for (int i = 0; i < MAX_KEYS; i++)
+	{
+		m_simulatedKeys[m_port][i] = 0;
+	}
 }
 
 void GamepadPanel::QuickBindings()
 {
-    for(int i = 0; i < MAX_KEYS; i++)
-    {
+	for (int i = 0; i < MAX_KEYS; i++)
+	{
 		status_bar->SetValue(wxString::Format("Press a key to set '%s' to, or Escape to cancel.", pad_labels[i]));
 		wxYieldIfNeeded();
 
 		ConfigureGamepadKey((gamePadValues)i);
 		usleep(500000); // give enough time to the user to release the button
-    }
+	}
 
 	status_bar->SetValue(wxString("Gamepad Configuration."));
 }
 
+void GamepadPanel::ResetToDefaults()
+{
+	DefaultKeyboardValues();
+	for (auto& dev : s_vgamePad)
+	{
+		dev->ClearBindings();
+		dev->ResetBindingsToDefault();
+	}
+	Update();
+}
 void GamepadPanel::ButtonPressed(wxCommandEvent& event)
 {
 	wxButton* button = (wxButton*)event.GetEventObject(); // get the button object
@@ -289,11 +303,16 @@ void GamepadPanel::ButtonPressed(wxCommandEvent& event)
 		status_bar->SetValue(wxString("Gamepad Configuration."));
 	}
 
-    if (button_id == wxBTN_PAD_ID_DELETE) DeleteBinding();
-    if (button_id == wxBTN_PAD_ID_QUICK) QuickBindings();
-    if (button_id == wxBTN_PAD_ID_CLEAR) ClearAll();
+	if (button_id == wxBTN_PAD_ID_DELETE)
+		DeleteBinding();
+	if (button_id == wxBTN_PAD_ID_QUICK)
+		QuickBindings();
+	if (button_id == wxBTN_PAD_ID_CLEAR)
+		ClearAll();
+	if (button_id == wxBTN_PAD_ID_RESET)
+		ResetToDefaults();
 
-    if (button_id == wxBTN_PAD_ID_L_STICK_CONFIG)
+	if (button_id == wxBTN_PAD_ID_L_STICK_CONFIG)
 	{
 		JoystickConfiguration joystick_config(m_port, true, this);
 
@@ -301,7 +320,7 @@ void GamepadPanel::ButtonPressed(wxCommandEvent& event)
 		joystick_config.ShowModal();
 	}
 
-    if (button_id == wxBTN_PAD_ID_R_STICK_CONFIG)
+	if (button_id == wxBTN_PAD_ID_R_STICK_CONFIG)
 	{
 		JoystickConfiguration joystick_config(m_port, false, this);
 

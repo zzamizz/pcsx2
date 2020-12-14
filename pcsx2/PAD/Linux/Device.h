@@ -68,6 +68,9 @@ public:
 
 	virtual const char* GetBindingName(int key) = 0;
 
+	virtual void ClearBindings() = 0;
+	virtual void ResetBindingsToDefault() = 0;
+
 	int GetDeadzone()
 	{
 		return m_deadzone;
