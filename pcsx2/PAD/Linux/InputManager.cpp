@@ -82,6 +82,6 @@ void InputDeviceManager::Update()
 void EnumerateDevices()
 {
 #ifdef SDL_BUILD
-	SDL2Gamepad::EnumerateJoysticks();
+	EnumerateSDL2();
 #endif
 }

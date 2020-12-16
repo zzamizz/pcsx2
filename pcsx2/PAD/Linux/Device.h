@@ -20,6 +20,21 @@
 #include <array>
 #include <string>
 
+enum DeviceAPI
+{
+	NO_API = 0,
+	KEYBOARD_API = 16,
+	SDL_AUTO = 17
+};
+
+enum DeviceType
+{
+	NO_DEVICE = 0,
+	KEYBOARD = 1,
+	MOUSE = 2,
+	OTHER = 3
+};
+
 class Device
 {
 public:
@@ -27,6 +42,8 @@ public:
 		: m_unique_id(0)
 		, m_device_name("")
 		, m_bindings()
+		, api(NO_API)
+		, type(NO_DEVICE)
 		, m_deadzone(1500)
 		, m_no_error(false)
 	{
@@ -86,6 +103,8 @@ public:
 	size_t m_unique_id;
 	std::string m_device_name;
 	std::array<int, MAX_KEYS> m_bindings;
+	DeviceAPI api;
+	DeviceType type;
 
 protected:
 	int m_deadzone;

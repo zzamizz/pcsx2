@@ -23,7 +23,7 @@
 //////////////////////////
 
 // opens handles to all possible joysticks
-void SDL2Gamepad::EnumerateJoysticks()
+void EnumerateSDL2()
 {
 	uint32_t flag = SDL_INIT_JOYSTICK | SDL_INIT_HAPTIC | SDL_INIT_EVENTS | SDL_INIT_GAMECONTROLLER;
 
@@ -121,6 +121,9 @@ SDL2Gamepad::SDL2Gamepad(int id)
 	, m_controller(nullptr)
 	, m_haptic(nullptr)
 {
+	api = SDL_AUTO;
+	type = OTHER;
+
 	SDL_Joystick* joy = nullptr;
 	m_effects_id.fill(-1);
 
