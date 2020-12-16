@@ -201,7 +201,8 @@ void GamepadPanel::Update()
 		}
 	}
 
-	for (auto const& device : s_vgamePad)
+	if (device_manager == nullptr) fprintf(stderr, "device_manager == null!\n");
+	for (auto const& device : device_manager->devices)
 	{
 		for (int i = 0; i < MAX_KEYS; i++)
 		{
@@ -307,7 +308,7 @@ void GamepadPanel::QuickBindings()
 void GamepadPanel::ResetToDefaults()
 {
 	DefaultKeyboardValues();
-	for (auto& dev : s_vgamePad)
+	for (auto& dev : device_manager->devices)
 	{
 		dev->ClearBindings();
 		dev->ResetBindingsToDefault();

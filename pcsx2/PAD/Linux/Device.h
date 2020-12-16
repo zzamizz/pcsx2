@@ -17,9 +17,6 @@
 
 #include "PAD.h"
 
-#ifdef SDL_BUILD
-#include <SDL.h>
-#endif
 #include <array>
 #include <string>
 
@@ -94,8 +91,3 @@ protected:
 	int m_deadzone;
 	bool m_no_error;
 };
-
-/*
- * Find every interesting device and create right structure for them(depends on backend)
- */
-extern void EnumerateDevices();

@@ -55,7 +55,7 @@ s32 _PADopen(void* pDsp)
 
 void _PADclose()
 {
-	s_vgamePad.clear();
+	device_manager->devices.clear();
 }
 
 void PollForJoystickInput(int cpad)
@@ -64,7 +64,7 @@ void PollForJoystickInput(int cpad)
 	if (index < 0)
 		return;
 
-	auto& gamePad = s_vgamePad[index];
+	auto& gamePad = device_manager->devices[index];
 
 	gamePad->UpdateDeviceState();
 

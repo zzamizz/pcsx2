@@ -63,14 +63,14 @@ void SDL2Gamepad::EnumerateJoysticks()
 		}
 	}
 
-	s_vgamePad.clear();
+	device_manager->devices.clear();
 
 	for (int i = 0; i < SDL_NumJoysticks(); ++i)
 	{
-		s_vgamePad.push_back(std::unique_ptr<Device>(new SDL2Gamepad(i)));
+		device_manager->devices.push_back(std::make_unique<SDL2Gamepad>(i));
 		// Something goes wrong in the init, let's drop it
-		if (!s_vgamePad.back()->IsProperlyInitialized())
-			s_vgamePad.pop_back();
+		if (!device_manager->devices.back()->IsProperlyInitialized())
+			device_manager->devices.pop_back();
 	}
 }
 

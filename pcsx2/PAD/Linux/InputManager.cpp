@@ -16,15 +16,26 @@
 #include "Device.h"
 #include "InputManager.h"
 
-std::vector<std::unique_ptr<Device>> s_vgamePad;
-std::unique_ptr<InputDeviceManager> device_manager;
+#ifdef SDL_BUILD
+#include "Devices/SDL2Gamepad.h"
+#endif
+
+std::unique_ptr<InputDeviceManager> device_manager(new InputDeviceManager);
 
 InputDeviceManager::InputDeviceManager()
 {
-
 }
 
 InputDeviceManager::~InputDeviceManager()
 {
-    
+}
+
+/**
+ * Find every interesting devices and create right structure for them(depend on backend)
+ **/
+void EnumerateDevices()
+{
+#ifdef SDL_BUILD
+	SDL2Gamepad::EnumerateJoysticks();
+#endif
 }
