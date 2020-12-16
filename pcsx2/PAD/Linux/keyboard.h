@@ -32,11 +32,6 @@ extern void UpdateKeyboardInput();
 extern bool PollForNewKeyboardKeys(u32& pkey);
 extern std::string KeyName(int pad, int key, int keysym);
 
-#ifndef __APPLE__
-extern Display* GSdsp;
-extern Window GSwin;
-#endif
-
 [[maybe_unused]]static std::map<int, int> keyboard_defaults =
 {
 	{PAD_L2, XK_a},

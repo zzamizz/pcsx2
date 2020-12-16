@@ -24,6 +24,8 @@ class InputDeviceManager
 public:
     InputDeviceManager();
     ~InputDeviceManager();
+    void PollForJoystickInput(int cpad);
+    void Update();
 
     std::vector<std::unique_ptr<Device>> devices;
 };

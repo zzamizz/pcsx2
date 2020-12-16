@@ -53,21 +53,6 @@ Display* GSdsp;
 Window GSwin;
 #endif
 
-s32 _PADopen(void* pDsp)
-{
-#ifndef __APPLE__
-	GSdsp = *(Display**)pDsp;
-	GSwin = (Window) * (((u32*)pDsp) + 1);
-#endif
-
-	return 0;
-}
-
-void _PADclose()
-{
-	device_manager->devices.clear();
-}
-
 s32 PADinit()
 {
 	PADLoadConfig();
@@ -96,7 +81,12 @@ s32 PADopen(void* pDsp)
 #if defined(__unix__) || defined(__APPLE__)
 	EnumerateDevices();
 #endif
-	return _PADopen(pDsp);
+
+#ifndef __APPLE__
+	GSdsp = *(Display**)pDsp;
+	GSwin = (Window) * (((u32*)pDsp) + 1);
+#endif
+	return 0;
 }
 
 void PADsetLogDir(const char* dir)
@@ -105,7 +95,6 @@ void PADsetLogDir(const char* dir)
 
 void PADclose()
 {
-	_PADclose();
 }
 
 u32 PADquery()
@@ -312,26 +301,6 @@ void PADDoFreezeIn(pxInputStream& infp)
 		throw std::runtime_error(" * PAD: Error loading state!\n");
 }
 
-void PollForJoystickInput(int cpad)
-{
-	int index = Device::uid_to_index(cpad);
-	if (index < 0)
-		return;
-
-	auto& gamePad = device_manager->devices[index];
-
-	gamePad->UpdateDeviceState();
-
-	for (int i = 0; i < MAX_KEYS; i++)
-	{
-		s32 value = gamePad->GetInput((gamePadValues)i);
-		if (value != 0)
-			g_key_status.press(cpad, i, value);
-		else
-			g_key_status.release(cpad, i);
-	}
-}
-
 // Actually PADupdate is always call with pad == 0. So you need to update both
 // pads -- Gregory
 void PADupdate(int pad)
@@ -349,25 +318,7 @@ void PADupdate(int pad)
 	}
 #endif
 
-	// Poll keyboard/mouse event. There is currently no way to separate pad0 from pad1 event.
-	// So we will populate both pad in the same time
-	for (int cpad = 0; cpad < GAMEPAD_NUMBER; cpad++)
-	{
-		g_key_status.keyboard_state_acces(cpad);
-	}
-	UpdateKeyboardInput();
-
-	// Get joystick state + Commit
-	for (int cpad = 0; cpad < GAMEPAD_NUMBER; cpad++)
-	{
-		g_key_status.joystick_state_acces(cpad);
-
-		PollForJoystickInput(cpad);
-
-		g_key_status.commit_status(cpad);
-	}
-
-	Pad::rumble_all();
+	device_manager->Update();
 }
 
 void PADconfigure()

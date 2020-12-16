@@ -25,6 +25,11 @@
 
 #include "../keyboard.h"
 
+#ifndef __APPLE__
+extern Display* GSdsp;
+extern Window GSwin;
+#endif
+
 static bool s_grab_input = false;
 static bool s_Shift = false;
 static unsigned int s_previous_mouse_x = 0;
