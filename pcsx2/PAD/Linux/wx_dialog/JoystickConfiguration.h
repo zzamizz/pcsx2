@@ -20,7 +20,7 @@
 
 #include <wx/wx.h>
 
-#include "../Device.h"
+#include "../InputManager.h"
 #include "../keyboard.h"
 #include "../PAD.h"
 

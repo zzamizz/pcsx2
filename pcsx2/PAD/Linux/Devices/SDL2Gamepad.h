@@ -18,7 +18,7 @@
 #include <SDL.h>
 #include <SDL_haptic.h>
 
-#include "../Device.h"
+#include "../InputManager.h"
 #include "../PAD.h"
 #include "../config.h"
 

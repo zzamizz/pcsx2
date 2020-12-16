@@ -14,7 +14,7 @@
  */
 
 #include "AppCoreThread.h"
-#include "Device.h"
+#include "InputManager.h"
 #include "PAD.h"
 #include "keyboard.h"
 #include "state_management.h"

@@ -119,6 +119,7 @@ static int GetPadName(wxString &string, unsigned int port, unsigned int slot)
 
 #if defined(__unix__) || defined(__APPLE__)
 #include "Device.h"
+#include "InputManager.h"
 #endif
 #include "bitwise.h"
 #include "KeyStatus.h"

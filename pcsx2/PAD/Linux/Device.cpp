@@ -18,8 +18,6 @@
 #include "Devices/SDL2Gamepad.h"
 #endif
 
-std::vector<std::unique_ptr<Device>> s_vgamePad;
-
 /**
  * Following static methods are just forwarders to their backend
  * This is where link between agnostic and specific code is done

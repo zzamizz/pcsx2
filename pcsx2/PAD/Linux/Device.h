@@ -95,8 +95,6 @@ protected:
 	bool m_no_error;
 };
 
-extern std::vector<std::unique_ptr<Device>> s_vgamePad;
-
 /*
  * Find every interesting device and create right structure for them(depends on backend)
  */
