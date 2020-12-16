@@ -18,6 +18,22 @@
 // Contain all simulated keys
 u32 m_simulatedKeys[GAMEPAD_NUMBER][MAX_KEYS];
 
+static void SysMessage(const char* fmt, ...)
+{
+	va_list list;
+	char msg[512];
+
+	va_start(list, fmt);
+	vsprintf(msg, fmt, list);
+	va_end(list);
+
+	if (msg[strlen(msg) - 1] == '\n')
+		msg[strlen(msg) - 1] = 0;
+
+	wxMessageDialog dialog(nullptr, msg, "Info", wxOK);
+	dialog.ShowModal();
+}
+
 GeneralPanel::GeneralPanel(wxWindow* parent) 
 	: wxPanel(parent, wxID_ANY)
 {

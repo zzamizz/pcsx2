@@ -19,10 +19,13 @@
 #include <string.h>
 #include <stdarg.h>
 
+#include "AppCoreThread.h"
 #include "Utilities/pxStreams.h"
+
 #include "keyboard.h"
 #include "PAD.h"
 #include "state_management.h"
+#include "wx_dialog/dialog.h"
 
 #ifdef __linux__
 #include <unistd.h>
@@ -44,6 +47,26 @@ static keyEvent s_event;
 KeyStatus g_key_status;
 
 MtQueue<keyEvent> g_ev_fifo;
+
+#ifndef __APPLE__
+Display* GSdsp;
+Window GSwin;
+#endif
+
+s32 _PADopen(void* pDsp)
+{
+#ifndef __APPLE__
+	GSdsp = *(Display**)pDsp;
+	GSwin = (Window) * (((u32*)pDsp) + 1);
+#endif
+
+	return 0;
+}
+
+void _PADclose()
+{
+	device_manager->devices.clear();
+}
 
 s32 PADinit()
 {
@@ -287,4 +310,72 @@ void PADDoFreezeIn(pxInputStream& infp)
 	infp.Read(fP.data, fP.size);
 	if (PADfreeze(FREEZE_LOAD, &fP) != 0)
 		throw std::runtime_error(" * PAD: Error loading state!\n");
+}
+
+void PollForJoystickInput(int cpad)
+{
+	int index = Device::uid_to_index(cpad);
+	if (index < 0)
+		return;
+
+	auto& gamePad = device_manager->devices[index];
+
+	gamePad->UpdateDeviceState();
+
+	for (int i = 0; i < MAX_KEYS; i++)
+	{
+		s32 value = gamePad->GetInput((gamePadValues)i);
+		if (value != 0)
+			g_key_status.press(cpad, i, value);
+		else
+			g_key_status.release(cpad, i);
+	}
+}
+
+// Actually PADupdate is always call with pad == 0. So you need to update both
+// pads -- Gregory
+void PADupdate(int pad)
+{
+#ifndef __APPLE__
+	// Gamepad inputs don't count as an activity. Therefore screensaver will
+	// be fired after a couple of minute.
+	// Emulate an user activity
+	static int count = 0;
+	count++;
+	if ((count & 0xFFF) == 0)
+	{
+		// 1 call every 4096 Vsync is enough
+		XResetScreenSaver(GSdsp);
+	}
+#endif
+
+	// Poll keyboard/mouse event. There is currently no way to separate pad0 from pad1 event.
+	// So we will populate both pad in the same time
+	for (int cpad = 0; cpad < GAMEPAD_NUMBER; cpad++)
+	{
+		g_key_status.keyboard_state_acces(cpad);
+	}
+	UpdateKeyboardInput();
+
+	// Get joystick state + Commit
+	for (int cpad = 0; cpad < GAMEPAD_NUMBER; cpad++)
+	{
+		g_key_status.joystick_state_acces(cpad);
+
+		PollForJoystickInput(cpad);
+
+		g_key_status.commit_status(cpad);
+	}
+
+	Pad::rumble_all();
+}
+
+void PADconfigure()
+{
+	ScopedCoreThreadPause paused_core;
+	PADLoadConfig();
+
+	DisplayDialog();
+	paused_core.AllowResume();
+	return;
 }

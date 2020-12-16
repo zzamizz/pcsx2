@@ -497,7 +497,6 @@ set(pcsx2PADSources
     PAD/Linux/wx_dialog/GamepadConfiguration.cpp
     PAD/Linux/wx_dialog/JoystickConfiguration.cpp
     PAD/Linux/config.cpp
-    PAD/Linux/linux.cpp
     ${CMAKE_BINARY_DIR}/pcsx2/PAD/Linux/resources_pad.cpp
     )
 
