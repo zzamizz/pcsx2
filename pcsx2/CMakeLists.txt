@@ -489,6 +489,7 @@ set(pcsx2PADSources
     PAD/Linux/Devices/SDL2Gamepad.cpp
     PAD/Linux/Devices/X11Keyboard.cpp
     PAD/Linux/Devices/MacKeyboard.cpp
+    PAD/Linux/Devices/KeyboardDevice.cpp
     PAD/Linux/KeyStatus.cpp
     PAD/Linux/PAD.cpp
     PAD/Linux/state_management.cpp
@@ -507,7 +508,7 @@ set(pcsx2PADHeaders
     PAD/Linux/Device.h
     PAD/Linux/InputManager.h
     PAD/Linux/Devices/SDL2Gamepad.h
-    PAD/Linux/keyboard.h
+    PAD/Linux/Devices/KeyboardDevice.h
     PAD/Linux/KeyStatus.h
     PAD/Linux/PAD.h
     PAD/Linux/state_management.h

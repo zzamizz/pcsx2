@@ -22,7 +22,7 @@
 #include "AppCoreThread.h"
 #include "Utilities/pxStreams.h"
 
-#include "keyboard.h"
+#include "Devices/KeyboardDevice.h"
 #include "PAD.h"
 #include "state_management.h"
 #include "wx_dialog/dialog.h"

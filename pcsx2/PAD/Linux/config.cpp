@@ -16,7 +16,7 @@
 #include <string.h>
 
 #include "InputManager.h"
-#include "keyboard.h"
+#include "Devices/KeyboardDevice.h"
 #include "AppConfig.h"
 #include "PAD.h"
 #include "config.h"

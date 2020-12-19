@@ -21,7 +21,7 @@
 #include <wx/wx.h>
 
 #include "../InputManager.h"
-#include "../keyboard.h"
+#include "../Devices/KeyboardDevice.h"
 #include "../PAD.h"
 
 static const s32 Lx_check_id = wxID_HIGHEST + 100 + 1;

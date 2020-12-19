@@ -15,7 +15,7 @@
 
 #include "Device.h"
 #include "InputManager.h"
-#include "keyboard.h"
+#include "Devices/KeyboardDevice.h"
 #include "state_management.h"
 
 #ifdef SDL_BUILD

@@ -23,7 +23,7 @@
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
 
-#include "../keyboard.h"
+#include "KeyboardDevice.h"
 
 #ifndef __APPLE__
 extern Display* GSdsp;

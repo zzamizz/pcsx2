@@ -18,7 +18,7 @@
 #include <wx/panel.h>
 #include <wx/dataview.h>
 
-#include "../keyboard.h"
+#include "../Devices/KeyboardDevice.h"
 #include "JoystickConfiguration.h"
 #include "GamepadConfiguration.h"
 

@@ -28,7 +28,7 @@
 #include <wx/dataview.h>
 
 #include "../InputManager.h"
-#include "../keyboard.h"
+#include "../Devices/KeyboardDevice.h"
 #include "../PAD.h"
 
 #include "GamepadPanel.h"

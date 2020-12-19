@@ -21,7 +21,7 @@
 #if defined(__APPLE__)
 
 #include <Carbon/Carbon.h>
-#include "../keyboard.h"
+#include "KeyboardDevice.h"
 
 std::string KeyName(int pad, int key, int keysym)
 {
