@@ -208,7 +208,7 @@ void GamepadPanel::Update()
 			wxVector<wxVariant> data;
 
 			data.push_back(wxVariant(device->m_device_name.c_str()));
-			data.push_back(wxVariant(wxString(device->GetBindingName(i))));
+			data.push_back(wxVariant(wxString(device->GetBindingName(m_port, i))));
 			data.push_back(wxVariant(wxString(pad_labels[i])));
 			pad_list->AppendItem(data);
 
@@ -217,7 +217,7 @@ void GamepadPanel::Update()
 			temp.device = j;
 			temp.port = m_port;
 			temp.slot = m_slot;
-			temp.key = device->m_bindings[i];
+			temp.key = device->m_bindings[m_port][i];
 			temp.value = i;
 			dev_bind.emplace_back(temp);
 		}

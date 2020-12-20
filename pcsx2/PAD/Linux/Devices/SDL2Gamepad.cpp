@@ -265,14 +265,14 @@ size_t SDL2Gamepad::GetUniqueIdentifier()
 	return m_unique_id;
 }
 
-const char* SDL2Gamepad::GetBindingName(int key)
+const char* SDL2Gamepad::GetBindingName(int pad, int key)
 {
-	return sdl2_key_names[m_bindings[key]];
+	return sdl2_key_names[m_bindings[pad][key]];
 }
 
 void SDL2Gamepad::ClearBindings()
 {
-	m_bindings.fill(0);
+	m_bindings = {{0}};
 }
 
 void SDL2Gamepad::ResetBindingsToDefault()
@@ -281,7 +281,7 @@ void SDL2Gamepad::ResetBindingsToDefault()
 
 	for (auto& default_bind : sdl2_defaults)
 	{
-		m_bindings[default_bind.first] = default_bind.second;
+		m_bindings[0][default_bind.first] = default_bind.second;
 	}
 }
 
@@ -303,14 +303,14 @@ bool SDL2Gamepad::TestForce(float strength = 0.60)
 	return true;
 }
 
-int SDL2Gamepad::GetInput(gamePadValues input)
+int SDL2Gamepad::GetInput(int pad, gamePadValues input)
 {
 	float k = g_conf.get_sensibility() / 100.0; // convert sensibility to float
 
 	// Handle analog inputs which range from -32k to +32k. Range conversion is handled later in the controller
 	if (IsAnalogKey(input))
 	{
-		int value = SDL_GameControllerGetAxis(m_controller, (SDL_GameControllerAxis)m_bindings[input]);
+		int value = SDL_GameControllerGetAxis(m_controller, (SDL_GameControllerAxis)m_bindings[pad][input]);
 		value *= k;
 		return (abs(value) > m_deadzone) ? value : 0;
 	}
@@ -318,12 +318,12 @@ int SDL2Gamepad::GetInput(gamePadValues input)
 	// Handle triggers which range from 0 to +32k. They must be converted to 0-255 range
 	if (input == PAD_L2 || input == PAD_R2)
 	{
-		int value = SDL_GameControllerGetAxis(m_controller, (SDL_GameControllerAxis)m_bindings[input]);
+		int value = SDL_GameControllerGetAxis(m_controller, (SDL_GameControllerAxis)m_bindings[pad][input]);
 		return (value > m_deadzone) ? value / 128 : 0;
 	}
 
 	// Remain buttons
-	int value = SDL_GameControllerGetButton(m_controller, (SDL_GameControllerButton)m_bindings[input]);
+	int value = SDL_GameControllerGetButton(m_controller, (SDL_GameControllerButton)m_bindings[pad][input]);
 	return value ? 0xFF : 0; // Max pressure
 }
 

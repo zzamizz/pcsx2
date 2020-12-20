@@ -79,9 +79,9 @@ public:
 
 	virtual const char* GetName() = 0;
 
-	virtual int GetInput(gamePadValues input) = 0;
+	virtual int GetInput(int pad, gamePadValues input) = 0;
 
-	virtual const char* GetBindingName(int key) = 0;
+	virtual const char* GetBindingName(int pad, int key) = 0;
 
 	virtual void ClearBindings() = 0;
 	virtual void ResetBindingsToDefault() = 0;
@@ -103,7 +103,7 @@ public:
 
 	size_t m_unique_id;
 	std::string m_device_name;
-	std::array<int, MAX_KEYS> m_bindings;
+	std::array<std::array<int, MAX_KEYS>, 2> m_bindings;
 	DeviceAPI api;
 	DeviceType type;
 

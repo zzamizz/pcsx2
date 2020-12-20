@@ -62,9 +62,9 @@ void PADshutdown()
 
 s32 PADopen(void* pDsp)
 {
-	memset(&event, 0, sizeof(event));
+	event.key = 0;
+	event.evt = 0;
 	g_key_status.Init();
-
 	g_ev_fifo.reset();
 
 #if defined(__unix__) || defined(__APPLE__)
@@ -244,7 +244,6 @@ void PADDoFreezeOut(void* dest)
 	if (PADfreeze(FREEZE_SAVE, &fP) != 0)
 		throw std::runtime_error(" * PAD: Error saving state!\n");
 }
-
 
 void PADDoFreezeIn(pxInputStream& infp)
 {

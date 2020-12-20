@@ -33,23 +33,29 @@ InputDeviceManager::~InputDeviceManager()
 	device_manager->devices.clear();
 }
 
-void InputDeviceManager::PollForJoystickInput(int cpad)
+void InputDeviceManager::PollForJoystickInput()
 {
-	int index = Device::uid_to_index(cpad);
-	if (index < 0)
-		return;
-
-	auto& gamePad = devices[index];
-
-	gamePad->UpdateDeviceState();
-
-	for (int i = 0; i < MAX_KEYS; i++)
+	for (auto& gamePad : devices)
 	{
-		s32 value = gamePad->GetInput((gamePadValues)i);
-		if (value != 0)
-			g_key_status.press(cpad, i, value);
-		else
-			g_key_status.release(cpad, i);
+		// Return if a keyboard, mouse, or no device.
+		if (gamePad->type != OTHER) break;
+
+		gamePad->UpdateDeviceState();
+
+		for (int cpad = 0; cpad < 2; cpad++)
+		{
+			g_key_status.joystick_state_acces(cpad);
+			for (int i = 0; i < MAX_KEYS; i++)
+			{
+				s32 value = gamePad->GetInput(cpad, (gamePadValues)i);
+
+				if (value != 0)
+					g_key_status.press(cpad, i, value);
+				else
+					g_key_status.release(cpad, i);
+			}
+			g_key_status.commit_status(cpad);
+		}
 	}
 }
 
@@ -64,14 +70,7 @@ void InputDeviceManager::Update()
 	UpdateKeyboardInput();
 
 	// Get joystick state + Commit
-	for (int cpad = 0; cpad < GAMEPAD_NUMBER; cpad++)
-	{
-		g_key_status.joystick_state_acces(cpad);
-
-		PollForJoystickInput(cpad);
-
-		g_key_status.commit_status(cpad);
-	}
+	PollForJoystickInput();
 
 	Pad::rumble_all();
 }

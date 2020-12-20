@@ -40,9 +40,9 @@ public:
 
 	const char* GetName() final;
 
-	int GetInput(gamePadValues input) final;
+	int GetInput(int pad, gamePadValues input) final;
 
-	const char* GetBindingName(int key) final;
+	const char* GetBindingName(int pad, int key) final;
 	void ClearBindings() final;
 	void ResetBindingsToDefault() final;
 
