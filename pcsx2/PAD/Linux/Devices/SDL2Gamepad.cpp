@@ -63,7 +63,7 @@ void EnumerateSDL2()
 		}
 	}
 
-	device_manager->devices.clear();
+	//device_manager->devices.clear();
 
 	for (int i = 0; i < SDL_NumJoysticks(); ++i)
 	{
@@ -186,6 +186,15 @@ SDL2Gamepad::SDL2Gamepad(int id)
 
 	std::hash<std::string> hash_me;
 	m_unique_id = hash_me(std::string(guid));
+
+	for (auto& device : device_manager->devices)
+	{
+		if (device->m_unique_id == m_unique_id)
+		{
+			m_no_error = false;
+			return;
+		}
+	}
 
 	// Default haptic effect
 	SDL_HapticEffect effects[NB_EFFECT];
