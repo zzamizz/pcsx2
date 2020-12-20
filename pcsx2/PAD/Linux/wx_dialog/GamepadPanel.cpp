@@ -14,17 +14,15 @@
  */
 
 #include "GamepadPanel.h"
-#include "../PAD.h"
+#include "../Global.h"
 
 std::vector<device_binding_list> dev_bind;
 
 GamepadPanel::GamepadPanel(wxNotebook* parent, unsigned int port, unsigned int slot)
 	: wxPanel(parent)
 {
-	wxString title;
 	m_port = port;
 	m_slot = slot;
-	GetPadName(title, m_port, m_slot);
 
 	auto* tab_box = new wxBoxSizer(wxHORIZONTAL);
 	auto* left_box = new wxBoxSizer(wxVERTICAL);

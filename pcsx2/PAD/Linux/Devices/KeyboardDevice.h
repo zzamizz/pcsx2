@@ -16,8 +16,13 @@
 #ifndef __KEYBOARD_H__
 #define __KEYBOARD_H__
 
-#include "../PAD.h"
+#include "../Global.h"
 #include "../config.h"
+
+#include "mt_queue.h"
+
+extern keyEvent event;
+extern MtQueue<keyEvent> g_ev_fifo;
 
 #if defined(__unix__) || defined(__APPLE__)
 

@@ -18,7 +18,7 @@
 #include "InputManager.h"
 #include "Devices/KeyboardDevice.h"
 #include "AppConfig.h"
-#include "PAD.h"
+#include "Global.h"
 #include "config.h"
 
 void ClearKeyboardValues()

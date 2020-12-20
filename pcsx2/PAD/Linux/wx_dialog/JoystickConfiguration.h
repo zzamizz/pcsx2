@@ -22,7 +22,7 @@
 
 #include "../InputManager.h"
 #include "../Devices/KeyboardDevice.h"
-#include "../PAD.h"
+#include "../Global.h"
 
 static const s32 Lx_check_id = wxID_HIGHEST + 100 + 1;
 static const s32 Ly_check_id = wxID_HIGHEST + 100 + 2;

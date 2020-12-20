@@ -74,6 +74,24 @@ void EnumerateSDL2()
 	}
 }
 
+void UpdateSDLDevices()
+{
+	// Take the opportunity to handle hot plugging here
+	SDL_Event events;
+	while (SDL_PollEvent(&events))
+	{
+		switch (events.type)
+		{
+			case SDL_CONTROLLERDEVICEADDED:
+			case SDL_CONTROLLERDEVICEREMOVED:
+				EnumerateSDL2();
+				break;
+			default:
+				break;
+		}
+	}
+}
+
 void SDL2Gamepad::Rumble(unsigned type, unsigned pad)
 {
 	if (type >= m_effects_id.size())

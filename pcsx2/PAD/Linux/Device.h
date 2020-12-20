@@ -15,7 +15,8 @@
 
 #pragma once
 
-#include "PAD.h"
+#include "Global.h"
+#include "InputManager.h"
 
 #include <array>
 #include <string>

@@ -13,23 +13,12 @@
  *  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <fcntl.h>
-#include <string.h>
-#include <stdarg.h>
-
 #include "AppCoreThread.h"
-#include "Utilities/pxStreams.h"
 
 #include "Devices/KeyboardDevice.h"
 #include "PAD.h"
 #include "state_management.h"
 #include "wx_dialog/dialog.h"
-
-#ifdef __linux__
-#include <unistd.h>
-#endif
 
 #ifdef SDL_BUILD
 #include "SDL.h"
@@ -208,20 +197,7 @@ u8 PADpoll(u8 value)
 keyEvent* PADkeyEvent()
 {
 #ifdef SDL_BUILD
-	// Take the opportunity to handle hot plugging here
-	SDL_Event events;
-	while (SDL_PollEvent(&events))
-	{
-		switch (events.type)
-		{
-			case SDL_CONTROLLERDEVICEADDED:
-			case SDL_CONTROLLERDEVICEREMOVED:
-				EnumerateDevices();
-				break;
-			default:
-				break;
-		}
-	}
+	UpdateSDLDevices();
 #endif
 #ifdef __unix__
 	if (g_ev_fifo.size() == 0)

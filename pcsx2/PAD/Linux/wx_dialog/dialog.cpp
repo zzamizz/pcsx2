@@ -15,6 +15,9 @@
 
 #include "dialog.h"
 
+extern void PADLoadConfig();
+extern void PADSaveConfig();
+
 // Contain all simulated keys
 u32 m_simulatedKeys[GAMEPAD_NUMBER][MAX_KEYS];
 

@@ -13,6 +13,8 @@
  *  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#pragma once
+
 #include <wx/wx.h>
 #include <wx/notebook.h>
 #include <wx/panel.h>

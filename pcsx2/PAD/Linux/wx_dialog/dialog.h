@@ -29,7 +29,7 @@
 
 #include "../InputManager.h"
 #include "../Devices/KeyboardDevice.h"
-#include "../PAD.h"
+#include "../Global.h"
 
 #include "GamepadPanel.h"
 #include "GamepadConfiguration.h"
@@ -42,6 +42,20 @@
 	"Pop'n Music controller",
 	"PS1 Mouse",
 	"neGcon"};
+
+// Returns 0 if pad doesn't exist due to mtap settings, as a convenience.
+static int GetPadName(wxString &string, unsigned int port, unsigned int slot)
+{
+    if (!slot && !g_conf.multitap[port]) {
+        string = wxString::Format(L"Pad %i", port + 1);
+
+    } else {
+        string = wxString::Format(L"Pad %i%c", port + 1, 'A' + slot);
+
+        if (!g_conf.multitap[port]) return 0;
+    }
+    return 1;
+}
 
 class GeneralPanel : public wxPanel
 {

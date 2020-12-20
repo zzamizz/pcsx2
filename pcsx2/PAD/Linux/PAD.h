@@ -15,115 +15,12 @@
 
 #pragma once
 
-#define GAMEPAD_NUMBER 2 // numbers of gamepad
-
-#include <wx/string.h>
-#include <wx/tokenzr.h>
-#include <wx/intl.h>
-#include <wx/log.h>
-#include <wx/filename.h>
-
-#include <stdio.h>
-#include <assert.h>
-#include <array>
-#include <vector>
-#include <map>
-#include <string>
-#include <memory>
-#include <mutex>
-#include <queue>
-
-#include "Utilities/pxStreams.h"
-#include "Utilities/Console.h"
-#include "DebugTools/Debug.h"
-
-#include "PS2Edefs.h"
-#include "config.h"
-
-#define PADdefs
-
-enum PadOptions
-{
-	PADOPTION_FORCEFEEDBACK = 0x1,
-	PADOPTION_REVERSELX = 0x2,
-	PADOPTION_REVERSELY = 0x4,
-	PADOPTION_REVERSERX = 0x8,
-	PADOPTION_REVERSERY = 0x10,
-	PADOPTION_MOUSE_L = 0x20,
-	PADOPTION_MOUSE_R = 0x40,
-};
-
-enum PadCommands
-{
-	CMD_SET_VREF_PARAM = 0x40,
-	CMD_QUERY_DS2_ANALOG_MODE = 0x41,
-	CMD_READ_DATA_AND_VIBRATE = 0x42,
-	CMD_CONFIG_MODE = 0x43,
-	CMD_SET_MODE_AND_LOCK = 0x44,
-	CMD_QUERY_MODEL_AND_MODE = 0x45,
-	CMD_QUERY_ACT = 0x46,  // ??
-	CMD_QUERY_COMB = 0x47, // ??
-	CMD_QUERY_MODE = 0x4C, // QUERY_MODE ??
-	CMD_VIBRATION_TOGGLE = 0x4D,
-	CMD_SET_DS2_NATIVE_MODE = 0x4F // SET_DS2_NATIVE_MODE
-};
-
-enum gamePadValues
-{
-	PAD_L2 = 0,   // L2 button
-	PAD_R2,       // R2 button
-	PAD_L1,       // L1 button
-	PAD_R1,       // R1 button
-	PAD_TRIANGLE, // Triangle button ▲
-	PAD_CIRCLE,   // Circle button ●
-	PAD_CROSS,    // Cross button ✖
-	PAD_SQUARE,   // Square button ■
-	PAD_SELECT,   // Select button
-	PAD_L3,       // Left joystick button (L3)
-	PAD_R3,       // Right joystick button (R3)
-	PAD_START,    // Start button
-	PAD_UP,       // Directional pad ↑
-	PAD_RIGHT,    // Directional pad →
-	PAD_DOWN,     // Directional pad ↓
-	PAD_LEFT,     // Directional pad ←
-	PAD_L_UP,     // Left joystick (Up) ↑
-	PAD_L_RIGHT,  // Left joystick (Right) →
-	PAD_L_DOWN,   // Left joystick (Down) ↓
-	PAD_L_LEFT,   // Left joystick (Left) ←
-	PAD_R_UP,     // Right joystick (Up) ↑
-	PAD_R_RIGHT,  // Right joystick (Right) →
-	PAD_R_DOWN,   // Right joystick (Down) ↓
-	PAD_R_LEFT    // Right joystick (Left) ←
-};
-
-#define MAX_KEYS 24
-
-static bool IsAnalogKey(int index)
-{
-	return ((index >= PAD_L_UP) && (index <= PAD_R_LEFT));
-}
-
-// Returns 0 if pad doesn't exist due to mtap settings, as a convenience.
-static int GetPadName(wxString &string, unsigned int port, unsigned int slot)
-{
-    if (!slot && !g_conf.multitap[port]) {
-        string = wxString::Format(L"Pad %i", port + 1);
-
-    } else {
-        string = wxString::Format(L"Pad %i%c", port + 1, 'A' + slot);
-
-        if (!g_conf.multitap[port]) return 0;
-    }
-    return 1;
-}
-
-#if defined(__unix__) || defined(__APPLE__)
-#include "Device.h"
-#include "InputManager.h"
-#endif
-#include "bitwise.h"
-#include "KeyStatus.h"
+#include "Global.h"
 #include "mt_queue.h"
+
+#ifdef SDL_BUILD
+extern void UpdateSDLDevices();
+#endif
 
 extern FILE* padLog;
 extern void initLogging();
@@ -131,32 +28,32 @@ extern void initLogging();
 extern keyEvent event;
 extern MtQueue<keyEvent> g_ev_fifo;
 
-s32 _PADopen(void* pDsp);
-void _PADclose();
-void PADsetMode(int pad, int mode);
+extern s32 _PADopen(void* pDsp);
+extern void _PADclose();
+extern void PADsetMode(int pad, int mode);
 
-void __LogToConsole(const char* fmt, ...);
-void PADLoadConfig();
-void PADSaveConfig();
+extern void __LogToConsole(const char* fmt, ...);
+extern void PADLoadConfig();
+extern void PADSaveConfig();
 
-void SysMessage(char* fmt, ...);
+extern void SysMessage(char* fmt, ...);
 
-s32 PADinit();
-void PADshutdown();
-s32 PADopen(void* pDsp);
-void PADsetLogDir(const char* dir);
-void PADclose();
-u32 PADquery();
-s32 PADsetSlot(u8 port, u8 slot);
-s32 PADfreeze(int mode, freezeData* data);
-u8 PADstartPoll(int pad);
-u8 PADpoll(u8 value);
-keyEvent* PADkeyEvent();
+extern s32 PADinit();
+extern void PADshutdown();
+extern s32 PADopen(void* pDsp);
+extern void PADsetLogDir(const char* dir);
+extern void PADclose();
+extern u32 PADquery();
+extern s32 PADsetSlot(u8 port, u8 slot);
+extern s32 PADfreeze(int mode, freezeData* data);
+extern u8 PADstartPoll(int pad);
+extern u8 PADpoll(u8 value);
+extern keyEvent* PADkeyEvent();
 void PADupdate(int pad);
-void PADconfigure();
-void PADDoFreezeOut(void* dest);
-void PADDoFreezeIn(pxInputStream& infp);
+extern void PADconfigure();
+extern void PADDoFreezeOut(void* dest);
+extern void PADDoFreezeIn(pxInputStream& infp);
 
 #if defined(__unix__)
-void PADWriteEvent(keyEvent& evt);
+extern void PADWriteEvent(keyEvent& evt);
 #endif

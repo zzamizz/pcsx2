@@ -19,8 +19,9 @@
 #include <SDL_haptic.h>
 
 #include "../InputManager.h"
-#include "../PAD.h"
+#include "../Global.h"
 #include "../config.h"
+#include "../Device.h"
 
 #define NB_EFFECT 2 // Don't use more than two, ps2 only has one for big motor and one for small(like most systems)
 // holds all joystick info
@@ -57,6 +58,7 @@ private:
 
 // opens handles to all possible joysticks
 extern void EnumerateSDL2();
+extern void UpdateSDLDevices();
 
 [[maybe_unused]] static std::map<int, int> sdl2_defaults =
 	{

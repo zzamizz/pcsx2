@@ -15,7 +15,8 @@
 
 #pragma once
 
-#include "InputManager.h"
+#include <vector>
+#include <memory>
 
 class Device;
 

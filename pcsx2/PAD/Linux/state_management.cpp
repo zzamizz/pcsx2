@@ -15,6 +15,7 @@
 
 #include "state_management.h"
 #include "InputManager.h"
+#include "Device.h"
 
 // Typical packet response on the bus
 static const u8 ConfigExit[7] = {0x5A, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};

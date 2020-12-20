@@ -13,10 +13,12 @@
  *  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#pragma once
+
 #ifndef __KEYSTATUS_H__
 #define __KEYSTATUS_H__
 
-#include "PAD.h"
+#include "Global.h"
 #include "config.h"
 
 typedef struct

@@ -511,6 +511,7 @@ set(pcsx2PADHeaders
     PAD/Linux/Devices/KeyboardDevice.h
     PAD/Linux/KeyStatus.h
     PAD/Linux/PAD.h
+	PAD/Linux/Global.h
     PAD/Linux/state_management.h
     PAD/Linux/wx_dialog/GamepadPanel.h
     PAD/Linux/wx_dialog/GamepadConfiguration.h
