@@ -21,7 +21,7 @@ void KeyStatus::Init(u8 pad)
 	m_button = 0xFFFF;
 	m_internal_button[0] = 0xFFFF;
 	m_internal_button[1] = 0xFFFF;
-	m_state_acces = 0;
+	m_state_index = 0;
 
 	for (auto& key : all_keys)
 	{
@@ -39,7 +39,7 @@ void KeyStatus::press(u32 index, s32 value)
 	if (!IsAnalogKey(index))
 	{
 		m_internal_button_pressure[index] = value;
-		clear_bit(m_internal_button[m_state_acces], index);
+		clear_bit(m_internal_button[m_state_index], index);
 	}
 	else
 	{
@@ -94,7 +94,7 @@ void KeyStatus::release(u32 index)
 {
 	if (!IsAnalogKey(index))
 	{
-		set_bit(m_internal_button[m_state_acces], index);
+		set_bit(m_internal_button[m_state_index], index);
 	}
 	else
 	{
@@ -110,7 +110,7 @@ u16 KeyStatus::get()
 void KeyStatus::analog_set(u32 index, u8 value)
 {
 	PADAnalog* m_internal_analog_ref;
-	m_internal_analog_ref = &m_internal_analog[m_state_acces];
+	m_internal_analog_ref = &m_internal_analog[m_state_index];
 
 	switch (index)
 	{

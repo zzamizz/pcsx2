@@ -202,14 +202,14 @@ void GamepadPanel::Update()
 	if (device_manager == nullptr) fprintf(stderr, "device_manager == null!\n");
 	for (auto const& device : device_manager->devices)
 	{
-		for (int i = 0; i < MAX_KEYS; i++)
+		for (auto& key : all_keys)
 		{
 			//fprintf(stderr, "Device %d : '%s (%s) (%s)'\n", i, device->m_device_name.c_str(), device->GetBindingName(i), pad_labels[i]);
 			wxVector<wxVariant> data;
 
 			data.push_back(wxVariant(device->m_device_name.c_str()));
-			data.push_back(wxVariant(wxString(device->GetBindingName(m_port, i))));
-			data.push_back(wxVariant(wxString(pad_labels[i])));
+			data.push_back(wxVariant(wxString(device->GetBindingName(m_port, (int)key))));
+			data.push_back(wxVariant(wxString(pad_labels[(int)key])));
 			pad_list->AppendItem(data);
 
 			device_binding_list temp;
@@ -217,8 +217,8 @@ void GamepadPanel::Update()
 			temp.device = j;
 			temp.port = m_port;
 			temp.slot = m_slot;
-			temp.key = device->m_bindings[m_port][i];
-			temp.value = i;
+			temp.key = device->m_bindings[m_port][(int)key];
+			temp.value = (int)key;
 			dev_bind.emplace_back(temp);
 		}
 		j++;
@@ -283,20 +283,20 @@ void GamepadPanel::ClearAll()
 {
 	g_conf.keysym_map[m_port].clear();
 
-	for (int i = 0; i < MAX_KEYS; i++)
+	for (auto& key : all_keys)
 	{
-		m_simulatedKeys[m_port][i] = 0;
+		m_simulatedKeys[m_port][(int)key] = 0;
 	}
 }
 
 void GamepadPanel::QuickBindings()
 {
-	for (int i = 0; i < MAX_KEYS; i++)
+	for (auto& key : all_keys)
 	{
-		status_bar->SetValue(wxString::Format("Press a key to set '%s' to, or Escape to cancel.", pad_labels[i]));
+		status_bar->SetValue(wxString::Format("Press a key to set '%s' to, or Escape to cancel.", pad_labels[(int)key]));
 		wxYieldIfNeeded();
 
-		ConfigureGamepadKey((gamePadValues)i);
+		ConfigureGamepadKey(key);
 		usleep(500000); // give enough time to the user to release the button
 	}
 

@@ -43,7 +43,7 @@ typedef struct
 	}
 } PADAnalog;
 
-#define MAX_ANALOG_VALUE 32766
+const s16 MAX_ANALOG_VALUE = INT16_MAX - 1;
 
 class KeyStatus
 {
@@ -51,16 +51,16 @@ private:
 	const u8 m_analog_released_val;
 
 	u8 m_pad;
+
 	u16 m_button;
+	PADAnalog m_analog;
+
+	u8 m_state_index;
 	std::array<u16, 2> m_internal_button;
+	std::array<PADAnalog, 2> m_internal_analog;
 
 	std::array<u8, MAX_KEYS> m_button_pressure;
 	std::array<u8, MAX_KEYS> m_internal_button_pressure;
-
-	u8 m_state_acces;
-
-	PADAnalog m_analog;
-	std::array<PADAnalog, 2> m_internal_analog;
 
 	void analog_set(u32 index, u8 value);
 	bool analog_is_reversed(u32 index);
@@ -74,8 +74,8 @@ public:
 	}
 	void Init(u8 pad);
 
-	void keyboard_state_acces() { m_state_acces = 0; }
-	void joystick_state_acces() { m_state_acces = 1; }
+	void keyboard_state_acces() { m_state_index = 0; }
+	void joystick_state_acces() { m_state_index = 1; }
 
 	void press(u32 index, s32 value = 0xFF);
 	void press_button(u32 index);
