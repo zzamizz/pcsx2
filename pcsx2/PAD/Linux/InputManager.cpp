@@ -45,14 +45,14 @@ void InputDeviceManager::PollForJoystickInput()
 		for (int cpad = 0; cpad < 2; cpad++)
 		{
 			g_key_status.joystick_state_acces(cpad);
-			for (int i = 0; i < MAX_KEYS; i++)
+			for (auto& key : all_keys)
 			{
-				s32 value = gamePad->GetInput(cpad, (gamePadValues)i);
+				s32 value = gamePad->GetInput(cpad, key);
 
 				if (value != 0)
-					g_key_status.press(cpad, i, value);
+					g_key_status.press(cpad, key, value);
 				else
-					g_key_status.release(cpad, i);
+					g_key_status.release(cpad, key);
 			}
 			g_key_status.commit_status(cpad);
 		}
