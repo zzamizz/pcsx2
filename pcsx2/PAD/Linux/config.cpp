@@ -13,7 +13,8 @@
  *  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <string.h>
+#include <string>
+#include <fstream>
 
 #include "InputManager.h"
 #include "Devices/KeyboardDevice.h"
@@ -38,92 +39,40 @@ void DefaultKeyboardValues()
 
 void PADSaveConfig()
 {
-	FILE* f;
+	const std::string iniFile = std::string(GetSettingsFolder().Combine(wxString(L"PAD.yaml")).GetFullPath()); // default path, just in case
+	YAML::Node config;
 
-	wxString iniName(L"PAD.ini");
-	const std::string iniFile = std::string(GetSettingsFolder().Combine(iniName).GetFullPath()); // default path, just in case
-	f = fopen(iniFile.c_str(), "w");
-	if (f == NULL)
-	{
-		printf("PAD: failed to save ini %s\n", iniFile.c_str());
-		return;
-	}
+	config["first_time_wizard"] = g_conf.ftw;
+	config["log"] = g_conf.log;
+	config["options"] = g_conf.packed_options;
+	config["mouse_sensibility"] = g_conf.get_sensibility();
+	config["ff_intensity"] = g_conf.get_ff_intensity();
+	config["uid_0"] = g_conf.get_joy_uid(0);
+	config["uid_1"] = g_conf.get_joy_uid(1);
+	config["keysym_0"] = g_conf.keysym_map[0];
+	config["keysym_1"] = g_conf.keysym_map[1];
+	config["sdl2"] = g_conf.sdl2_mapping;
 
-	fprintf(f, "first_time_wizard = %d\n", g_conf.ftw);
-	fprintf(f, "log = %d\n", g_conf.log);
-	fprintf(f, "options = %d\n", g_conf.packed_options);
-	fprintf(f, "mouse_sensibility = %d\n", g_conf.get_sensibility());
-	fprintf(f, "ff_intensity = %d\n", g_conf.get_ff_intensity());
-	fprintf(f, "uid[0] = %zu\n", g_conf.get_joy_uid(0));
-	fprintf(f, "uid[1] = %zu\n", g_conf.get_joy_uid(1));
-
-	for (int pad = 0; pad < GAMEPAD_NUMBER; pad++)
-		for (auto const& it : g_conf.keysym_map[pad])
-			fprintf(f, "PAD %d:KEYSYM 0x%x = %d\n", pad, it.first, it.second);
-
-	for (auto const& it : g_conf.sdl2_mapping)
-		fprintf(f, "SDL2 = %s\n", it.c_str());
-
-	fclose(f);
+	std::ofstream fout(iniFile);
+	fout << config;
 }
 
 void PADLoadConfig()
 {
-	FILE* f;
-	bool have_user_setting = false;
+	const std::string iniFile = std::string(GetSettingsFolder().Combine(wxString(L"PAD.yaml")).GetFullPath()); // default path, just in case
+	YAML::Node config = YAML::LoadFile(iniFile);
 
-	g_conf.init();
+	g_conf.ftw = config["first_time_wizard"].as<u32>();
+	g_conf.log = config["log"].as<u32>();
+	g_conf.packed_options = config["options"].as<u32>();
+	g_conf.set_sensibility(config["mouse_sensibility"].as<u32>());
+	g_conf.set_ff_intensity(config["ff_intensity"].as<u32>());
 
+	g_conf.set_joy_uid(0, config["uid_0"].as<size_t>());
+	g_conf.set_joy_uid(1, config["uid_1"].as<size_t>());
 
-	wxString iniName(L"PAD.ini");
-	const std::string iniFile = std::string(GetSettingsFolder().Combine(iniName).GetFullPath()); // default path, just in case
-	f = fopen(iniFile.c_str(), "r");
-	if (f == NULL)
-	{
-		printf("OnePAD: failed to load ini %s\n", iniFile.c_str());
-		PADSaveConfig(); //save and return
-		return;
-	}
+	g_conf.keysym_map[0] = config["keysym_0"].as<std::map<u32,u32>>();
+	g_conf.keysym_map[1] = config["keysym_1"].as<std::map<u32,u32>>();
 
-	u32 value;
-
-	if (fscanf(f, "first_time_wizard = %u\n", &value) == 1)
-		g_conf.ftw = value;
-
-	if (fscanf(f, "log = %u\n", &value) == 1)
-		g_conf.log = value;
-
-	if (fscanf(f, "options = %u\n", &value) == 1)
-		g_conf.packed_options = value;
-
-	if (fscanf(f, "mouse_sensibility = %u\n", &value) == 1)
-		g_conf.set_sensibility(value);
-
-	if (fscanf(f, "ff_intensity = %u\n", &value) == 1)
-		g_conf.set_ff_intensity(value);
-
-	size_t uid;
-	if (fscanf(f, "uid[0] = %zu\n", &uid) == 1)
-		g_conf.set_joy_uid(0, uid);
-	if (fscanf(f, "uid[1] = %zu\n", &uid) == 1)
-		g_conf.set_joy_uid(1, uid);
-
-	u32 pad;
-	u32 keysym;
-	u32 index;
-	while (fscanf(f, "PAD %u:KEYSYM 0x%x = %u\n", &pad, &keysym, &index) == 3)
-	{
-		g_conf.set_keyboard_key(pad & 1, keysym, index);
-		if (pad == 0)
-			have_user_setting = true;
-	}
-
-	char sdl2[512];
-	while (fscanf(f, "SDL2 = %511[^\n]\n", sdl2) == 1)
-		g_conf.sdl2_mapping.push_back(std::string(sdl2));
-
-	if (!have_user_setting)
-		DefaultKeyboardValues();
-
-	fclose(f);
+	g_conf.sdl2_mapping = config["sdl2"].as<std::vector<std::string>>();
 }

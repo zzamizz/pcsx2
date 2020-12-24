@@ -15,6 +15,8 @@
 
 #pragma once
 
+#include "yaml-cpp/yaml.h"
+
 class PADconf
 {
 	u32 ff_intensity;
