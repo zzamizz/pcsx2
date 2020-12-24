@@ -33,7 +33,7 @@ keyEvent event;
 
 static keyEvent s_event;
 
-KeyStatus g_key_status;
+std::array<KeyStatus, GAMEPAD_NUMBER> g_key_status;
 
 MtQueue<keyEvent> g_ev_fifo;
 
@@ -64,7 +64,8 @@ s32 PADopen(void* pDsp)
 {
 	event.key = 0;
 	event.evt = 0;
-	g_key_status.Init();
+	g_key_status[0].Init(0);
+	g_key_status[1].Init(1);
 	g_ev_fifo.reset();
 
 #if defined(__unix__) || defined(__APPLE__)

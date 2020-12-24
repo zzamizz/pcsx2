@@ -44,17 +44,17 @@ void InputDeviceManager::PollForJoystickInput()
 
 		for (int cpad = 0; cpad < 2; cpad++)
 		{
-			g_key_status.joystick_state_acces(cpad);
+			g_key_status[cpad].joystick_state_acces();
 			for (auto& key : all_keys)
 			{
 				s32 value = gamePad->GetInput(cpad, key);
 
 				if (value != 0)
-					g_key_status.press(cpad, key, value);
+					g_key_status[cpad].press(key, value);
 				else
-					g_key_status.release(cpad, key);
+					g_key_status[cpad].release(key);
 			}
-			g_key_status.commit_status(cpad);
+			g_key_status[cpad].commit_status();
 		}
 	}
 }
@@ -65,7 +65,7 @@ void InputDeviceManager::Update()
 	// So we will populate both pad in the same time
 	for (int cpad = 0; cpad < GAMEPAD_NUMBER; cpad++)
 	{
-		g_key_status.keyboard_state_acces(cpad);
+		g_key_status[cpad].keyboard_state_acces();
 	}
 	UpdateKeyboardInput();
 

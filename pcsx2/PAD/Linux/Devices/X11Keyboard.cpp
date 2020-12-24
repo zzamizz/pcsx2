@@ -101,7 +101,7 @@ void AnalyzeKeyEvent(keyEvent& evt)
 			}
 
 			if (index != -1)
-				g_key_status.press_button(pad, index);
+				g_key_status[pad].press_button(index);
 
 			//PAD_LOG("Key pressed:%d\n", index);
 
@@ -114,7 +114,7 @@ void AnalyzeKeyEvent(keyEvent& evt)
 				s_Shift = false;
 
 			if (index != -1)
-				g_key_status.release(pad, index);
+				g_key_status[pad].release(index);
 
 			event.evt = KEYRELEASE;
 			event.key = key;
@@ -129,12 +129,12 @@ void AnalyzeKeyEvent(keyEvent& evt)
 
 		case ButtonPress:
 			if (index != -1)
-				g_key_status.press(pad, index);
+				g_key_status[pad].press(index);
 			break;
 
 		case ButtonRelease:
 			if (index != -1)
-				g_key_status.release(pad, index);
+				g_key_status[pad].release(index);
 			break;
 
 		case MotionNotify:
@@ -163,15 +163,15 @@ void AnalyzeKeyEvent(keyEvent& evt)
 				value *= g_conf.get_sensibility();
 
 				if (x == 0)
-					g_key_status.press(pad, pad_x, -MAX_ANALOG_VALUE);
+					g_key_status[pad].press(pad_x, -MAX_ANALOG_VALUE);
 				else if (x == 0xFFFF)
-					g_key_status.press(pad, pad_x, MAX_ANALOG_VALUE);
+					g_key_status[pad].press(pad_x, MAX_ANALOG_VALUE);
 				else if (x < (s_previous_mouse_x - 2))
-					g_key_status.press(pad, pad_x, -value);
+					g_key_status[pad].press(pad_x, -value);
 				else if (x > (s_previous_mouse_x + 2))
-					g_key_status.press(pad, pad_x, value);
+					g_key_status[pad].press(pad_x, value);
 				else
-					g_key_status.release(pad, pad_x);
+					g_key_status[pad].release(pad_x);
 
 
 				unsigned y = evt.key >> 16;
@@ -179,15 +179,15 @@ void AnalyzeKeyEvent(keyEvent& evt)
 				value *= g_conf.get_sensibility();
 
 				if (y == 0)
-					g_key_status.press(pad, pad_y, -MAX_ANALOG_VALUE);
+					g_key_status[pad].press(pad_y, -MAX_ANALOG_VALUE);
 				else if (y == 0xFFFF)
-					g_key_status.press(pad, pad_y, MAX_ANALOG_VALUE);
+					g_key_status[pad].press(pad_y, MAX_ANALOG_VALUE);
 				else if (y < (s_previous_mouse_y - 2))
-					g_key_status.press(pad, pad_y, -value);
+					g_key_status[pad].press(pad_y, -value);
 				else if (y > (s_previous_mouse_y + 2))
-					g_key_status.press(pad, pad_y, value);
+					g_key_status[pad].press(pad_y, value);
 				else
-					g_key_status.release(pad, pad_y);
+					g_key_status[pad].release(pad_y);
 
 				s_previous_mouse_x = x;
 				s_previous_mouse_y = y;

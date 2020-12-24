@@ -50,43 +50,44 @@ class KeyStatus
 private:
 	const u8 m_analog_released_val;
 
-	std::array<u16, GAMEPAD_NUMBER> m_button;
-	std::array<std::array<u16, GAMEPAD_NUMBER>, 2> m_internal_button;
+	u8 m_pad;
+	u16 m_button;
+	std::array<u16, 2> m_internal_button;
 
-	std::array<std::array<u8, MAX_KEYS>, GAMEPAD_NUMBER> m_button_pressure;
-	std::array<std::array<u8, MAX_KEYS>, GAMEPAD_NUMBER> m_internal_button_pressure;
+	std::array<u8, MAX_KEYS> m_button_pressure;
+	std::array<u8, MAX_KEYS> m_internal_button_pressure;
 
-	std::array<u8, GAMEPAD_NUMBER> m_state_acces;
+	u8 m_state_acces;
 
-	std::array<PADAnalog, GAMEPAD_NUMBER> m_analog;
-	std::array<std::array<PADAnalog, GAMEPAD_NUMBER>, 2> m_internal_analog;
+	PADAnalog m_analog;
+	std::array<PADAnalog, 2> m_internal_analog;
 
-	void analog_set(u32 pad, u32 index, u8 value);
-	bool analog_is_reversed(u32 pad, u32 index);
+	void analog_set(u32 index, u8 value);
+	bool analog_is_reversed(u32 index);
 	u8 analog_merge(u8 kbd, u8 joy);
 
 public:
-	KeyStatus()
+	KeyStatus(u8 pad = 0)
 		: m_analog_released_val(0x7F)
 	{
-		Init();
+		Init(pad);
 	}
-	void Init();
+	void Init(u8 pad);
 
-	void keyboard_state_acces(u32 pad) { m_state_acces[pad] = 0; }
-	void joystick_state_acces(u32 pad) { m_state_acces[pad] = 1; }
+	void keyboard_state_acces() { m_state_acces = 0; }
+	void joystick_state_acces() { m_state_acces = 1; }
 
-	void press(u32 pad, u32 index, s32 value = 0xFF);
-	void press_button(u32 pad, u32 index);
-	void release(u32 pad, u32 index);
+	void press(u32 index, s32 value = 0xFF);
+	void press_button(u32 index);
+	void release( u32 index);
 
-	u16 get(u32 pad);
-	u8 get(u32 pad, u32 index);
+	u16 get();
+	u8 get(u32 index);
 
 
-	void commit_status(u32 pad);
+	void commit_status();
 };
 
-extern KeyStatus g_key_status;
+extern std::array<KeyStatus, GAMEPAD_NUMBER> g_key_status;
 
 #endif

@@ -185,7 +185,7 @@ void UpdateKeyboardInput()
 		// joystick axes (which have two bound keys) will always go to the later-polled key
 		// Instead, release all keys first and then set the ones that are pressed
 		for (const auto& key : map)
-			g_key_status.release(pad, key.second);
+			g_key_status.release[pad](key.second);
 		for (const auto& key : map)
 		{
 			bool state;
@@ -198,7 +198,7 @@ void UpdateKeyboardInput()
 				state = CGEventSourceButtonState(kCGEventSourceStateHIDSystemState, (CGMouseButton)(key.first & 0xFFFF));
 			}
 			if (state)
-				g_key_status.press_button(pad, key.second);
+				g_key_status[pad].press_button(key.second);
 		}
 	}
 }
