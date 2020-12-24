@@ -20,28 +20,19 @@ void KeyStatus::Init()
 	for (int pad = 0; pad < GAMEPAD_NUMBER; pad++)
 	{
 		m_button[pad] = 0xFFFF;
-		m_internal_button_kbd[pad] = 0xFFFF;
-		m_internal_button_joy[pad] = 0xFFFF;
-		m_state_acces[pad] = false;
+		m_internal_button[0][pad] = 0xFFFF;
+		m_internal_button[1][pad] = 0xFFFF;
+		m_state_acces[pad] = 0;
 
-		for (int index = 0; index < MAX_KEYS; index++)
+		for (auto& key : all_keys)
 		{
-			m_button_pressure[pad][index] = 0xFF;
-			m_internal_button_pressure[pad][index] = 0xFF;
+			m_button_pressure[pad][(int)key] = 0xFF;
+			m_internal_button_pressure[pad][(int)key] = 0xFF;
 		}
 
-		m_analog[pad].lx = m_analog_released_val;
-		m_analog[pad].ly = m_analog_released_val;
-		m_analog[pad].rx = m_analog_released_val;
-		m_analog[pad].ry = m_analog_released_val;
-		m_internal_analog_kbd[pad].lx = m_analog_released_val;
-		m_internal_analog_kbd[pad].ly = m_analog_released_val;
-		m_internal_analog_kbd[pad].rx = m_analog_released_val;
-		m_internal_analog_kbd[pad].ry = m_analog_released_val;
-		m_internal_analog_joy[pad].lx = m_analog_released_val;
-		m_internal_analog_joy[pad].ly = m_analog_released_val;
-		m_internal_analog_joy[pad].rx = m_analog_released_val;
-		m_internal_analog_joy[pad].ry = m_analog_released_val;
+		m_analog[pad].set(m_analog_released_val);
+		m_internal_analog[0][pad].set(m_analog_released_val);
+		m_internal_analog[1][pad].set(m_analog_released_val);
 	}
 }
 
@@ -50,10 +41,10 @@ void KeyStatus::press(u32 pad, u32 index, s32 value)
 	if (!IsAnalogKey(index))
 	{
 		m_internal_button_pressure[pad][index] = value;
-		if (m_state_acces[pad])
-			clear_bit(m_internal_button_kbd[pad], index);
+		if (m_state_acces[pad] == 0)
+			clear_bit(m_internal_button[0][pad], index);
 		else
-			clear_bit(m_internal_button_joy[pad], index);
+			clear_bit(m_internal_button[1][pad], index);
 	}
 	else
 	{
@@ -108,10 +99,10 @@ void KeyStatus::release(u32 pad, u32 index)
 {
 	if (!IsAnalogKey(index))
 	{
-		if (m_state_acces[pad])
-			set_bit(m_internal_button_kbd[pad], index);
+		if (m_state_acces[pad] == 0)
+			set_bit(m_internal_button[0][pad], index);
 		else
-			set_bit(m_internal_button_joy[pad], index);
+			set_bit(m_internal_button[1][pad], index);
 	}
 	else
 	{
@@ -127,10 +118,7 @@ u16 KeyStatus::get(u32 pad)
 void KeyStatus::analog_set(u32 pad, u32 index, u8 value)
 {
 	PADAnalog* m_internal_analog_ref;
-	if (m_state_acces[pad])
-		m_internal_analog_ref = &m_internal_analog_kbd[pad];
-	else
-		m_internal_analog_ref = &m_internal_analog_joy[pad];
+	m_internal_analog_ref = &m_internal_analog[m_state_acces[pad]][pad];
 
 	switch (index)
 	{
@@ -219,13 +207,13 @@ u8 KeyStatus::analog_merge(u8 kbd, u8 joy)
 
 void KeyStatus::commit_status(u32 pad)
 {
-	m_button[pad] = m_internal_button_kbd[pad] & m_internal_button_joy[pad];
+	m_button[pad] = m_internal_button[0][pad] & m_internal_button[1][pad];
 
-	for (int index = 0; index < MAX_KEYS; index++)
-		m_button_pressure[pad][index] = m_internal_button_pressure[pad][index];
+	for (auto& key : all_keys)
+		m_button_pressure[pad][(int)key] = m_internal_button_pressure[pad][(int)key];
 
-	m_analog[pad].lx = analog_merge(m_internal_analog_kbd[pad].lx, m_internal_analog_joy[pad].lx);
-	m_analog[pad].ly = analog_merge(m_internal_analog_kbd[pad].ly, m_internal_analog_joy[pad].ly);
-	m_analog[pad].rx = analog_merge(m_internal_analog_kbd[pad].rx, m_internal_analog_joy[pad].rx);
-	m_analog[pad].ry = analog_merge(m_internal_analog_kbd[pad].ry, m_internal_analog_joy[pad].ry);
+	m_analog[pad].lx = analog_merge(m_internal_analog[0][pad].lx, m_internal_analog[1][pad].lx);
+	m_analog[pad].ly = analog_merge(m_internal_analog[0][pad].ly, m_internal_analog[1][pad].ly);
+	m_analog[pad].rx = analog_merge(m_internal_analog[0][pad].rx, m_internal_analog[1][pad].rx);
+	m_analog[pad].ry = analog_merge(m_internal_analog[0][pad].ry, m_internal_analog[1][pad].ry);
 }

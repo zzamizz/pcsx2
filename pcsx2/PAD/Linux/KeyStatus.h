@@ -25,6 +25,22 @@ typedef struct
 {
 	u8 lx, ly;
 	u8 rx, ry;
+	
+	void set(u8 lx2, u8 ly2, u8 rx2, u8 ry2)
+	{
+		lx = lx2;
+		ly = ly2;
+		rx = rx2;
+		ry = ry2;
+	}
+
+	void set(u8 value)
+	{
+		lx = value;
+		ly = value;
+		rx = value;
+		ry = value;
+	}
 } PADAnalog;
 
 #define MAX_ANALOG_VALUE 32766
@@ -34,18 +50,16 @@ class KeyStatus
 private:
 	const u8 m_analog_released_val;
 
-	u16 m_button[GAMEPAD_NUMBER];
-	u16 m_internal_button_kbd[GAMEPAD_NUMBER];
-	u16 m_internal_button_joy[GAMEPAD_NUMBER];
+	std::array<u16, GAMEPAD_NUMBER> m_button;
+	std::array<std::array<u16, GAMEPAD_NUMBER>, 2> m_internal_button;
 
-	u8 m_button_pressure[GAMEPAD_NUMBER][MAX_KEYS];
-	u8 m_internal_button_pressure[GAMEPAD_NUMBER][MAX_KEYS];
+	std::array<std::array<u8, MAX_KEYS>, GAMEPAD_NUMBER> m_button_pressure;
+	std::array<std::array<u8, MAX_KEYS>, GAMEPAD_NUMBER> m_internal_button_pressure;
 
-	bool m_state_acces[GAMEPAD_NUMBER];
+	std::array<u8, GAMEPAD_NUMBER> m_state_acces;
 
-	PADAnalog m_analog[GAMEPAD_NUMBER];
-	PADAnalog m_internal_analog_kbd[GAMEPAD_NUMBER];
-	PADAnalog m_internal_analog_joy[GAMEPAD_NUMBER];
+	std::array<PADAnalog, GAMEPAD_NUMBER> m_analog;
+	std::array<std::array<PADAnalog, GAMEPAD_NUMBER>, 2> m_internal_analog;
 
 	void analog_set(u32 pad, u32 index, u8 value);
 	bool analog_is_reversed(u32 pad, u32 index);
@@ -59,8 +73,8 @@ public:
 	}
 	void Init();
 
-	void keyboard_state_acces(u32 pad) { m_state_acces[pad] = true; }
-	void joystick_state_acces(u32 pad) { m_state_acces[pad] = false; }
+	void keyboard_state_acces(u32 pad) { m_state_acces[pad] = 0; }
+	void joystick_state_acces(u32 pad) { m_state_acces[pad] = 1; }
 
 	void press(u32 pad, u32 index, s32 value = 0xFF);
 	void press_button(u32 pad, u32 index);
