@@ -451,23 +451,8 @@ if(PULSEAUDIO_FOUND)
     set(pcsx2USBHeaders ${pcsx2USBHeaders} USB/usb-mic/audiodev-pulse.h)
 endif()
 
-
-
 # PAD resources pre-compilation
-set(PADImgHeader "${CMAKE_BINARY_DIR}/pcsx2/PAD/Linux/ImgHeader")
-set(PADImg "${CMAKE_SOURCE_DIR}/pcsx2/PAD/Linux/Img")
 include_directories ("${CMAKE_BINARY_DIR}/pcsx2/PAD/Linux/")
-
-file(MAKE_DIRECTORY ${PADImgHeader})
-
-foreach(result_file IN ITEMS
-        analog circle cross dp_bottom dp_left dp_right dp_up dualshock2
-        joystick_cursor l1 r1 l2 r2 l3 r3 select square start triangle arrow_up
-        arrow_bottom arrow_left arrow_right)
-    add_custom_command(
-        OUTPUT  "${PADImgHeader}/${result_file}.h"
-        COMMAND perl ${CMAKE_SOURCE_DIR}/linux_various/hex2h.pl "${PADImg}/${result_file}.png" "${PADImgHeader}/${result_file}" )
-endforeach()
 
 add_custom_command(
     OUTPUT ${CMAKE_BINARY_DIR}/pcsx2/PAD/Linux/resources_pad.h
@@ -480,7 +465,6 @@ add_custom_command(
     COMMAND glib-compile-resources --sourcedir "${CMAKE_SOURCE_DIR}/pcsx2/PAD/Linux/res" --generate-source
     --c-name PAD_res "${CMAKE_SOURCE_DIR}/pcsx2/PAD/Linux/res/PAD-res.xml" --target=${CMAKE_BINARY_DIR}/pcsx2/PAD/Linux/resources_pad.cpp
     DEPENDS ${CMAKE_SOURCE_DIR}/pcsx2/PAD/Linux/res/PAD-res.xml ${CMAKE_SOURCE_DIR}/pcsx2/PAD/Linux/res/game_controller_db.txt)
-
 
 # PAD/Linux sources 
 set(pcsx2PADSources
@@ -517,30 +501,6 @@ set(pcsx2PADHeaders
     PAD/Linux/wx_dialog/GamepadConfiguration.h
     PAD/Linux/wx_dialog/JoystickConfiguration.h
     ${CMAKE_BINARY_DIR}/pcsx2/PAD/Linux/resources_pad.h
-    # images
-    ${PADImgHeader}/analog.h
-    ${PADImgHeader}/circle.h
-    ${PADImgHeader}/cross.h
-    ${PADImgHeader}/dp_bottom.h
-    ${PADImgHeader}/dp_left.h
-    ${PADImgHeader}/dp_right.h
-    ${PADImgHeader}/dp_up.h
-    ${PADImgHeader}/dualshock2.h
-    ${PADImgHeader}/joystick_cursor.h
-    ${PADImgHeader}/l1.h
-    ${PADImgHeader}/r1.h
-    ${PADImgHeader}/l2.h
-    ${PADImgHeader}/r2.h
-    ${PADImgHeader}/l3.h
-    ${PADImgHeader}/r3.h
-    ${PADImgHeader}/select.h
-    ${PADImgHeader}/square.h
-    ${PADImgHeader}/start.h
-    ${PADImgHeader}/triangle.h
-    ${PADImgHeader}/arrow_up.h
-    ${PADImgHeader}/arrow_bottom.h
-    ${PADImgHeader}/arrow_left.h
-    ${PADImgHeader}/arrow_right.h
     )
 
 # DebugTools sources
