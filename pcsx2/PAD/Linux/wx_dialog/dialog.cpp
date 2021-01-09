@@ -48,52 +48,33 @@ GeneralPanel::GeneralPanel(wxWindow* parent)
 	}
 
 	auto* tab_box = new wxBoxSizer(wxHORIZONTAL);
-    auto* pad1_box = new wxStaticBoxSizer(wxVERTICAL, this, "Pad 1");
-    auto* pad2_box = new wxStaticBoxSizer(wxVERTICAL, this, "Pad 2");
 
-    multitap_1_check = new wxCheckBox(this, wxID_ANY, "Port 1 Multitap");
-	pad1_joy_choice = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(250,-1), joy_choices);
-	pad1_rumble_check = new wxCheckBox(this, wxID_ANY, _T("&Enable rumble"));
+	for(u32 i = 0; i < 2; i++)
+	{
+    	auto* pad_box = new wxStaticBoxSizer(wxVERTICAL, this, wxString::Format("Pad %d", i + 1));
 
-	auto* rumble1_box = new wxStaticBoxSizer(wxVERTICAL, this, wxT("Rumble intensity"));
-	pad1_rumble_intensity = new wxSlider(this, wxID_ANY, 0, 0, 0x7FFF, wxDefaultPosition, wxSize(250,-1),
-										 wxSL_HORIZONTAL | wxSL_LABELS | wxSL_BOTTOM);
-	rumble1_box->Add(pad1_rumble_intensity);
+		pad[i].multitap_check = new wxCheckBox(this, wxID_ANY, wxString::Format("Port %d Multitap", i + 1));
+		pad[i].joy_choice = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(250,-1), joy_choices);
+		pad[i].rumble_check = new wxCheckBox(this, wxID_ANY, _T("&Enable rumble"));
 
-	auto* joy1_box = new wxStaticBoxSizer(wxVERTICAL, this, wxT("Joystick sensitivity"));
-	pad1_joy_sensitivity = new wxSlider(this, wxID_ANY, 0, 0, 200, wxDefaultPosition, wxSize(250,-1),
-											 wxSL_HORIZONTAL | wxSL_LABELS | wxSL_BOTTOM);
-	joy1_box->Add(pad1_joy_sensitivity);
+		auto* rumble_box = new wxStaticBoxSizer(wxVERTICAL, this, wxT("Rumble intensity"));
+		pad[i].rumble_intensity = new wxSlider(this, wxID_ANY, 0, 0, 0x7FFF, wxDefaultPosition, wxSize(250,-1),
+											wxSL_HORIZONTAL | wxSL_LABELS | wxSL_BOTTOM);
+		rumble_box->Add(pad[i].rumble_intensity);
 
-    pad1_box->Add(multitap_1_check);
-    pad1_box->Add(pad1_joy_choice);
-    pad1_box->Add(pad1_rumble_check);
-    pad1_box->Add(rumble1_box);
-    pad1_box->Add(joy1_box);
+		auto* joy_box = new wxStaticBoxSizer(wxVERTICAL, this, wxT("Joystick sensitivity"));
+		pad[i].joy_sensitivity = new wxSlider(this, wxID_ANY, 0, 0, 200, wxDefaultPosition, wxSize(250,-1),
+												wxSL_HORIZONTAL | wxSL_LABELS | wxSL_BOTTOM);
+		joy_box->Add(pad[i].joy_sensitivity);
 
-	tab_box->Add(pad1_box, wxSizerFlags().Border(wxALL, 10));
+		pad_box->Add(pad[i].multitap_check);
+		pad_box->Add(pad[i].joy_choice);
+		pad_box->Add(pad[i].rumble_check);
+		pad_box->Add(rumble_box);
+		pad_box->Add(joy_box);
 
-    multitap_2_check = new wxCheckBox(this, wxID_ANY, "Port 2 Multitap");
-	pad2_joy_choice = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(250,-1), joy_choices);
-	pad2_rumble_check = new wxCheckBox(this, enable_rumble_id, _T("&Enable rumble"));
-
-	auto* rumble2_box = new wxStaticBoxSizer(wxVERTICAL, this, wxT("Rumble intensity"));
-	pad2_rumble_intensity = new wxSlider(this, wxID_ANY, 0, 0, 0x7FFF, wxDefaultPosition, wxSize(250,-1),
-										 wxSL_HORIZONTAL | wxSL_LABELS | wxSL_BOTTOM);
-	rumble2_box->Add(pad2_rumble_intensity);
-
-	auto* joy2_box = new wxStaticBoxSizer(wxVERTICAL, this, wxT("Joystick sensitivity"));
-	pad2_joy_sensitivity = new wxSlider(this, wxID_ANY, 0, 0, 200, wxDefaultPosition, wxSize(250,-1),
-											 wxSL_HORIZONTAL | wxSL_LABELS | wxSL_BOTTOM);
-	joy2_box->Add(pad2_joy_sensitivity);
-
-    pad2_box->Add(multitap_2_check);
-    pad2_box->Add(pad2_joy_choice);
-    pad2_box->Add(pad2_rumble_check);
-    pad2_box->Add(rumble2_box);
-    pad2_box->Add(joy2_box);
-
-	tab_box->Add(pad2_box, wxSizerFlags().Border(wxALL, 10));
+		tab_box->Add(pad_box, wxSizerFlags().Border(wxALL, 10));
+	}
 
 	SetSizerAndFit(tab_box);
 	Bind(wxEVT_CHECKBOX, &GeneralPanel::CallCheck, this);
@@ -103,21 +84,6 @@ GeneralPanel::GeneralPanel(wxWindow* parent)
 
 void GeneralPanel::Populate()
 {
-	u32 pad1_uid = Device::uid_to_index(g_conf.get_joy_uid(0));
-	u32 pad2_uid = Device::uid_to_index(g_conf.get_joy_uid(1));
-
-    multitap_1_check->SetValue(g_conf.multitap[0]);
-    multitap_2_check->SetValue(g_conf.multitap[1]);
-
-	pad1_rumble_check->SetValue(g_conf.pad_options[0].forcefeedback);
-	pad2_rumble_check->SetValue(g_conf.pad_options[1].forcefeedback);
-
-	pad1_rumble_intensity->SetValue(g_conf.get_ff_intensity());
-	pad1_joy_sensitivity->SetValue(g_conf.get_sensibility());
-
-	pad2_rumble_intensity->SetValue(g_conf.get_ff_intensity());
-	pad2_joy_sensitivity->SetValue(g_conf.get_sensibility());
-
 	joy_choices.Clear();
 	joy_choices.Add("None");
 	for (const auto& j : device_manager->devices)
@@ -125,20 +91,25 @@ void GeneralPanel::Populate()
 		joy_choices.Add(j->GetName());
 	}
 
-	pad1_joy_choice->Set(joy_choices);
-	pad2_joy_choice->Set(joy_choices);
+	for(u32 i = 0; i < 2; i++)
+	{
+		u32 pad_uid = Device::uid_to_index(g_conf.get_joy_uid(i));
+		pad[i].multitap_check->SetValue(g_conf.multitap[i]);
+		pad[i].rumble_check->SetValue(g_conf.pad_options[i].forcefeedback);
+		pad[i].rumble_intensity->SetValue(g_conf.get_ff_intensity());
+		pad[i].joy_sensitivity->SetValue(g_conf.get_sensibility());
 
-	if (pad1_uid < (joy_choices.GetCount() - 1) && !pad1_joy_choice->IsEmpty())
-		pad1_joy_choice->SetSelection(pad1_uid);
+		pad[i].joy_choice->Set(joy_choices);
 
-	if (pad2_uid < (joy_choices.GetCount() - 1) && !pad2_joy_choice->IsEmpty())
-		pad2_joy_choice->SetSelection(pad2_uid);
+		if (pad_uid < (joy_choices.GetCount() - 1) && !pad[i].joy_choice->IsEmpty())
+			pad[i].joy_choice->SetSelection(pad_uid);
+	}
 }
 
 void GeneralPanel::CallCheck(wxCommandEvent& /*event*/)
 {
-	g_conf.multitap[0] = multitap_1_check->GetValue();
-	g_conf.multitap[1] = multitap_2_check->GetValue();
+	g_conf.multitap[0] = pad[1].multitap_check->GetValue();
+	g_conf.multitap[1] = pad[1].multitap_check->GetValue();
 }
 
 GeneralPanel::~GeneralPanel()
