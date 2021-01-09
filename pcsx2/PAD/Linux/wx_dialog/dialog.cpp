@@ -40,89 +40,105 @@ static void SysMessage(const char* fmt, ...)
 GeneralPanel::GeneralPanel(wxWindow* parent) 
 	: wxPanel(parent, wxID_ANY)
 {
+	joy_choices.Clear();
+	joy_choices.Add("None");
+	for (const auto& j : device_manager->devices)
+	{
+		joy_choices.Add(j->GetName());
+	}
+
 	auto* tab_box = new wxBoxSizer(wxHORIZONTAL);
-    auto* pad_box = new wxStaticBoxSizer(wxHORIZONTAL, this, "Pads");
-    auto* pad_options = new wxBoxSizer(wxVERTICAL);
+    auto* pad1_box = new wxStaticBoxSizer(wxVERTICAL, this, "Pad 1");
+    auto* pad2_box = new wxStaticBoxSizer(wxVERTICAL, this, "Pad 2");
 
     multitap_1_check = new wxCheckBox(this, wxID_ANY, "Port 1 Multitap");
-    multitap_2_check = new wxCheckBox(this, wxID_ANY, "Port 2 Multitap");
-    multiple_bindings_check = new wxCheckBox(this, wxID_ANY, "Multiple Bindings");
+	pad1_joy_choice = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(250,-1), joy_choices);
+	pad1_rumble_check = new wxCheckBox(this, wxID_ANY, _T("&Enable rumble"));
 
-    //multiple_bindings_check->SetValue(config.multipleBinding);
+	auto* rumble1_box = new wxStaticBoxSizer(wxVERTICAL, this, wxT("Rumble intensity"));
+	pad1_rumble_intensity = new wxSlider(this, wxID_ANY, 0, 0, 0x7FFF, wxDefaultPosition, wxSize(250,-1),
+										 wxSL_HORIZONTAL | wxSL_LABELS | wxSL_BOTTOM);
+	rumble1_box->Add(pad1_rumble_intensity);
+
+	auto* joy1_box = new wxStaticBoxSizer(wxVERTICAL, this, wxT("Joystick sensitivity"));
+	pad1_joy_sensitivity = new wxSlider(this, wxID_ANY, 0, 0, 200, wxDefaultPosition, wxSize(250,-1),
+											 wxSL_HORIZONTAL | wxSL_LABELS | wxSL_BOTTOM);
+	joy1_box->Add(pad1_joy_sensitivity);
+
+    pad1_box->Add(multitap_1_check);
+    pad1_box->Add(pad1_joy_choice);
+    pad1_box->Add(pad1_rumble_check);
+    pad1_box->Add(rumble1_box);
+    pad1_box->Add(joy1_box);
+
+	tab_box->Add(pad1_box, wxSizerFlags().Border(wxALL, 10));
+
+    multitap_2_check = new wxCheckBox(this, wxID_ANY, "Port 2 Multitap");
+	pad2_joy_choice = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(250,-1), joy_choices);
+	pad2_rumble_check = new wxCheckBox(this, enable_rumble_id, _T("&Enable rumble"));
+
+	auto* rumble2_box = new wxStaticBoxSizer(wxVERTICAL, this, wxT("Rumble intensity"));
+	pad2_rumble_intensity = new wxSlider(this, wxID_ANY, 0, 0, 0x7FFF, wxDefaultPosition, wxSize(250,-1),
+										 wxSL_HORIZONTAL | wxSL_LABELS | wxSL_BOTTOM);
+	rumble2_box->Add(pad2_rumble_intensity);
+
+	auto* joy2_box = new wxStaticBoxSizer(wxVERTICAL, this, wxT("Joystick sensitivity"));
+	pad2_joy_sensitivity = new wxSlider(this, wxID_ANY, 0, 0, 200, wxDefaultPosition, wxSize(250,-1),
+											 wxSL_HORIZONTAL | wxSL_LABELS | wxSL_BOTTOM);
+	joy2_box->Add(pad2_joy_sensitivity);
+
+    pad2_box->Add(multitap_2_check);
+    pad2_box->Add(pad2_joy_choice);
+    pad2_box->Add(pad2_rumble_check);
+    pad2_box->Add(rumble2_box);
+    pad2_box->Add(joy2_box);
+
+	tab_box->Add(pad2_box, wxSizerFlags().Border(wxALL, 10));
+
+	SetSizerAndFit(tab_box);
+	Bind(wxEVT_CHECKBOX, &GeneralPanel::CallCheck, this);
+
+	Populate();
+};
+
+void GeneralPanel::Populate()
+{
+	u32 pad1_uid = Device::uid_to_index(g_conf.get_joy_uid(0));
+	u32 pad2_uid = Device::uid_to_index(g_conf.get_joy_uid(1));
+
     multitap_1_check->SetValue(g_conf.multitap[0]);
     multitap_2_check->SetValue(g_conf.multitap[1]);
 
-    pad_options->Add(multitap_1_check);
-    pad_options->Add(multitap_2_check);
-    pad_options->Add(multiple_bindings_check);
+	pad1_rumble_check->SetValue(g_conf.pad_options[0].forcefeedback);
+	pad2_rumble_check->SetValue(g_conf.pad_options[1].forcefeedback);
 
-    pad_box->Add(pad_options);
+	pad1_rumble_intensity->SetValue(g_conf.get_ff_intensity());
+	pad1_joy_sensitivity->SetValue(g_conf.get_sensibility());
 
-    pad_list = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(350,100));
-    pad_list->AppendTextColumn("Pad", wxDATAVIEW_CELL_INERT, 60);
-    pad_list->AppendTextColumn("Type", wxDATAVIEW_CELL_INERT, 186);
-    pad_list->AppendTextColumn("Bindings", wxDATAVIEW_CELL_INERT, 40);
+	pad2_rumble_intensity->SetValue(g_conf.get_ff_intensity());
+	pad2_joy_sensitivity->SetValue(g_conf.get_sensibility());
 
-    pad_box->Add(pad_list);
+	joy_choices.Clear();
+	joy_choices.Add("None");
+	for (const auto& j : device_manager->devices)
+	{
+		joy_choices.Add(j->GetName());
+	}
 
-    wxArrayString why;
-    for(auto str : padTypes)
-    {
-        why.Add(str);
-    }
+	pad1_joy_choice->Set(joy_choices);
+	pad2_joy_choice->Set(joy_choices);
 
-    choice = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, why);
-    pad_box->Add(choice);
+	if (pad1_uid < (joy_choices.GetCount() - 1) && !pad1_joy_choice->IsEmpty())
+		pad1_joy_choice->SetSelection(pad1_uid);
 
-    RefreshList();
-    
-    tab_box->Add(pad_box);
-
-	SetSizerAndFit(tab_box);
-	//Bind(wxEVT_CHOICE, &GeneralTab::CallRefreshList, this);
-	//Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &GeneralTab::CallUpdateType, this);
-	Bind(wxEVT_CHECKBOX, &GeneralPanel::CallCheck, this);
-};
+	if (pad2_uid < (joy_choices.GetCount() - 1) && !pad2_joy_choice->IsEmpty())
+		pad2_joy_choice->SetSelection(pad2_uid);
+}
 
 void GeneralPanel::CallCheck(wxCommandEvent& /*event*/)
 {
 	g_conf.multitap[0] = multitap_1_check->GetValue();
 	g_conf.multitap[1] = multitap_2_check->GetValue();
-	//g_conf.multipleBinding = multiple_bindings_check->GetValue();
-
-}
-// Updates the list with the current information.
-void GeneralPanel::RefreshList()
-{
-    //int list_selection = pad_list->GetSelectedRow();
-    //int choice_selection = choice->GetSelection();
-
-    //if (choice_selection >= 0)
-    //{
-    //    config.padConfigs[loc[list_selection].port][loc[list_selection].slot].type = (PadType)choice_selection; 
-    //}
-
-    pad_list->DeleteAllItems();
-    //loc.clear();
-    
-    for (unsigned int port = 0; port < 2; port++)
-    {
-        for (unsigned int slot = 0; slot < 4; slot++)
-        {
-            wxString title;
-            wxVector<wxVariant> data;
-
-            if (!GetPadName(title, port, slot)) continue;
-
-            data.push_back(wxVariant(title));
-			data.push_back(wxVariant(wxString("Placeholder")));
-            data.push_back(wxVariant(wxString::Format("%d", 0)));
-            //data.push_back(wxVariant(padTypes[config.padConfigs[port][slot].type]));
-            //data.push_back(wxVariant(wxString::Format("%d", CountBindings(port, slot))));
-            pad_list->AppendItem(data);
-            //loc.push_back({port, slot});
-        }
-    }
 }
 
 GeneralPanel::~GeneralPanel()
@@ -165,14 +181,15 @@ PADDialog::PADDialog()
 
 void PADDialog::InitDialog()
 {
-	EnumerateDevices();			// activate gamepads
-	PADLoadConfig();                        // Load configuration from the ini file
-	general_panel->Update();                           // Set label and fit simulated key array
+	EnumerateDevices();
+	PADLoadConfig();
+
+	general_panel->Update();
+	general_panel->Populate();
 }
 
 void PADDialog::Update()
 {
-	general_panel->RefreshList();
 	for(auto& tab : m_gamepad_tabs)
 	{
 		tab->Update();

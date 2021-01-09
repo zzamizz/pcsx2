@@ -60,14 +60,21 @@ static int GetPadName(wxString &string, unsigned int port, unsigned int slot)
 class GeneralPanel : public wxPanel
 {
 private:
-	wxCheckBox *multitap_1_check, *multitap_2_check, *multiple_bindings_check;
-	wxChoice* choice;
-	wxDataViewListCtrl* pad_list;
+	wxArrayString joy_choices;
+	wxCheckBox *multitap_1_check;
+	wxChoice* pad1_joy_choice;
+	wxCheckBox* pad1_rumble_check;
+	wxSlider *pad1_rumble_intensity, *pad1_joy_sensitivity;
+
+	wxCheckBox *multitap_2_check;
+	wxChoice* pad2_joy_choice;
+	wxCheckBox* pad2_rumble_check;
+	wxSlider *pad2_rumble_intensity, *pad2_joy_sensitivity;
 
 public:
 	GeneralPanel(wxWindow* parent);
 	~GeneralPanel();
-	void RefreshList();
+	void Populate();
 	void CallCheck(wxCommandEvent& /*event*/);
 };
 
