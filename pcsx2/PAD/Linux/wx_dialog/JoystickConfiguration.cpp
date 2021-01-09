@@ -121,15 +121,15 @@ void JoystickConfiguration::OnCheckboxChange(wxCommandEvent& event)
 		switch (cb_id)
 		{
 			case Lx_check_id:
-				g_conf.pad_options[m_pad_id].reverse_lx = m_cb_reverse_Lx->GetValue();
+				g_conf.options[m_pad_id].reverse_lx = m_cb_reverse_Lx->GetValue();
 				break;
 
 			case Ly_check_id:
-				g_conf.pad_options[m_pad_id].reverse_ly = m_cb_reverse_Ly->GetValue();
+				g_conf.options[m_pad_id].reverse_ly = m_cb_reverse_Ly->GetValue();
 				break;
 
 			case Ljoy_check_id:
-				g_conf.pad_options[m_pad_id].mouse_l = m_cb_mouse_Ljoy->GetValue();
+				g_conf.options[m_pad_id].mouse_l = m_cb_mouse_Ljoy->GetValue();
 				break;
 
 			default:
@@ -141,15 +141,15 @@ void JoystickConfiguration::OnCheckboxChange(wxCommandEvent& event)
 		switch (cb_id)
 		{
 			case Rx_check_id:
-				g_conf.pad_options[m_pad_id].reverse_rx = m_cb_reverse_Rx->GetValue();
+				g_conf.options[m_pad_id].reverse_rx = m_cb_reverse_Rx->GetValue();
 				break;
 
 			case Ry_check_id:
-				g_conf.pad_options[m_pad_id].reverse_ry = m_cb_reverse_Ry->GetValue();
+				g_conf.options[m_pad_id].reverse_ry = m_cb_reverse_Ry->GetValue();
 				break;
 
 			case Rjoy_check_id:
-				g_conf.pad_options[m_pad_id].mouse_r = m_cb_mouse_Rjoy->GetValue();
+				g_conf.options[m_pad_id].mouse_r = m_cb_mouse_Rjoy->GetValue();
 				break;
 
 			default:
@@ -184,24 +184,24 @@ void JoystickConfiguration::repopulate()
 {
 	if (m_isForLeftJoystick)
 	{
-		m_init_reverse_Lx = g_conf.pad_options[m_pad_id].reverse_lx;
+		m_init_reverse_Lx = g_conf.options[m_pad_id].reverse_lx;
 		m_cb_reverse_Lx->SetValue(m_init_reverse_Lx);
 
-		m_init_reverse_Ly = g_conf.pad_options[m_pad_id].reverse_ly;
+		m_init_reverse_Ly = g_conf.options[m_pad_id].reverse_ly;
 		m_cb_reverse_Ly->SetValue(m_init_reverse_Ly);
 
-		m_init_mouse_Ljoy = g_conf.pad_options[m_pad_id].mouse_l;
+		m_init_mouse_Ljoy = g_conf.options[m_pad_id].mouse_l;
 		m_cb_mouse_Ljoy->SetValue(m_init_mouse_Ljoy);
 	}
 	else
 	{
-		m_init_reverse_Rx = g_conf.pad_options[m_pad_id].reverse_rx;
+		m_init_reverse_Rx = g_conf.options[m_pad_id].reverse_rx;
 		m_cb_reverse_Rx->SetValue(m_init_reverse_Rx);
 
-		m_init_reverse_Ry = g_conf.pad_options[m_pad_id].reverse_ry;
+		m_init_reverse_Ry = g_conf.options[m_pad_id].reverse_ry;
 		m_cb_reverse_Ry->SetValue(m_init_reverse_Ry);
 
-		m_init_mouse_Rjoy = g_conf.pad_options[m_pad_id].mouse_r;
+		m_init_mouse_Rjoy = g_conf.options[m_pad_id].mouse_r;
 		m_cb_mouse_Rjoy->SetValue(m_init_mouse_Rjoy);
 	}
 }

@@ -17,30 +17,38 @@
 
 #include "yaml-cpp/yaml.h"
 
+
+struct pad_options
+{
+	bool forcefeedback;
+	bool reverse_lx;
+	bool reverse_ly;
+	bool reverse_rx;
+	bool reverse_ry;
+	bool mouse_l;
+	bool mouse_r;
+
+	bool operator==(const pad_options& other) const
+	{
+		return ((forcefeedback == other.forcefeedback) &&
+				(reverse_lx == other.reverse_lx) &&
+				(reverse_ly == other.reverse_ly) &&
+				(reverse_rx == other.reverse_rx) &&
+				(reverse_ry == other.reverse_ry) &&
+				(mouse_l == other.mouse_l) &&
+				(mouse_r == other.mouse_r));
+	}
+};
+
 class PADconf
 {
+public:
 	u32 ff_intensity;
 	u32 sensibility;
 
-public:
-	union
-	{
-		struct
-		{
-			u16 forcefeedback : 1;
-			u16 reverse_lx : 1;
-			u16 reverse_ly : 1;
-			u16 reverse_rx : 1;
-			u16 reverse_ry : 1;
-			u16 mouse_l : 1;
-			u16 mouse_r : 1;
-			u16 _free : 9;             // The 9 remaining bits are unused, do what you wish with them ;)
-		} pad_options[GAMEPAD_NUMBER]; // One for each pads
-		u32 packed_options;            // Only first 8 bits of each 16 bits series are really used, rest is padding
-	};
-
-	u32 log;
-	u32 ftw;
+	bool log;
+	bool ftw;
+	std::array<pad_options, GAMEPAD_NUMBER> options;
 	bool multitap[2];
 	std::map<u32, u32> keysym_map[GAMEPAD_NUMBER];
 	std::array<size_t, GAMEPAD_NUMBER> unique_id;
@@ -52,12 +60,19 @@ public:
 	{
 		log = 0;
 		ftw = 1;
-		packed_options = 0;
+
 		ff_intensity = 0x7FFF; // set it at max value by default
 		sensibility = 100;
-		for (int pad = 0; pad < GAMEPAD_NUMBER; pad++)
+		for (int i = 0; i < GAMEPAD_NUMBER; i++)
 		{
-			keysym_map[pad].clear();
+			keysym_map[i].clear();
+			options[i].forcefeedback = false;
+			options[i].reverse_lx = false;
+			options[i].reverse_ly = false;
+			options[i].reverse_rx = false;
+			options[i].reverse_ry = false;
+			options[i].mouse_l = false;
+			options[i].mouse_r = false;
 		}
 		unique_id.fill(0);
 		sdl2_mapping.clear();

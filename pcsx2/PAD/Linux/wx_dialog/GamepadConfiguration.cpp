@@ -138,7 +138,7 @@ void GamepadConfiguration::OnCheckboxChange(wxCommandEvent& event)
 
 	if (cb_id == enable_rumble_id)
 	{
-		g_conf.pad_options[m_pad_id].forcefeedback = (m_cb_rumble->GetValue()) ? (u32)1 : (u32)0;
+		g_conf.options[m_pad_id].forcefeedback = (m_cb_rumble->GetValue()) ? (u32)1 : (u32)0;
 		if (m_cb_rumble->GetValue())
 		{
 			device_manager->devices[m_pad_id]->TestForce();
@@ -171,7 +171,7 @@ void GamepadConfiguration::OnChoiceChange(wxCommandEvent& event)
 // Set button values
 void GamepadConfiguration::repopulate()
 {
-	m_cb_rumble->SetValue(g_conf.pad_options[m_pad_id].forcefeedback);
+	m_cb_rumble->SetValue(g_conf.options[m_pad_id].forcefeedback);
 
 	m_sl_rumble_intensity->SetValue(g_conf.get_ff_intensity());
 	m_sl_joystick_sensibility->SetValue(g_conf.get_sensibility());

@@ -57,7 +57,7 @@ static int GetPadName(wxString &string, unsigned int port, unsigned int slot)
     return 1;
 }
 
-struct pad_options
+struct gui_pad_options
 {
 	wxCheckBox *multitap_check;
 	wxChoice* joy_choice;
@@ -70,7 +70,7 @@ class GeneralPanel : public wxPanel
 {
 private:
 	wxArrayString joy_choices;
-	std::array<pad_options, 2> pad;
+	std::array<gui_pad_options, 2> pad;
 
 public:
 	GeneralPanel(wxWindow* parent);

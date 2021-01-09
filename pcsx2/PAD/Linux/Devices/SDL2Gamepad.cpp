@@ -97,7 +97,7 @@ void SDL2Gamepad::Rumble(unsigned type, unsigned pad)
 	if (type >= m_effects_id.size())
 		return;
 
-	if (!(g_conf.pad_options[pad].forcefeedback))
+	if (!(g_conf.options[pad].forcefeedback))
 		return;
 
 	if (m_haptic == nullptr)

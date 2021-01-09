@@ -95,7 +95,7 @@ void GeneralPanel::Populate()
 	{
 		u32 pad_uid = Device::uid_to_index(g_conf.get_joy_uid(i));
 		pad[i].multitap_check->SetValue(g_conf.multitap[i]);
-		pad[i].rumble_check->SetValue(g_conf.pad_options[i].forcefeedback);
+		pad[i].rumble_check->SetValue(g_conf.options[i].forcefeedback);
 		pad[i].rumble_intensity->SetValue(g_conf.get_ff_intensity());
 		pad[i].joy_sensitivity->SetValue(g_conf.get_sensibility());
 
