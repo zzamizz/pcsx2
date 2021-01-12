@@ -27,6 +27,8 @@
 #include "GSSetupPrimCodeGenerator.h"
 #include "GSDrawScanlineCodeGenerator.h"
 
+MULTI_ISA_UNSHARED_START
+
 class GSDrawScanline : public IDrawScanline
 {
 public:
@@ -88,3 +90,5 @@ public:
 
 	void PrintStats() {m_ds_map.PrintStats();}
 };
+
+MULTI_ISA_UNSHARED_END

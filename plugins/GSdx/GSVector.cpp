@@ -75,8 +75,6 @@ const GSVector4 GSVector4::m_x4f800000(cxpr_set1_epi32(0x4f800000));
 const GSVector4 GSVector4::m_max(cxpr_set1_ps(FLT_MAX));
 const GSVector4 GSVector4::m_min(cxpr_set1_ps(FLT_MIN));
 
-#if _M_SSE >= 0x500
-
 const GSVector8 GSVector8::m_half(cxpr_set1_ps(0.5f));
 const GSVector8 GSVector8::m_one(cxpr_set1_ps(1.0f));
 const GSVector8 GSVector8::m_x7fffffff(cxpr_set1_epi32(0x7fffffff));
@@ -86,9 +84,6 @@ const GSVector8 GSVector8::m_x4f800000(cxpr_set1_epi32(0x4f800000));
 const GSVector8 GSVector8::m_max(cxpr_set1_ps(FLT_MAX));
 const GSVector8 GSVector8::m_min(cxpr_set1_ps(FLT_MAX));
 
-#endif
-
-#if _M_SSE >= 0x501
 const GSVector8i GSVector8i::m_xff[33] =
 {
 	GSVector8i(0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000),
@@ -162,7 +157,6 @@ const GSVector8i GSVector8i::m_x0f[33] =
 	GSVector8i(0x0f0f0f0f, 0x0f0f0f0f, 0x0f0f0f0f, 0x0f0f0f0f, 0x0f0f0f0f, 0x0f0f0f0f, 0x0f0f0f0f, 0x000f0f0f),
 	GSVector8i(0x0f0f0f0f, 0x0f0f0f0f, 0x0f0f0f0f, 0x0f0f0f0f, 0x0f0f0f0f, 0x0f0f0f0f, 0x0f0f0f0f, 0x0f0f0f0f),
 };
-#endif
 
 GSVector4i GSVector4i::fit(int arx, int ary) const
 {

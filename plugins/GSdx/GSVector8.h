@@ -19,8 +19,6 @@
  *
  */
 
-#if _M_SSE >= 0x500
-
 class alignas(32) GSVector8
 {
 public:
@@ -96,11 +94,19 @@ public:
 	static const GSVector8 m_min;
 
 	GSVector8() = default;
+	constexpr GSVector8(const GSVector8& v) = default;
 
 	constexpr GSVector8(float x0, float y0, float z0, float w0, float x1, float y1, float z1, float w1)
 		: m(cxpr_setr_ps(x0, y0, z0, w0, x1, y1, z1, w1))
 	{
 	}
+
+	constexpr explicit GSVector8(__m256 m)
+		: m(m)
+	{
+	}
+
+#if _M_SSE >= 0x500
 
 	__forceinline GSVector8(int x0, int y0, int z0, int w0, int x1, int y1, int z1, int w1)
 	{
@@ -119,8 +125,6 @@ public:
 
 		#endif
 	}
-
-	constexpr GSVector8(const GSVector8& v) = default;
 
 	__forceinline explicit GSVector8(float f)
 	{
@@ -145,11 +149,6 @@ public:
 	__forceinline explicit GSVector8(__m128 m)
 	{
 		*this = m;
-	}
-
-	constexpr explicit GSVector8(__m256 m)
-		: m(m)
-	{
 	}
 
 	#if _M_SSE >= 0x501
@@ -886,6 +885,6 @@ public:
 	// TODO: v.(x0|y0|z0|w0|x1|y1|z1|w1) // broadcast element
 
 	#endif
-};
 
 #endif
+};

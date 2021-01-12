@@ -284,23 +284,9 @@ typedef int64 sint64;
 
 #endif
 
-#if _M_SSE >= 0x301
-
-	#include <tmmintrin.h>
-
-#endif
-
-#if _M_SSE >= 0x401
-
-	#include <smmintrin.h>
-
-#endif
-
-#if _M_SSE >= 0x500
-
-	#include <immintrin.h>
-
-#endif
+// Note: We use the struct definitions for GSVector8 no matter what
+// None of the compilers we use seem to complain at the existence of the header, only if you actually try to call its intrinsics
+#include <immintrin.h>
 
 #undef min
 #undef max
@@ -426,3 +412,30 @@ struct GLAutoPop {
 // Helper path to dump texture
 extern const std::string root_sw;
 extern const std::string root_hw;
+
+// For multiple-isa compilation
+#ifdef MULTI_ISA_UNSHARED_COMPILATION
+// TODO: Remove the second check when we have _M_SSE properly set on x64
+# if _M_SSE >= 0x501 || defined(__AVX2__)
+#  define CURRENT_ISA isa_avx2
+# elif _M_SSE >= 0x500
+#  define CURRENT_ISA isa_avx
+# elif _M_SSE >= 0x401
+#  define CURRENT_ISA isa_sse4
+# else
+#  define CURRENT_ISA isa_sse2
+# endif
+#else
+// Define to isa_native in shared section in addition to multi-isa-off so if someone tries to use it they'll hopefully get a linker error and notice
+# define CURRENT_ISA isa_native
+#endif
+
+#ifndef MULTI_ISA_SHARED_COMPILATION
+# define MULTI_ISA_UNSHARED_START namespace CURRENT_ISA {
+# define MULTI_ISA_UNSHARED_END }
+# define MULTI_ISA_UNSHARED_IMPL using namespace CURRENT_ISA
+#else
+# define MULTI_ISA_UNSHARED_START static_assert(0, "This file should not be included by multi-isa shared compilation!");
+# define MULTI_ISA_UNSHARED_IMPL static_assert(0, "This file should be compiled unshared in multi-isa mode!");
+# define MULTI_ISA_UNSHARED_END
+#endif
