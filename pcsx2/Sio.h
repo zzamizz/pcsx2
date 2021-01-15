@@ -116,7 +116,6 @@ struct _sio
 extern _sio sio;
 extern _mcd mcds[2][4];
 extern _mcd *mcd;
-extern int pad_slots[2];
 
 extern void sioInit();
 extern u8 sioRead8();

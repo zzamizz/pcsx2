@@ -39,9 +39,6 @@ static void sioWrite8inl(u8 data);
 #define SIO_WRITE void inline
 #define SIO_FORCEINLINE __fi
 
-// Active slots for each port.
-int pad_slots[2] = {0, 0};
-
 // Magic psx values from nocash info
 static const u8 memcard_psx[] = {0x5A, 0x5D, 0x5C, 0x5D, 0x04, 0x00, 0x00, 0x80};
 
@@ -297,9 +294,6 @@ SIO_WRITE sioWriteMultitap(u8 data)
 				}
 				else
 				{
-					// Even if no pad there, record the slot, as it is the active slot regardless.
-					pad_slots[sio.port] = data;
-
 					sio.buf[5] = data;
 					sio.buf[6] = 0x5A;
 				}

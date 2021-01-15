@@ -101,7 +101,7 @@ s32 PADinit()
 	query.reset();
 
 	for (int port = 0; port < 2; port++)
-		pad_slots[port] = 0;
+		sio.slot[port] = 0;
 
 	return 0;
 }
@@ -181,7 +181,7 @@ s32 PADfreeze(int mode, freezeData* data)
 			}
 
 			if (pdata->slot[port] < 4)
-				pad_slots[port] = pdata->slot[port];
+				sio.slot[port] = pdata->slot[port];
 		}
 	}
 	else if (mode == FREEZE_SAVE)
@@ -206,7 +206,7 @@ s32 PADfreeze(int mode, freezeData* data)
 				pdata->padData[port][slot] = pads[port][slot];
 			}
 
-			pdata->slot[port] = pad_slots[port];
+			pdata->slot[port] = sio.slot[port];
 		}
 	}
 	else

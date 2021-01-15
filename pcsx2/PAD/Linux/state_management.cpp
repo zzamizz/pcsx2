@@ -15,6 +15,7 @@
 
 #include "state_management.h"
 #include "GamePad.h"
+#include "Sio.h"
 
 // Typical packet response on the bus
 static const u8 ConfigExit[7] = {0x5A, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
@@ -60,7 +61,7 @@ u8 QueryInfo::start_poll(int _port)
 
 	queryDone = 0;
 	port = _port;
-	slot = pad_slots[port];
+	slot = sio.slot[port];
 	numBytes = 2;
 	lastByte = 0;
 

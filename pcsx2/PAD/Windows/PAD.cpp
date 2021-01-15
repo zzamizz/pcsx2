@@ -61,8 +61,6 @@ WndProcEater hWndTopProc;
 WndProcEater hWndButtonProc;
 #endif
 
-extern int pad_slots[2];
-
 // Keeps the various sources for Update polling (PADpoll, PADupdate, etc) from wreaking
 // havoc on each other...
 static std::mutex updateLock;
@@ -860,7 +858,7 @@ s32 PADinit()
 
 		for (int slot = 0; slot < 4; slot++)
 			ResetPad(port, slot);
-		pad_slots[port] = 0;
+		sio.slot[port] = 0;
 		portInitialized[port] = 1;
 
 		query.lastByte = 1;
@@ -1113,13 +1111,13 @@ u8 PADstartPoll(int port)
 	{
 		query.queryDone = 0;
 		query.port = port;
-		query.slot = pad_slots[port];
+		query.slot = sio.slot[port];
 		query.numBytes = 2;
 		query.lastByte = 0;
 		DEBUG_IN(port);
 		DEBUG_OUT(0xFF);
-		DEBUG_IN(pad_slots[port]);
-		DEBUG_OUT(pads[port][pad_slots[port]].enabled);
+		DEBUG_IN(sio.slot[port]);
+		DEBUG_OUT(pads[port][sio.slot[port]].enabled);
 		return 0xFF;
 	}
 	else
@@ -1630,7 +1628,7 @@ s32 PADfreeze(int mode, freezeData* data)
 			}
 
 			if (pdata.slot[port] < 4)
-				pad_slots[port] = pdata.slot[port];
+				sio.slot[port] = pdata.slot[port];
 		}
 	}
 	else if (mode == FREEZE_SAVE)
@@ -1656,7 +1654,7 @@ s32 PADfreeze(int mode, freezeData* data)
 				pdata.padData[port][slot] = pads[port][slot];
 			}
 
-			pdata.slot[port] = pad_slots[port];
+			pdata.slot[port] = sio.slot[port];
 		}
 	}
 	else
