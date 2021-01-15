@@ -18,6 +18,24 @@
 // sio_internal.h -- contains defines and structs used by sio and sio2, which
 // are of little or no use to the rest of the world.
 
+//This bit-field in the STATUS register contains the (inveted) state of the /ACK linre from the Controller / MC.
+//1 = /ACK_line_active_low
+#define ACK_INP 0x80
+
+//This is named RESET_ERR in sio_internal.h.
+#define CLR_INTR 0x0010
+//Set the ammount of received bytes that triggers an interrupt.
+//0=1, 1=2, 2=4, 3=8 receivedBytesIntTriger = 1<< ((ctrl & RX_BYTES_INT) >>8)
+#define RX_BYTES_INT 0x0300
+//Enable interrupt on TX ready and TX empty
+#define TX_INT_EN 0x0400
+//Trigger interrupt after receiving several (see above) bytes.
+#define RX_INT_EN 0x0800
+//Controll register: Enable the /ACK line trigerring the interrupt.
+#define ACK_INT_EN 0x1000
+//Selects slot 1 or 2
+#define SLOT_NR 0x2000
+
 // Status Flags
 static const int
 	TX_RDY =		0x0001,

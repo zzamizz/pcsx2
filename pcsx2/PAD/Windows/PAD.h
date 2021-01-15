@@ -54,7 +54,6 @@ u8 PADpoll(u8 value);
 keyEvent* PADkeyEvent();
 void PADconfigure();
 s32 PADfreeze(int mode, freezeData* data);
-s32 PADsetSlot(u8 port, u8 slot);
 void PADsetSettingsDir(const char* dir);
 void PADDoFreezeOut(void* dest);
 void PADDoFreezeIn(pxInputStream& infp);

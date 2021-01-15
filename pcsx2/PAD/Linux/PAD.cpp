@@ -23,6 +23,7 @@
 #include "keyboard.h"
 #include "PAD.h"
 #include "state_management.h"
+#include "Sio.h"
 
 #ifdef __linux__
 #include <unistd.h>
@@ -100,7 +101,7 @@ s32 PADinit()
 	query.reset();
 
 	for (int port = 0; port < 2; port++)
-		slots[port] = 0;
+		pad_slots[port] = 0;
 
 	return 0;
 }
@@ -136,20 +137,6 @@ void PADsetLogDir(const char* dir)
 void PADclose()
 {
 	_PADclose();
-}
-
-s32 PADsetSlot(u8 port, u8 slot)
-{
-	port--;
-	slot--;
-	if (port > 1 || slot > 3)
-	{
-		return 0;
-	}
-	// Even if no pad there, record the slot, as it is the active slot regardless.
-	slots[port] = slot;
-
-	return 1;
 }
 
 s32 PADfreeze(int mode, freezeData* data)
@@ -194,7 +181,7 @@ s32 PADfreeze(int mode, freezeData* data)
 			}
 
 			if (pdata->slot[port] < 4)
-				slots[port] = pdata->slot[port];
+				pad_slots[port] = pdata->slot[port];
 		}
 	}
 	else if (mode == FREEZE_SAVE)
@@ -219,7 +206,7 @@ s32 PADfreeze(int mode, freezeData* data)
 				pdata->padData[port][slot] = pads[port][slot];
 			}
 
-			pdata->slot[port] = slots[port];
+			pdata->slot[port] = pad_slots[port];
 		}
 	}
 	else

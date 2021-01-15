@@ -34,7 +34,6 @@ static const u8 queryAct[2][7] = {
 
 QueryInfo query;
 Pad pads[2][4];
-int slots[2] = {0, 0};
 
 //////////////////////////////////////////////////////////////////////
 // QueryInfo implementation
@@ -61,7 +60,7 @@ u8 QueryInfo::start_poll(int _port)
 
 	queryDone = 0;
 	port = _port;
-	slot = slots[port];
+	slot = pad_slots[port];
 	numBytes = 2;
 	lastByte = 0;
 

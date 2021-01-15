@@ -39,6 +39,9 @@ static void sioWrite8inl(u8 data);
 #define SIO_WRITE void inline
 #define SIO_FORCEINLINE __fi
 
+// Active slots for each port.
+int pad_slots[2] = {0, 0};
+
 // Magic psx values from nocash info
 static const u8 memcard_psx[] = {0x5A, 0x5D, 0x5C, 0x5D, 0x04, 0x00, 0x00, 0x80};
 
@@ -90,14 +93,6 @@ void ClearMcdEjectTimeoutNow()
 			ClearMcdEjectTimeoutNow( port, slot );
 		}
 	}
-}
-
-// Currently only check if pad wants mtap to be active.
-// Could lets PCSX2 have its own options, if anyone ever
-// wants to add support for using the extra memcard slots.
-static bool IsMtapPresent( uint port )
-{
-	return EmuConfig.MultitapEnabled( port );
 }
 
 void sioInit()
@@ -240,7 +235,7 @@ SIO_WRITE sioWriteMultitap(u8 data)
 	switch(sio.bufCount)
 	{
 	case 0:
-		if(IsMtapPresent(sio.port))
+		if(EmuConfig.MultitapEnabled(sio.port))
 		{
 			SIO_STAT_READY();
 			DEVICE_PLUGGED();
@@ -295,9 +290,19 @@ SIO_WRITE sioWriteMultitap(u8 data)
 			{
 				sio.slot[sio.port] = data;
 
-				u32 ret = PADsetSlot(sio.port+1, data+1);
-				sio.buf[5] = ret? data : 0xFF;
-				sio.buf[6] = ret? 0x5A : 0x66;
+				if (sio.port > 1 || data > 3)
+				{
+					sio.buf[5] = 0xFF;
+					sio.buf[6] = 0x66;
+				}
+				else
+				{
+					// Even if no pad there, record the slot, as it is the active slot regardless.
+					pad_slots[sio.port] = data;
+
+					sio.buf[5] = data;
+					sio.buf[6] = 0x5A;
+				}
 			}
 			break;
 
@@ -647,8 +652,6 @@ SIO_WRITE memcardInit()
 		DEVICE_UNPLUGGED();
 		siomode = SIO_DUMMY;
 	}
-
-	
 }
 
 SIO_WRITE sioWriteMemcard(u8 data)
@@ -866,25 +869,6 @@ SIO_WRITE sioWriteInfraRed(u8 data)
 	siomode = SIO_DUMMY;
 	sioInterrupt();
 }
-
-//This bit-field in the STATUS register contains the (inveted) state of the /ACK linre from the Controller / MC.
-//1 = /ACK_line_active_low
-//Should go into Sio.h
-#define ACK_INP 0x80
-
-//This is named RESET_ERR in sio_internal.h.
-#define CLR_INTR 0x0010
-//Set the ammount of received bytes that triggers an interrupt.
-//0=1, 1=2, 2=4, 3=8 receivedBytesIntTriger = 1<< ((ctrl & RX_BYTES_INT) >>8)
-#define RX_BYTES_INT 0x0300
-//Enable interrupt on TX ready and TX empty
-#define TX_INT_EN 0x0400
-//Trigger interrupt after receiving several (see above) bytes.
-#define RX_INT_EN 0x0800
-//Controll register: Enable the /ACK line trigerring the interrupt.
-#define ACK_INT_EN 0x1000
-//Selects slot 1 or 2
-#define SLOT_NR 0x2000
 
 void chkTriggerInt() {
 	//Conditions for triggerring an interrupt.
