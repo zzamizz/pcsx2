@@ -1107,7 +1107,7 @@ u8 PADstartPoll(int port)
 {
 	DEBUG_NEW_SET();
 	port--;
-	if ((unsigned int)port <= 1 && pads[port][slots[port]].enabled)
+	if ((unsigned int)port <= 1 && pads[port][sio.slot[port]].enabled)
 	{
 		query.queryDone = 0;
 		query.port = port;
