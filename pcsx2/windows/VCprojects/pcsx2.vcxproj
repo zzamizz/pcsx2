@@ -514,6 +514,7 @@
     <ClCompile Include="..\..\R3000AInterpreter.cpp" />
     <ClCompile Include="..\..\R3000AOpcodeTables.cpp" />
     <ClCompile Include="..\..\Sio.cpp" />
+    <ClCompile Include="..\..\Sio_PAD.cpp" />
     <ClCompile Include="..\..\x86\iR3000A.cpp" />
     <ClCompile Include="..\..\x86\iR3000Atables.cpp" />
     <ClCompile Include="..\..\IopHw.cpp" />
@@ -828,6 +829,7 @@
     <ClInclude Include="..\..\IopSio2.h" />
     <ClInclude Include="..\..\R3000A.h" />
     <ClInclude Include="..\..\Sio.h" />
+    <ClInclude Include="..\..\Sio_PAD.h" />
     <ClInclude Include="..\..\x86\iR3000A.h" />
     <ClInclude Include="..\..\IopHw.h" />
     <ClInclude Include="..\..\ps2\Iop\IopHw_Internal.h" />

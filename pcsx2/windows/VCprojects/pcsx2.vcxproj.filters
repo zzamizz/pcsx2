@@ -536,6 +536,9 @@
     <ClCompile Include="..\..\Sio.cpp">
       <Filter>System\Ps2\Iop</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Sio_PAD.cpp">
+      <Filter>System\Ps2\Iop</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\x86\iR3000A.cpp">
       <Filter>System\Ps2\Iop\Dynarec</Filter>
     </ClCompile>
@@ -1486,6 +1489,9 @@
       <Filter>System\Ps2\Iop</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Sio.h">
+      <Filter>System\Ps2\Iop</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Sio_PAD.h">
       <Filter>System\Ps2\Iop</Filter>
     </ClInclude>
     <ClInclude Include="..\..\x86\iR3000A.h">

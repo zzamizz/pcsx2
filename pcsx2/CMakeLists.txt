@@ -118,6 +118,7 @@ set(pcsx2Sources
 	Sif1.cpp
 	sif2.cpp
 	Sio.cpp
+	Sio_PAD.cpp
 	SourceLog.cpp
 	SPR.cpp
 	System.cpp
@@ -183,6 +184,7 @@ set(pcsx2Headers
 	Sifcmd.h
 	Sif.h
 	Sio.h
+	Sio_PAD.h
 	sio_internal.h
 	SPR.h
 	SysForwardDefs.h
