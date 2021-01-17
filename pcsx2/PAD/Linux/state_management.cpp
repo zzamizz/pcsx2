@@ -16,56 +16,8 @@
 #include "state_management.h"
 #include "GamePad.h"
 
-// Typical packet response on the bus
-static const u8 ConfigExit[7] = {0x5A, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-static const u8 noclue[7] = {0x5A, 0x00, 0x00, 0x02, 0x00, 0x00, 0x5A};
-static const u8 setMode[7] = {0x5A, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-static const u8 queryModelDS2[7] = {0x5A, 0x03, 0x02, 0x00, 0x02, 0x01, 0x00};
-static const u8 queryModelDS1[7] = {0x5A, 0x01, 0x02, 0x00, 0x02, 0x01, 0x00};
-static const u8 queryComb[7] = {0x5A, 0x00, 0x00, 0x02, 0x00, 0x01, 0x00};
-static const u8 queryMode[7] = {0x5A, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-static const u8 setNativeMode[7] = {0x5A, 0x00, 0x00, 0x00, 0x00, 0x00, 0x5A};
-
-static u8 queryMaskMode[7] = {0x5A, 0xFF, 0xFF, 0x00, 0x00, 0x00, 0x5A};
-
-static const u8 queryAct[2][7] = {
-	{0x5A, 0x00, 0x00, 0x01, 0x02, 0x00, 0x0A},
-	{0x5A, 0x00, 0x00, 0x01, 0x01, 0x01, 0x14}};
-
 QueryInfo query;
 Pad pads[2][4];
-
-//////////////////////////////////////////////////////////////////////
-// QueryInfo implementation
-//////////////////////////////////////////////////////////////////////
-
-void QueryInfo::reset()
-{
-	port = 0;
-	slot = 0;
-	lastByte = 1;
-	currentCommand = 0;
-	numBytes = 0;
-	queryDone = 1;
-	memset(response, 0xF3, sizeof(response));
-}
-
-u8 QueryInfo::start_poll(int _port)
-{
-	if (port > 1)
-	{
-		reset();
-		return 0;
-	}
-
-	queryDone = 0;
-	port = _port;
-	slot = sio.slot[port];
-	numBytes = 2;
-	lastByte = 0;
-
-	return 0xFF;
-}
 
 //////////////////////////////////////////////////////////////////////
 // Pad implementation
@@ -155,11 +107,6 @@ inline bool IsDualshock2()
 #else
 	return true;
 #endif
-}
-
-u8 pad_start_poll(u8 pad)
-{
-	return query.start_poll(pad - 1);
 }
 
 u8 pad_poll(u8 value)

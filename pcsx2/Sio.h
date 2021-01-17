@@ -18,11 +18,37 @@
 #include "Plugins.h"
 #include "MemoryCardFile.h"
 
-#define MODE_PS1_MOUSE 0x12
-#define MODE_NEGCON 0x23
-#define MODE_DIGITAL 0x41
-#define MODE_ANALOG 0x73
-#define MODE_DS2_NATIVE 0x79
+[[maybe_unused]]static const u8 MODE_PS1_MOUSE = 0x12;
+[[maybe_unused]]static const u8 MODE_NEGCON = 0x23;
+[[maybe_unused]]static const u8 MODE_DIGITAL = 0x41;
+[[maybe_unused]]static const u8 MODE_ANALOG = 0x73;
+[[maybe_unused]]static const u8 MODE_DS2_NATIVE = 0x79;
+
+
+// Typical packet response on the bus
+[[maybe_unused]]static const u8 ConfigExit[7] = {0x5A, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+//static const u8 ConfigExit[7] = {0x5A, 0xFF, 0xFF, 0x00, 0x00, 0x00, 0x00};
+
+[[maybe_unused]]static const u8 noclue[7] = {0x5A, 0x00, 0x00, 0x02, 0x00, 0x00, 0x5A};
+[[maybe_unused]]static u8 queryMaskMode[7] = {0x5A, 0xFF, 0xFF, 0x00, 0x00, 0x00, 0x5A};
+//static const u8 DSNonNativeMode[7] = {0x5A, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+[[maybe_unused]]static const u8 setMode[7] = {0x5A, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+
+// DS2
+[[maybe_unused]]static const u8 queryModelDS2[7] = {0x5A, 0x03, 0x02, 0x00, 0x02, 0x01, 0x00};
+// DS1
+[[maybe_unused]]static const u8 queryModelDS1[7] = {0x5A, 0x01, 0x02, 0x00, 0x02, 0x01, 0x00};
+
+[[maybe_unused]]static const u8 queryAct[2][7] = {{0x5A, 0x00, 0x00, 0x01, 0x02, 0x00, 0x0A},
+								  {0x5A, 0x00, 0x00, 0x01, 0x01, 0x01, 0x14}};
+
+[[maybe_unused]]static const u8 queryComb[7] = {0x5A, 0x00, 0x00, 0x02, 0x00, 0x01, 0x00};
+
+[[maybe_unused]]static const u8 queryMode[7] = {0x5A, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+
+
+[[maybe_unused]]static const u8 setNativeMode[7] = {0x5A, 0x00, 0x00, 0x00, 0x00, 0x00, 0x5A};
+
 
 // Freeze data, for a single pad.  Basically has all pad state that
 // a PS2 can set.
@@ -68,10 +94,10 @@ struct QueryInfo
 	u8 queryDone;
 	u8 response[42];
 
-#ifndef _MSC_VER
 	void reset();
 	u8 start_poll(int port);
 
+#ifndef _MSC_VER
 	template <size_t S>
 	void set_result(const u8 (&rsp)[S])
 	{
@@ -87,6 +113,8 @@ struct QueryInfo
 	}
 #endif
 };
+
+extern QueryInfo query;
 
 // Full state to manage save state
 struct PadPluginFreezeData

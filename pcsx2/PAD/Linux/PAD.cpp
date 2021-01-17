@@ -217,11 +217,6 @@ s32 PADfreeze(int mode, freezeData* data)
 	return 0;
 }
 
-u8 PADstartPoll(int pad)
-{
-	return pad_start_poll(pad);
-}
-
 u8 PADpoll(u8 value)
 {
 	return pad_poll(value);

@@ -76,64 +76,6 @@ int windowThreadId = 0;
 int updateQueued = 0;
 #endif
 
-u32 bufSize = 0;
-unsigned char outBuf[50];
-unsigned char inBuf[50];
-
-void DEBUG_TEXT_OUT(const char* text)
-{
-	if (!config.debug)
-		return;
-
-	std::ofstream file("logs/padLog.txt", std::ios::app);
-	if (!file.good())
-		return;
-	file << text;
-}
-
-void DEBUG_NEW_SET()
-{
-	if (config.debug && bufSize > 1)
-	{
-		std::ofstream file("logs/padLog.txt", std::ios::app);
-		if (file.good())
-		{
-			std::stringstream stream;
-			stream.setf(std::ios::hex, std::ios::basefield);
-			stream.setf(std::ios::uppercase);
-			stream.fill('0');
-
-			unsigned char* buffer[2] = {inBuf, outBuf};
-			for (const auto& buf : buffer)
-			{
-				// Port/FF
-				stream << std::setw(2) << int(buf[0]);
-				// Active slots/Enabled (only relevant for multitap)
-				stream << " (" << std::setw(2) << int(buf[1]) << ')';
-
-				// Command/Response
-				for (u32 n = 2; n < bufSize; ++n)
-					stream << ' ' << std::setw(2) << int(buf[n]);
-				stream << '\n';
-			}
-			stream << '\n';
-			file << stream.rdbuf();
-		}
-	}
-	bufSize = 0;
-}
-
-inline void DEBUG_IN(unsigned char c)
-{
-	if (bufSize < sizeof(inBuf))
-		inBuf[bufSize] = c;
-}
-inline void DEBUG_OUT(unsigned char c)
-{
-	if (bufSize < sizeof(outBuf))
-		outBuf[bufSize++] = c;
-}
-
 struct Stick
 {
 	int horiz;
@@ -817,29 +759,6 @@ s32 PADinit()
 		query.queryDone = 1;                      \
 	}
 
-static const u8 ConfigExit[7] = {0x5A, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-//static const u8 ConfigExit[7] = {0x5A, 0xFF, 0xFF, 0x00, 0x00, 0x00, 0x00};
-
-static const u8 noclue[7] = {0x5A, 0x00, 0x00, 0x02, 0x00, 0x00, 0x5A};
-static u8 queryMaskMode[7] = {0x5A, 0xFF, 0xFF, 0x00, 0x00, 0x00, 0x5A};
-//static const u8 DSNonNativeMode[7] = {0x5A, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-static const u8 setMode[7] = {0x5A, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-
-// DS2
-static const u8 queryModelDS2[7] = {0x5A, 0x03, 0x02, 0x00, 0x02, 0x01, 0x00};
-// DS1
-static const u8 queryModelDS1[7] = {0x5A, 0x01, 0x02, 0x00, 0x02, 0x01, 0x00};
-
-static const u8 queryAct[2][7] = {{0x5A, 0x00, 0x00, 0x01, 0x02, 0x00, 0x0A},
-								  {0x5A, 0x00, 0x00, 0x01, 0x01, 0x01, 0x14}};
-
-static const u8 queryComb[7] = {0x5A, 0x00, 0x00, 0x02, 0x00, 0x01, 0x00};
-
-static const u8 queryMode[7] = {0x5A, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-
-
-static const u8 setNativeMode[7] = {0x5A, 0x00, 0x00, 0x00, 0x00, 0x00, 0x5A};
-
 #ifdef _MSC_VER
 // Useful sequence before changing into active/inactive state.
 // Handles hooking/unhooking of mouse and KB and also mouse cursor visibility.
@@ -1025,36 +944,6 @@ void PADclose()
 		R_ClearKeyQueue();
 #endif
 		ClearKeyQueue();
-	}
-}
-
-u8 PADstartPoll(int port)
-{
-	DEBUG_NEW_SET();
-	port--;
-	if ((unsigned int)port <= 1 && pads[port][sio.slot[port]].enabled)
-	{
-		query.queryDone = 0;
-		query.port = port;
-		query.slot = sio.slot[port];
-		query.numBytes = 2;
-		query.lastByte = 0;
-		DEBUG_IN(port);
-		DEBUG_OUT(0xFF);
-		DEBUG_IN(sio.slot[port]);
-		DEBUG_OUT(pads[port][sio.slot[port]].enabled);
-		return 0xFF;
-	}
-	else
-	{
-		query.queryDone = 1;
-		query.numBytes = 0;
-		query.lastByte = 1;
-		DEBUG_IN(0);
-		DEBUG_OUT(0);
-		DEBUG_IN(port);
-		DEBUG_OUT(0);
-		return 0;
 	}
 }
 
