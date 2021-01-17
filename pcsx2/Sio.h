@@ -68,6 +68,7 @@ struct QueryInfo
 	u8 queryDone;
 	u8 response[42];
 
+#ifndef _MSC_VER
 	void reset();
 	u8 start_poll(int port);
 
@@ -84,6 +85,7 @@ struct QueryInfo
 		set_result(rsp);
 		queryDone = 1;
 	}
+#endif
 };
 
 // Full state to manage save state
