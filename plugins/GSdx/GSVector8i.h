@@ -116,7 +116,7 @@ public:
 	{
 	}
 
-	constexpr explicit GSVector8i(__m256i m)
+	__forceinline constexpr explicit GSVector8i(__m256i m)
 		: m(m)
 	{
 	}
@@ -159,14 +159,6 @@ public:
 		*this = m;
 	}
 
-<<<<<<< HEAD
-	__forceinline constexpr explicit GSVector8i(__m256i m)
-		: m(m)
-	{
-	}
-
-=======
->>>>>>> bc34b3305... GSdx: Prepare for separation of multi-isa code
 	__forceinline void operator = (const GSVector8i& v)
 	{
 		m = v.m;

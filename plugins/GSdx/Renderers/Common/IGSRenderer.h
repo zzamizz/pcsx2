@@ -53,7 +53,7 @@ public:
 	virtual void KeyEvent(GSKeyEventData* e) = 0;
 	virtual int Freeze(GSFreezeData* fd, bool sizeonly) = 0;
 	virtual int Defrost(const GSFreezeData* fd) = 0;
-	virtual std::wstring* BeginCapture() = 0;
+	virtual bool BeginCapture(std::string& filename) = 0;
 	virtual void EndCapture() = 0;
 	virtual void SetGameCRC(uint32 crc, int options) = 0;
 	virtual void GetLastTag(uint32* tag) = 0;
