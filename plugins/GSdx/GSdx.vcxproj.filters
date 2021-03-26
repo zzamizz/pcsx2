@@ -27,16 +27,10 @@
     <ClCompile Include="GSAlignedClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GSBlock.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="GSCapture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Window\GSCaptureDlg.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GSClut.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GSCodeBuffer.cpp">
@@ -60,28 +54,10 @@
     <ClCompile Include="Window\GSDialog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Renderers\Common\GSDirtyRect.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Renderers\SW\GSDrawScanline.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Renderers\SW\GSDrawScanlineCodeGenerator.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="GSDump.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GSdx.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Renderers\Common\GSFunctionMap.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Renderers\HW\GSHwHack.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GSLocalMemory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GSPerfMon.cpp">
@@ -90,37 +66,10 @@
     <ClCompile Include="Renderers\Common\GSOsdManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Renderers\SW\GSRasterizer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Renderers\Common\GSRenderer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Renderers\DX11\GSRendererDX11.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Renderers\HW\GSRendererHW.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Renderers\Null\GSRendererNull.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Renderers\OpenGL\GSRendererOGL.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Renderers\SW\GSRendererSW.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Window\GSSetting.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Renderers\SW\GSSetupPrimCodeGenerator.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Renderers\OpenGL\GSShaderOGL.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GSState.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GSTables.cpp">
@@ -133,18 +82,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Renderers\OpenGL\GSTextureOGL.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Renderers\HW\GSTextureCache.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Renderers\DX11\GSTextureCache11.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Renderers\OpenGL\GSTextureCacheOGL.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Renderers\SW\GSTextureCacheSW.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Renderers\DX11\GSTextureFX11.cpp">
@@ -163,9 +100,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Renderers\SW\GSVertexSW.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Renderers\Common\GSVertexTrace.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Window\GSWnd.cpp">
@@ -187,45 +121,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Renderers\SW\GSTextureSW.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Renderers\SW\GSSetupPrimCodeGenerator.x64.avx.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Renderers\SW\GSSetupPrimCodeGenerator.x64.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Renderers\SW\GSSetupPrimCodeGenerator.x86.avx.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Renderers\SW\GSSetupPrimCodeGenerator.x86.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Renderers\SW\GSDrawScanlineCodeGenerator.x64.avx.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Renderers\SW\GSDrawScanlineCodeGenerator.x64.avx2.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Renderers\SW\GSDrawScanlineCodeGenerator.x64.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Renderers\SW\GSDrawScanlineCodeGenerator.x86.avx.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Renderers\SW\GSDrawScanlineCodeGenerator.x86.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Renderers\SW\GSDrawScanlineCodeGenerator.x86.avx2.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Renderers\SW\GSSetupPrimCodeGenerator.x86.avx2.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Renderers\SW\GSSetupPrimCodeGenerator.x64.avx2.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GSDrawingContext.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GSPng.cpp">
@@ -254,16 +149,10 @@
     <ClInclude Include="GSAlignedClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GSBlock.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="GSCapture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Window\GSCaptureDlg.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GSClut.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GSCodeBuffer.h">
@@ -287,19 +176,7 @@
     <ClInclude Include="Window\GSDialog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Renderers\Common\GSDirtyRect.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GSDrawingContext.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="GSDrawingEnvironment.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Renderers\SW\GSDrawScanline.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Renderers\SW\GSDrawScanlineCodeGenerator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GSDump.h">
@@ -308,40 +185,13 @@
     <ClInclude Include="GSdx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Renderers\Common\GSFunctionMap.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GSLocalMemory.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="GSPerfMon.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Renderers\Common\GSOsdManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Renderers\SW\GSRasterizer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Renderers\Common\IGSRenderer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Renderers\Common\GSRenderer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Renderers\DX11\GSRendererDX11.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Renderers\HW\GSRendererHW.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Renderers\Null\GSRendererNull.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Renderers\OpenGL\GSRendererOGL.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Renderers\SW\GSRendererSW.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Renderers\SW\GSScanlineEnvironment.h">
@@ -353,13 +203,7 @@
     <ClInclude Include="Window\GSSettingsDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Renderers\SW\GSSetupPrimCodeGenerator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Renderers\OpenGL\GSShaderOGL.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GSState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GSTables.h">
@@ -372,18 +216,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Renderers\OpenGL\GSTextureOGL.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Renderers\HW\GSTextureCache.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Renderers\DX11\GSTextureCache11.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Renderers\OpenGL\GSTextureCacheOGL.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Renderers\SW\GSTextureCacheSW.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Renderers\Null\GSTextureNull.h">
@@ -426,9 +258,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Renderers\SW\GSVertexSW.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Renderers\Common\GSVertexTrace.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Window\GSWnd.h">
