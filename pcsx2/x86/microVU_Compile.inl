@@ -650,7 +650,10 @@ void* mVUcompileSingleInstruction(microVU& mVU, u32 startPC, uptr pState, microF
 
 void mVUDoDBit(microVU& mVU, microFlagCycles* mFC)
 {
-	xTEST(ptr32[&VU0.VI[REG_FBRST].UL], (isVU1 ? 0x400 : 0x4));
+	if (mVU.index && THREAD_VU1)
+		xTEST(ptr32[&vu1Thread.vuFBRST], (isVU1 ? 0x400 : 0x4));
+	else
+		xTEST(ptr32[&VU0.VI[REG_FBRST].UL], (isVU1 ? 0x400 : 0x4));
 	xForwardJump32 eJMP(Jcc_Zero);
 	if (!isVU1 || !THREAD_VU1)
 	{
@@ -665,7 +668,10 @@ void mVUDoDBit(microVU& mVU, microFlagCycles* mFC)
 
 void mVUDoTBit(microVU& mVU, microFlagCycles* mFC)
 {
-	xTEST(ptr32[&VU0.VI[REG_FBRST].UL], (isVU1 ? 0x800 : 0x8));
+	if (mVU.index && THREAD_VU1)
+		xTEST(ptr32[&vu1Thread.vuFBRST], (isVU1 ? 0x800 : 0x8));
+	else
+		xTEST(ptr32[&VU0.VI[REG_FBRST].UL], (isVU1 ? 0x800 : 0x8));
 	xForwardJump32 eJMP(Jcc_Zero);
 	if (!isVU1 || !THREAD_VU1)
 	{

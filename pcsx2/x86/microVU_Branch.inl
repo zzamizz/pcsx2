@@ -128,21 +128,24 @@ void mVUDTendProgram(mV, microFlagCycles* mFC, int isEbit)
 
 	xMOV(ptr32[&mVU.regs().nextBlockCycles], 0);
 
+
+	xMOV(ptr32[&mVU.regs().VI[REG_TPC].UL], xPC);
+
 	if (isEbit) // Clear 'is busy' Flags
 	{
 		if (!mVU.index || !THREAD_VU1)
 		{
 			xAND(ptr32[&VU0.VI[REG_VPU_STAT].UL], (isVU1 ? ~0x100 : ~0x001)); // VBS0/VBS1 flag
 		}
-		else
-			xFastCall((void*)mVUTBit);
 	}
 
 	if (isEbit != 2) // Save PC, and Jump to Exit Point
 	{
-		xMOV(ptr32[&mVU.regs().VI[REG_TPC].UL], xPC);
+		if (mVU.index && THREAD_VU1)
+			xFastCall((void*)mVUTBit);
 		xJMP(mVU.exitFunct);
 	}
+
 	memcpy(&mVUregs, &stateBackup, sizeof(mVUregs)); //Restore the state for the rest of the recompile
 }
 
@@ -245,6 +248,7 @@ void mVUendProgram(mV, microFlagCycles* mFC, int isEbit)
 		xMOVAPS(ptr128[&mVU.regs().micro_statusflags], xmmT1);
 	}
 
+	xMOV(ptr32[&mVU.regs().VI[REG_TPC].UL], xPC);
 
 	if ((isEbit && isEbit != 3)) // Clear 'is busy' Flags
 	{
@@ -253,8 +257,6 @@ void mVUendProgram(mV, microFlagCycles* mFC, int isEbit)
 		{
 			xAND(ptr32[&VU0.VI[REG_VPU_STAT].UL], (isVU1 ? ~0x100 : ~0x001)); // VBS0/VBS1 flag
 		}
-		else
-			xFastCall((void*)mVUEBit);
 	}
 	else if(isEbit)
 	{
@@ -263,7 +265,8 @@ void mVUendProgram(mV, microFlagCycles* mFC, int isEbit)
 
 	if (isEbit != 2 && isEbit != 3) // Save PC, and Jump to Exit Point
 	{
-		xMOV(ptr32[&mVU.regs().VI[REG_TPC].UL], xPC);
+		if (mVU.index && THREAD_VU1)
+			xFastCall((void*)mVUEBit);
 		xJMP(mVU.exitFunct);
 	}
 	memcpy(&mVUregs, &stateBackup, sizeof(mVUregs)); //Restore the state for the rest of the recompile
@@ -318,6 +321,8 @@ void normJumpCompile(mV, microFlagCycles& mFC, bool isEvilJump)
 		//So if it is taken, you need to end the program, else you get infinite loops.
 		mVUendProgram(mVU, &mFC, 2);
 		xMOV(ptr32[&mVU.regs().VI[REG_TPC].UL], arg1regd);
+		if (mVU.index && THREAD_VU1)
+			xFastCall((void*)mVUEBit);
 		xJMP(mVU.exitFunct);
 	}
 
@@ -337,7 +342,10 @@ void normBranch(mV, microFlagCycles& mFC)
 	if (mVUup.dBit && doDBitHandling)
 	{
 		u32 tempPC = iPC;
-		xTEST(ptr32[&VU0.VI[REG_FBRST].UL], (isVU1 ? 0x400 : 0x4));
+		if (mVU.index && THREAD_VU1)
+			xTEST(ptr32[&vu1Thread.vuFBRST], (isVU1 ? 0x400 : 0x4));
+		else
+			xTEST(ptr32[&VU0.VI[REG_FBRST].UL], (isVU1 ? 0x400 : 0x4));
 		xForwardJump32 eJMP(Jcc_Zero);
 		if (!mVU.index || !THREAD_VU1)
 		{
@@ -352,7 +360,10 @@ void normBranch(mV, microFlagCycles& mFC)
 	if (mVUup.tBit)
 	{
 		u32 tempPC = iPC;
-		xTEST(ptr32[&VU0.VI[REG_FBRST].UL], (isVU1 ? 0x800 : 0x8));
+		if (mVU.index && THREAD_VU1)
+			xTEST(ptr32[&vu1Thread.vuFBRST], (isVU1 ? 0x800 : 0x8));
+		else
+			xTEST(ptr32[&VU0.VI[REG_FBRST].UL], (isVU1 ? 0x800 : 0x8));
 		xForwardJump32 eJMP(Jcc_Zero);
 		if (!mVU.index || !THREAD_VU1)
 		{
@@ -378,6 +389,8 @@ void normBranch(mV, microFlagCycles& mFC)
 		mVUendProgram(mVU, &mFC, 3);
 		iPC = branchAddr(mVU) / 4;
 		xMOV(ptr32[&mVU.regs().VI[REG_TPC].UL], xPC);
+		if (mVU.index && THREAD_VU1)
+			xFastCall((void*)mVUEBit);
 		xJMP(mVU.exitFunct);
 		iPC = tempPC;
 	}
@@ -458,7 +471,10 @@ void condBranch(mV, microFlagCycles& mFC, int JMPcc)
 	{
 		DevCon.Warning("T-Bit on branch, please report if broken");
 		u32 tempPC = iPC;
-		xTEST(ptr32[&VU0.VI[REG_FBRST].UL], (isVU1 ? 0x800 : 0x8));
+		if (mVU.index && THREAD_VU1)
+			xTEST(ptr32[&vu1Thread.vuFBRST], (isVU1 ? 0x800 : 0x8));
+		else
+			xTEST(ptr32[&VU0.VI[REG_FBRST].UL], (isVU1 ? 0x800 : 0x8));
 		xForwardJump32 eJMP(Jcc_Zero);
 		if (!mVU.index || !THREAD_VU1)
 		{
@@ -470,11 +486,15 @@ void condBranch(mV, microFlagCycles& mFC, int JMPcc)
 		xForwardJump32 tJMP(xInvertCond((JccComparisonType)JMPcc));
 			incPC(4); // Set PC to First instruction of Non-Taken Side
 			xMOV(ptr32[&mVU.regs().VI[REG_TPC].UL], xPC);
+			if (mVU.index && THREAD_VU1)
+				xFastCall((void*)mVUTBit);
 			xJMP(mVU.exitFunct);
 		tJMP.SetTarget();
 		incPC(-4); // Go Back to Branch Opcode to get branchAddr
 		iPC = branchAddr(mVU) / 4;
 		xMOV(ptr32[&mVU.regs().VI[REG_TPC].UL], xPC);
+		if (mVU.index && THREAD_VU1)
+			xFastCall((void*)mVUTBit);
 		xJMP(mVU.exitFunct);
 		eJMP.SetTarget();
 		iPC = tempPC;
@@ -482,7 +502,10 @@ void condBranch(mV, microFlagCycles& mFC, int JMPcc)
 	if (mVUup.dBit && doDBitHandling)
 	{
 		u32 tempPC = iPC;
-		xTEST(ptr32[&VU0.VI[REG_FBRST].UL], (isVU1 ? 0x400 : 0x4));
+		if (mVU.index  && THREAD_VU1)
+			xTEST(ptr32[&vu1Thread.vuFBRST], (isVU1 ? 0x400 : 0x4));
+		else
+			xTEST(ptr32[&VU0.VI[REG_FBRST].UL], (isVU1 ? 0x400 : 0x4));
 		xForwardJump32 eJMP(Jcc_Zero);
 		if (!mVU.index || !THREAD_VU1)
 		{
@@ -517,11 +540,15 @@ void condBranch(mV, microFlagCycles& mFC, int JMPcc)
 		xForwardJump32 dJMP((JccComparisonType)JMPcc);
 		incPC(4); // Set PC to First instruction of Non-Taken Side
 		xMOV(ptr32[&mVU.regs().VI[REG_TPC].UL], xPC);
+		if (mVU.index && THREAD_VU1)
+			xFastCall((void*)mVUEBit);
 		xJMP(mVU.exitFunct);
 		dJMP.SetTarget();
 		incPC(-4); // Go Back to Branch Opcode to get branchAddr
 		iPC = branchAddr(mVU) / 4;
 		xMOV(ptr32[&mVU.regs().VI[REG_TPC].UL], xPC);
+		if (mVU.index && THREAD_VU1)
+			xFastCall((void*)mVUEBit);
 		xJMP(mVU.exitFunct);
 		iPC = tempPC;
 	}
@@ -537,12 +564,16 @@ void condBranch(mV, microFlagCycles& mFC, int JMPcc)
 		xForwardJump32 eJMP(((JccComparisonType)JMPcc));
 			incPC(1); // Set PC to First instruction of Non-Taken Side
 			xMOV(ptr32[&mVU.regs().VI[REG_TPC].UL], xPC);
+			if (mVU.index && THREAD_VU1)
+				xFastCall((void*)mVUEBit);
 			xJMP(mVU.exitFunct);
 		eJMP.SetTarget();
 		incPC(-4); // Go Back to Branch Opcode to get branchAddr
 
 		iPC = branchAddr(mVU) / 4;
 		xMOV(ptr32[&mVU.regs().VI[REG_TPC].UL], xPC);
+		if (mVU.index && THREAD_VU1)
+			xFastCall((void*)mVUEBit);
 		xJMP(mVU.exitFunct);
 		return;
 	}
@@ -625,7 +656,10 @@ void normJump(mV, microFlagCycles& mFC)
 	}
 	if (mVUup.dBit && doDBitHandling)
 	{
-		xTEST(ptr32[&VU0.VI[REG_FBRST].UL], (isVU1 ? 0x400 : 0x4));
+		if (THREAD_VU1)
+			xTEST(ptr32[&vu1Thread.vuFBRST], (isVU1 ? 0x400 : 0x4));
+		else
+			xTEST(ptr32[&VU0.VI[REG_FBRST].UL], (isVU1 ? 0x400 : 0x4));
 		xForwardJump32 eJMP(Jcc_Zero);
 		if (!mVU.index || !THREAD_VU1)
 		{
@@ -640,7 +674,10 @@ void normJump(mV, microFlagCycles& mFC)
 	}
 	if (mVUup.tBit)
 	{
-		xTEST(ptr32[&VU0.VI[REG_FBRST].UL], (isVU1 ? 0x800 : 0x8));
+		if (mVU.index && THREAD_VU1)
+			xTEST(ptr32[&vu1Thread.vuFBRST], (isVU1 ? 0x800 : 0x8));
+		else
+			xTEST(ptr32[&VU0.VI[REG_FBRST].UL], (isVU1 ? 0x800 : 0x8));
 		xForwardJump32 eJMP(Jcc_Zero);
 		if (!mVU.index || !THREAD_VU1)
 		{
@@ -650,6 +687,8 @@ void normJump(mV, microFlagCycles& mFC)
 		mVUDTendProgram(mVU, &mFC, 2);
 		xMOV(gprT1, ptr32[&mVU.branch]);
 		xMOV(ptr32[&mVU.regs().VI[REG_TPC].UL], gprT1);
+		if (mVU.index && THREAD_VU1)
+			xFastCall((void*)mVUTBit);
 		xJMP(mVU.exitFunct);
 		eJMP.SetTarget();
 	}
@@ -658,6 +697,8 @@ void normJump(mV, microFlagCycles& mFC)
 		mVUendProgram(mVU, &mFC, 2);
 		xMOV(gprT1, ptr32[&mVU.branch]);
 		xMOV(ptr32[&mVU.regs().VI[REG_TPC].UL], gprT1);
+		if (mVU.index && THREAD_VU1)
+			xFastCall((void*)mVUEBit);
 		xJMP(mVU.exitFunct);
 	}
 	else
