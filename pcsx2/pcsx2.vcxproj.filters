@@ -2856,6 +2856,9 @@
     <ClInclude Include="Memcard\PS2\MemcardPS2Protocol.h">
       <Filter>System\Ps2\Memcard\PS2</Filter>
     </ClInclude>
+    <ClInclude Include="PAD\PadUtils.h">
+      <Filter>System\Ps2\PAD</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="windows\wxResources.rc">
