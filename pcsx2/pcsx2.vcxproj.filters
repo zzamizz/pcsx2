@@ -288,6 +288,12 @@
     <Filter Include="System\Ps2\PAD\PS2">
       <UniqueIdentifier>{ee847e0c-c6d5-49fd-b586-395a6cbb2aee}</UniqueIdentifier>
     </Filter>
+    <Filter Include="System\Ps2\Multitap">
+      <UniqueIdentifier>{c24e4005-7124-41b4-ad91-24080a9b7372}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="System\Ps2\Multitap\PS2">
+      <UniqueIdentifier>{64b2d978-e326-4b04-9241-bb387c1f6982}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="Utilities\folderdesc.txt">
@@ -1659,9 +1665,6 @@
     <ClCompile Include="Memcard\PS2\MemcardPS2.cpp">
       <Filter>System\Ps2\Memcard\PS2</Filter>
     </ClCompile>
-    <ClCompile Include="Memcard\Memcard.cpp">
-      <Filter>System\Ps2\Memcard</Filter>
-    </ClCompile>
     <ClCompile Include="Sio0.cpp">
       <Filter>System\Ps2\Iop</Filter>
     </ClCompile>
@@ -1685,6 +1688,9 @@
     </ClCompile>
     <ClCompile Include="Memcard\PS2\MemcardPS2Protocol.cpp">
       <Filter>System\Ps2\Memcard\PS2</Filter>
+    </ClCompile>
+    <ClCompile Include="Multitap\PS2\MultitapPS2Protocol.cpp">
+      <Filter>System\Ps2\Multitap\PS2</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -2808,14 +2814,8 @@
     <ClInclude Include="Memcard\PS2\MemcardPS2Types.h">
       <Filter>System\Ps2\Memcard\PS2</Filter>
     </ClInclude>
-    <ClInclude Include="Memcard\Memcard.h">
-      <Filter>System\Ps2\Memcard</Filter>
-    </ClInclude>
     <ClInclude Include="Sio0.h">
       <Filter>System\Ps2\Iop</Filter>
-    </ClInclude>
-    <ClInclude Include="MemcardTypes.h">
-      <Filter>System\Ps2\Memcard</Filter>
     </ClInclude>
     <ClInclude Include="Sio0Types.h">
       <Filter>System\Ps2\Iop</Filter>
@@ -2858,6 +2858,12 @@
     </ClInclude>
     <ClInclude Include="PAD\PadUtils.h">
       <Filter>System\Ps2\PAD</Filter>
+    </ClInclude>
+    <ClInclude Include="Multitap\PS2\MultitapPS2Protocol.h">
+      <Filter>System\Ps2\Multitap\PS2</Filter>
+    </ClInclude>
+    <ClInclude Include="Multitap\PS2\MultitapPS2Types.h">
+      <Filter>System\Ps2\Multitap\PS2</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
