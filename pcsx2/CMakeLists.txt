@@ -157,6 +157,8 @@ set(pcsx2Sources
 	Sif1.cpp
 	sif2.cpp
 	Sio.cpp
+	Sio0.cpp
+	Sio2.cpp
 	SourceLog.cpp
 	SPR.cpp
 	System.cpp
@@ -224,7 +226,12 @@ set(pcsx2Headers
 	Sif.h
 	SingleRegisterTypes.h
 	Sio.h
+	Sio0.h
+	Sio2.h
 	sio_internal.h
+	SioTypes.h
+	Sio0Types.h
+	Sio2Types.h
 	SPR.h
 	SysForwardDefs.h
 	System.h
@@ -306,6 +313,24 @@ set(pcsx2SPU2Sources
 if(TARGET PkgConfig::PORTAUDIO)
 	list(APPEND pcsx2SPU2Sources SPU2/SndOut_Portaudio.cpp)
 endif()
+
+#Memcard Headers
+set(pcsx2MemcardHeaders
+		Memcard/PS1/MemcardPS1.h
+		Memcard/PS1/MemcardPS1Protocol.h
+		Memcard/PS1/MemcardPS1Types.h
+		Memcard/PS2/MemcardPS2.h
+		Memcard/PS2/MemcardPS2Protocol.h
+		Memcard/PS2/MemcardPS2Types.h
+)
+
+#Memcard Sources
+set(pcsx2MemcardSources
+		Memcard/PS1/MemcardPS1.cpp
+		Memcard/PS1/MemcardPS1Protocol.cpp
+		Memcard/PS2/MemcardPS2.cpp
+		Memcard/PS2/MemcardPS2Protocol.cpp
+)
 
 # SPU2 headers
 set(pcsx2SPU2Headers
@@ -470,8 +495,31 @@ if(TARGET PulseAudio::PulseAudio)
 	list(APPEND pcsx2USBHeaders USB/usb-mic/audiodev-pulse.h)
 endif()
 
+set(pcsx2PADCommonSources
+		Multitap/PS2/MultitapPS2Protocol.cpp
+		PAD/PS1/PadPS1.cpp
+		PAD/PS1/PadPS1Protocol.cpp
+		PAD/PS2/PadPS2.cpp
+		PAD/PS2/PadPS2Protocol.cpp
+)
+
+set(pcsx2PADCommonHeaders
+		Multitap/PS2/MultitapPS2Protocol.h
+		Multitap/PS2/MultitapPS2Types.h
+		PAD/Gamepad.h
+		PAD/PadTypes.h
+		PAD/PadUtils.h
+		PAD/PS1/PadPS1.h
+		PAD/PS1/PadPS1Protocol.h
+		PAD/PS1/PadPS1Types.h
+		PAD/PS2/PadPS2.h
+		PAD/PS2/PadPS2Protocol.h
+		PAD/PS2/PadPS2Types.h
+)
+
 if(WIN32)
 	set(pcsx2PADSources
+		${pcsx2PADCommonSources}
 		PAD/Windows/PADConfig.cpp
 		PAD/Windows/DeviceEnumerator.cpp
 		PAD/Windows/Diagnostics.cpp
@@ -492,7 +540,7 @@ if(WIN32)
 	)
 
 	set(pcsx2PADHeaders
-		PAD/Gamepad.h
+		${pcsx2PADCommonHeaders}
 		PAD/Windows/PADConfig.h
 		PAD/Windows/DeviceEnumerator.h
 		PAD/Windows/Diagnostics.h
@@ -545,24 +593,25 @@ else(WIN32)
 
 	# PAD/Linux sources
 	set(pcsx2PADSources
+		PAD/Linux/Config.cpp
 		PAD/Linux/Device.cpp
 		PAD/Linux/InputManager.cpp
-		PAD/Linux/SDL/joystick.cpp
 		PAD/Linux/keyboard.cpp
 		PAD/Linux/KeyStatus.cpp
 		PAD/Linux/PAD.cpp
 		PAD/Linux/state_management.cpp
+		PAD/Linux/SDL/joystick.cpp
 		PAD/Linux/wx_dialog/dialog.cpp
 		PAD/Linux/wx_dialog/opPanel.cpp
 		PAD/Linux/wx_dialog/GamepadConfiguration.cpp
 		PAD/Linux/wx_dialog/JoystickConfiguration.cpp
 		PAD/Linux/Config.cpp
 		${CMAKE_BINARY_DIR}/pcsx2/PAD/Linux/resources_pad.cpp
+		${pcsx2PADCommonSources}
 	)
 
 	# PAD/Linux headers
 	set(pcsx2PADHeaders
-		PAD/Gamepad.h
 		PAD/Linux/bitwise.h
 		PAD/Linux/Config.h
 		PAD/Linux/Device.h
@@ -575,6 +624,7 @@ else(WIN32)
 		PAD/Linux/wx_dialog/opPanel.h
 		PAD/Linux/wx_dialog/GamepadConfiguration.h
 		PAD/Linux/wx_dialog/JoystickConfiguration.h
+		${pcsx2PADCommonHeaders}
 		${CMAKE_BINARY_DIR}/pcsx2/PAD/Linux/resources_pad.h
 		# images
 		${PADImgHeader}/analog.h
@@ -1358,6 +1408,8 @@ target_sources(PCSX2 PRIVATE
 	${pcsx2PADSources}
 	${pcsx2GSHeaders}
 	${pcsx2GSSources}
+	${pcsx2MemcardHeaders}
+	${pcsx2MemcardSources}
 	${pcsx2DebugToolsSources}
 	${pcsx2DebugToolsHeaders}
 	${pcsx2GuiSources}
