@@ -142,6 +142,9 @@ else()
 				check_lib(LIBUDEV libudev libudev.h)
 			endif()
 		endif()
+	
+		find_package(LIBEVDEV REQUIRED)
+		include_directories("${LIBEVDEV_INCLUDE_DIR}")
 	endif()
 
 	if(PORTAUDIO_API)
