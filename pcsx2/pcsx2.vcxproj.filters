@@ -295,6 +295,9 @@
     <Filter Include="System\Ps2\Multitap\PS2">
       <UniqueIdentifier>{64b2d978-e326-4b04-9241-bb387c1f6982}</UniqueIdentifier>
     </Filter>
+    <Filter Include="System\Ps2\PAD\Devices">
+      <UniqueIdentifier>{5b8db70a-7c6c-4d75-ab2e-204387fff638}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="Utilities\folderdesc.txt">
@@ -1693,6 +1696,10 @@
     <ClCompile Include="Multitap\PS2\MultitapPS2Protocol.cpp">
       <Filter>System\Ps2\Multitap\PS2</Filter>
     </ClCompile>
+    <ClCompile Include="GS\Renderers\SW\GSSetupPrimCodeGenerator.all.cpp" />
+    <ClCompile Include="PAD\Devices\PadXInput.cpp">
+      <Filter>System\Ps2\PAD\Devices</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Patch.h">
@@ -2619,9 +2626,6 @@
     <ClInclude Include="GS\Renderers\Common\GSFastList.h">
       <Filter>System\Ps2\GS</Filter>
     </ClInclude>
-    <ClInclude Include="GS.h">
-      <Filter>System\Ps2\GIF</Filter>
-    </ClInclude>
     <ClInclude Include="GS\Renderers\DX11\GSDevice11.h">
       <Filter>System\Ps2\GS\Renderers\Direct3D</Filter>
     </ClInclude>
@@ -2868,6 +2872,13 @@
     </ClInclude>
     <ClInclude Include="PAD\Windows\PAD.h">
       <Filter>System\Ps2\PAD</Filter>
+    </ClInclude>
+    <ClInclude Include="GS.h" />
+    <ClInclude Include="PAD\Devices\PadXInput.h">
+      <Filter>System\Ps2\PAD\Devices</Filter>
+    </ClInclude>
+    <ClInclude Include="PAD\Devices\Devices.h">
+      <Filter>System\Ps2\PAD\Devices</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
