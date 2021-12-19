@@ -564,8 +564,8 @@ void GSRendererNew::EmulateBlending(bool& DATE_GL42, bool& DATE_GL45)
 		switch (m_sw_blending)
 		{
 			case AccBlendLevel::Ultra:
-				sw_blending |= true;
-				[[fallthrough]];
+				sw_blending = true;
+				break;
 			case AccBlendLevel::Full:
 				sw_blending |= (ALPHA.A != ALPHA.B) && ((ALPHA.C == 0 && m_vt.m_alpha.max > 128) || (ALPHA.C == 2 && ALPHA.FIX > 128u));
 				[[fallthrough]];
@@ -580,15 +580,30 @@ void GSRendererNew::EmulateBlending(bool& DATE_GL42, bool& DATE_GL45)
 				[[fallthrough]];
 			case AccBlendLevel::Basic:
 				sw_blending |= impossible_or_free_blend;
-				[[fallthrough]];
+				break;
 			case AccBlendLevel::None:
-				/*sw_blending |= accumulation_blend*/;
+				break;
 		}
 	}
 	else
 	{
-		if (static_cast<u8>(m_sw_blending) >= static_cast<u8>(AccBlendLevel::Basic))
-			sw_blending |= accumulation_blend || blend_non_recursive;
+		switch (m_sw_blending)
+		{
+			case AccBlendLevel::High:
+				// Primitive overlap doesn't require a full barrier so let's offer support on D3D11 too
+				sw_blending |= (m_prim_overlap == PRIM_OVERLAP_NO);
+				[[fallthrough]];
+			case AccBlendLevel::Medium:
+				// Primitive overlap doesn't require a full barrier so let's offer support on D3D11 too,
+				// prefer hw blend mix over reading the rt.
+				sw_blending |= (m_prim_overlap == PRIM_OVERLAP_NO) && !blend_mix;
+				[[fallthrough]];
+			case AccBlendLevel::Basic:
+				sw_blending |= accumulation_blend || blend_non_recursive;
+				break;
+			case AccBlendLevel::None:
+				break;
+		}
 	}
 
 	// Do not run BLEND MIX if sw blending is already present, it's less accurate
@@ -604,7 +619,7 @@ void GSRendererNew::EmulateBlending(bool& DATE_GL42, bool& DATE_GL45)
 		// Safe FBMASK, avoid hitting accumulation mode on 16bit,
 		// fixes shadows in Superman shadows of Apokolips.
 		const bool sw_fbmask_colclip = !m_conf.require_one_barrier && m_conf.ps.fbmask;
-		bool free_colclip;
+		bool free_colclip = false;
 		if (m_dev->Features().texture_barrier)
 			free_colclip = m_prim_overlap == PRIM_OVERLAP_NO || blend_non_recursive || sw_fbmask_colclip;
 		else
@@ -627,7 +642,7 @@ void GSRendererNew::EmulateBlending(bool& DATE_GL42, bool& DATE_GL45)
 			m_conf.ps.hdr = 1;
 			sw_blending = true; // Enable sw blending for the HDR algo
 		}
-		else if (sw_blending && m_dev->Features().texture_barrier)
+		else if (sw_blending)
 		{
 			// A slow algo that could requires several passes (barely used)
 			GL_INS("COLCLIP SW mode ENABLED");
@@ -731,11 +746,10 @@ void GSRendererNew::EmulateBlending(bool& DATE_GL42, bool& DATE_GL45)
 			// Disable HW blending
 			m_conf.blend = {};
 
-			m_conf.require_full_barrier |= !blend_non_recursive;
-
-			// Only BLEND_NO_REC should hit this code path for now
-			if (!m_dev->Features().texture_barrier)
-				ASSERT(blend_non_recursive);
+			if (m_dev->Features().texture_barrier)
+				m_conf.require_full_barrier |= !blend_non_recursive;
+			else
+				m_conf.require_one_barrier |= !blend_non_recursive;
 		}
 
 		// Require the fix alpha vlaue
@@ -1194,10 +1208,7 @@ void GSRendererNew::DrawPrims(GSTexture* rt, GSTexture* ds, GSTextureCache::Sour
 	MergeSprite(tex);
 
 	// Always check if primitive overlap as it is used in plenty of effects.
-	if (m_dev->Features().texture_barrier)
-		m_prim_overlap = PrimitiveOverlap();
-	else
-		m_prim_overlap = PRIM_OVERLAP_UNKNOW; // Prim overlap check is useless without texture barrier
+	m_prim_overlap = PrimitiveOverlap();
 
 	// Detect framebuffer read that will need special handling
 	if (m_dev->Features().texture_barrier && (m_context->FRAME.Block() == m_context->TEX0.TBP0) && PRIM->TME && m_sw_blending != AccBlendLevel::None)
