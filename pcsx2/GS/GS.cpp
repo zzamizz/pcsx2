@@ -1086,8 +1086,9 @@ void GSApp::Init()
 
 	m_gs_acc_blend_level_d3d11.push_back(GSSetting(static_cast<u32>(AccBlendLevel::None), "Minimum", "Fastest"));
 	m_gs_acc_blend_level_d3d11.push_back(GSSetting(static_cast<u32>(AccBlendLevel::Basic), "Basic", "Recommended"));
-	m_gs_acc_blend_level_d3d11.push_back(GSSetting(static_cast<u32>(AccBlendLevel::Medium), "Medium", "Debug"));
-	m_gs_acc_blend_level_d3d11.push_back(GSSetting(static_cast<u32>(AccBlendLevel::High), "High", "Debug"));
+	m_gs_acc_blend_level_d3d11.push_back(GSSetting(static_cast<u32>(AccBlendLevel::Medium), "Medium", ""));
+	m_gs_acc_blend_level_d3d11.push_back(GSSetting(static_cast<u32>(AccBlendLevel::High), "High", "Very Slow"));
+	m_gs_acc_blend_level_d3d11.push_back(GSSetting(static_cast<u32>(AccBlendLevel::Ultra), "Ultra", "Ultra Slow"));
 
 	m_gs_tv_shaders.push_back(GSSetting(0, "None", ""));
 	m_gs_tv_shaders.push_back(GSSetting(1, "Scanline filter", ""));

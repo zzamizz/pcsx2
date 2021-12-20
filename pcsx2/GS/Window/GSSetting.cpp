@@ -208,9 +208,11 @@ const char* dialog_message(int ID, bool* updateText)
 				"It is intended for slow computer.\n\n"
 				"Basic:\nEmulate correctly some of the effects with a limited speed penalty.\n"
 				"This is the recommended setting.\n\n"
-				"Medium:\nExtend it to color shuffling. Performance impact remains reasonable.\n"
+				"Medium:\nExtend it to color shuffling on fbmask. Performance impact remains reasonable.\n"
 				"It is intended for debug.\n\n"
-				"High:\nExtend it to triangle based primitives. It is ultra slow!\n"
+				"High:\nExtend it to triangle based primitives on fbmask, as well as reading the framebuffer when primitives don't overlap and when no hw/sw blend mix is present. It is very slow!\n"
+				"It is intended for debug.\n\n"
+				"Ultra:\nPrefer reading the framebuffer over hw/sw blend mix. It is ultra slow!\n"
 				"It is intended for debug.\n\n"
 				"Note: Direct3D 11 and OpenGL blending options aren't the same, even High blending on Direct3D 11 is like 1/3 of Basic blending on OpenGL.";
 #endif

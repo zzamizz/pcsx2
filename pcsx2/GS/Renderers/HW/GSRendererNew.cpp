@@ -589,11 +589,11 @@ void GSRendererNew::EmulateBlending(bool& DATE_GL42, bool& DATE_GL45)
 	{
 		switch (m_sw_blending)
 		{
-			case AccBlendLevel::High:
+			case AccBlendLevel::Ultra:
 				// Primitive overlap doesn't require a full barrier so let's offer support on D3D11 too
 				sw_blending |= (m_prim_overlap == PRIM_OVERLAP_NO);
 				[[fallthrough]];
-			case AccBlendLevel::Medium:
+			case AccBlendLevel::High:
 				// Primitive overlap doesn't require a full barrier so let's offer support on D3D11 too,
 				// prefer hw blend mix over reading the rt.
 				sw_blending |= (m_prim_overlap == PRIM_OVERLAP_NO) && !blend_mix;
