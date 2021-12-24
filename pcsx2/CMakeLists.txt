@@ -159,6 +159,7 @@ set(pcsx2Sources
 	Sio.cpp
 	Sio0.cpp
 	Sio2.cpp
+	SioCommon.cpp
 	SourceLog.cpp
 	SPR.cpp
 	System.cpp
@@ -232,6 +233,7 @@ set(pcsx2Headers
 	SioTypes.h
 	Sio0Types.h
 	Sio2Types.h
+	SioCommon.h
 	SPR.h
 	SysForwardDefs.h
 	System.h
@@ -324,6 +326,7 @@ set(pcsx2MemcardHeaders
 		Memcard/PS2/MemcardPS2Types.h
 		Memcard/MemcardConfig.h
 		Memcard/MemcardConfigSlot.h
+		Memcard/Memcard.h
 )
 
 #Memcard Sources
@@ -334,6 +337,7 @@ set(pcsx2MemcardSources
 		Memcard/PS2/MemcardPS2Protocol.cpp
 		Memcard/MemcardConfig.cpp
 		Memcard/MemcardConfigSlot.cpp
+		Memcard/Memcard.cpp
 )
 
 # SPU2 headers
