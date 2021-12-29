@@ -35,7 +35,6 @@ GSDevice11::GSDevice11()
 	m_mipmap = theApp.GetConfigI("mipmap");
 	m_upscale_multiplier = std::max(0, theApp.GetConfigI("upscale_multiplier"));
 
-	m_features.broken_point_sampler = true; // Not technically the case but the most common reason to use DX11 is because you're on AMD
 	m_features.geometry_shader = true;
 	m_features.image_load_store = false;
 	m_features.texture_barrier = false;
@@ -212,8 +211,12 @@ bool GSDevice11::Create(const WindowInfo& wi)
 	{
 		// HACK: check nVIDIA
 		// Note: It can cause issues on several games such as SOTC, Fatal Frame, plus it adds border offset.
-		bool disable_safe_features = theApp.GetConfigB("UserHacks") && theApp.GetConfigB("UserHacks_Disable_Safe_Features");
+		const bool disable_safe_features = theApp.GetConfigB("UserHacks") && theApp.GetConfigB("UserHacks_Disable_Safe_Features");
 		m_hack_topleft_offset = (m_upscale_multiplier != 1 && D3D::IsNvidia(adapter.get()) && !disable_safe_features) ? -0.01f : 0.0f;
+
+		// HACK: check AMD
+		// Broken point sampler should be enabled only on AMD.
+		m_features.broken_point_sampler = D3D::IsAMD(adapter.get());
 	}
 
 	std::optional<std::string> shader = Host::ReadResourceFileToString("shaders/dx11/tfx.fx");

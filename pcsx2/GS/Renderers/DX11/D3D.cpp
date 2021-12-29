@@ -107,6 +107,21 @@ namespace D3D
 		return desc.VendorId == 0x10DE;
 	}
 
+	bool IsAMD(IDXGIAdapter1* adapter)
+	{
+		ASSERT(adapter);
+
+		DXGI_ADAPTER_DESC1 desc = {};
+		if (FAILED(adapter->GetDesc1(&desc)))
+		{
+			fprintf(stderr, "D3D: failed to get the adapter description\n");
+			return false;
+		}
+
+		// AMD magic number
+		return desc.VendorId == 0x1002;
+	}
+
 	bool SupportsFeatureLevel11(IDXGIAdapter1* adapter)
 	{
 		ASSERT(adapter);

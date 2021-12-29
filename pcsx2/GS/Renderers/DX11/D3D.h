@@ -36,5 +36,6 @@ namespace D3D
 	// this is sort of a legacy thing that doesn't have much to do with d3d (just the easiest way)
 	// checks to see if the adapter at 0 is NV and thus we should prefer OpenGL
 	bool IsNvidia(IDXGIAdapter1* adapter);
+	bool IsAMD(IDXGIAdapter1* adapter);
 	bool ShouldPreferD3D();
 };
