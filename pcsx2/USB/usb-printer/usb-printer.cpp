@@ -233,7 +233,7 @@ namespace usb_printer
 			case USB_TOKEN_IN:
 				if (s->cmd_state == 0 && s->last_command_size > 0)
 				{
-					for (u_int32_t i = 0; i < sizeof(commands) / sizeof(commands[0]); i++)
+					for (uint32_t i = 0; i < sizeof(commands) / sizeof(commands[0]); i++)
 					{
 						if (s->last_command[1] == 0xCF)
 						{
@@ -272,7 +272,7 @@ namespace usb_printer
 	{
 		PrinterState* s = new PrinterState();
 		std::string api = *PrinterDevice::ListAPIs().begin();
-		u_int32_t subtype = GetSelectedSubtype(std::make_pair(port, TypeName()));
+		uint32_t subtype = GetSelectedSubtype(std::make_pair(port, TypeName()));
 		if (subtype >= sizeof(sPrinters) / sizeof(sPrinters[0])) {
 			subtype = 0;
 		}

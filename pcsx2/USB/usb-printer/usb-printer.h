@@ -149,7 +149,7 @@ namespace usb_printer
 		static std::vector<std::string> SubTypes()
 		{
 			std::vector<std::string> ret;
-			for (u_int32_t i = 0; i < sizeof(sPrinters) / sizeof(sPrinters[0]); i++)
+			for (uint32_t i = 0; i < sizeof(sPrinters) / sizeof(sPrinters[0]); i++)
 			{
 				ret.push_back(sPrinters[i].commercial_name);
 			}
