@@ -702,8 +702,8 @@ void ps_blend(inout vec4 Color, float As)
     vec3 D = vec3(0.0f);
 #endif
 
-    // As/Af clamp alpha for Blend mix
-#if PS_ALPHA_CLAMP
+    // As/Af clamp alpha for Blend mix123
+#if PS_BLEND_MIX == 1
     C = min(C, float(1.0f));
 #endif
 
@@ -859,6 +859,11 @@ void ps_main()
     ps_color_clamp_wrap(C.rgb);
 
     ps_fbmask(C);
+
+    // Substract As - 1 for Blend mix4
+#if PS_BLEND_MIX == 2
+       alpha_blend -= 1.0f;
+#endif
 
     SV_Target0 = C / 255.0f;
     SV_Target1 = vec4(alpha_blend);

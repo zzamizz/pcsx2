@@ -53,7 +53,7 @@ public:
 				u32 blend_index : 7;
 				u32 abe : 1;
 				u32 accu_blend : 1;
-				u32 blend_mix : 1;
+				u32 blend_mix : 2;
 			};
 
 			struct
@@ -65,7 +65,7 @@ public:
 			u32 key;
 		};
 
-		operator u32() { return key & 0x3fff; }
+		operator u32() { return key & 0x7fff; }
 
 		OMBlendSelector()
 			: key(0)

@@ -111,9 +111,10 @@ public:
 enum HWBlendFlags
 {
 	// A couple of flag to determine the blending behavior
-	BLEND_MIX1   = 0x20,  // Mix of hw and sw, do Cs*F or Cs*As in shader
-	BLEND_MIX2   = 0x40,  // Mix of hw and sw, do Cs*(As + 1) or Cs*(F + 1) in shader
-	BLEND_MIX3   = 0x80,  // Mix of hw and sw, do Cs*(1 - As) or Cs*(1 - F) in shader
+	BLEND_MIX1   = 0x10,  // Mix of hw and sw, do Cs*F or Cs*As in shader
+	BLEND_MIX2   = 0x20,  // Mix of hw and sw, do Cs*(As + 1) or Cs*(F + 1) in shader
+	BLEND_MIX3   = 0x40,  // Mix of hw and sw, do Cs*(1 - As) or Cs*(1 - F) in shader
+	BLEND_MIX4   = 0x80,  // Mix of hw and sw, replace Cs*F + Cd*(1 - F) with Cs*F - Cd*(F - 1)
 	BLEND_A_MAX  = 0x100, // Impossible blending uses coeff bigger than 1
 	BLEND_C_CLR  = 0x200, // Clear color blending (use directly the destination color as blending factor)
 	BLEND_NO_REC = 0x400, // Doesn't require sampling of the RT as a texture
@@ -220,7 +221,7 @@ struct alignas(16) GSHWDrawConfig
 				u32 clr1        : 1; // useful?
 				u32 hdr         : 1;
 				u32 colclip     : 1;
-				u32 alpha_clamp : 1;
+				u32 blend_mix   : 2;
 				u32 pabe        : 1;
 
 				// Others ways to fetch the texture
@@ -245,7 +246,7 @@ struct alignas(16) GSHWDrawConfig
 				// Scan mask
 				u32 scanmsk : 2;
 
-				u32 _free2 : 3;
+				u32 _free2 : 2;
 			};
 
 			u64 key;
@@ -418,12 +419,12 @@ struct alignas(16) GSHWDrawConfig
 				u8 factor;
 				bool is_constant     : 1;
 				bool is_accumulation : 1;
-				bool is_mixed_hw_sw  : 1;
+				u8 is_mixed_hw_sw  : 2;
 			};
 			u32 key;
 		};
 		BlendState(): key(0) {}
-		BlendState(u8 index, u8 factor, bool is_constant, bool is_accumulation, bool is_mixed_hw_sw)
+		BlendState(u8 index, u8 factor, bool is_constant, bool is_accumulation, u8 is_mixed_hw_sw)
 			: key(0)
 		{
 			this->index = index;

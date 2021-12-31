@@ -1055,7 +1055,7 @@ std::string GSDeviceOGL::GetPSSource(PSSelector sel)
 		+ format("#define PS_HDR %d\n", sel.hdr)
 		+ format("#define PS_DITHER %d\n", sel.dither)
 		+ format("#define PS_ZCLAMP %d\n", sel.zclamp)
-		+ format("#define PS_ALPHA_CLAMP %d\n", sel.alpha_clamp)
+		+ format("#define PS_BLEND_MIX %d\n", sel.blend_mix)
 		+ format("#define PS_PABE %d\n", sel.pabe)
 		+ format("#define PS_SCANMSK %d\n", sel.scanmsk)
 		+ format("#define PS_SCALE_FACTOR %d\n", m_upscale_multiplier)
@@ -1633,7 +1633,7 @@ void GSDeviceOGL::OMSetColorMaskState(OMColorMaskSelector sel)
 	}
 }
 
-void GSDeviceOGL::OMSetBlendState(u8 blend_index, u8 blend_factor, bool is_blend_constant, bool accumulation_blend, bool blend_mix)
+void GSDeviceOGL::OMSetBlendState(u8 blend_index, u8 blend_factor, bool is_blend_constant, bool accumulation_blend, u8 blend_mix)
 {
 	if (blend_index)
 	{
@@ -1656,9 +1656,18 @@ void GSDeviceOGL::OMSetBlendState(u8 blend_index, u8 blend_factor, bool is_blend
 			b.src = GL_ONE;
 			b.dst = GL_ONE;
 		}
-		else if (blend_mix)
+		else if (blend_mix == 1)
 		{
 			b.src = GL_ONE;
+		}
+		else if (blend_mix == 2)
+		{
+			b.op = GL_FUNC_SUBTRACT;
+			b.src = GL_ONE;
+			if (blend_index == 11)
+				b.dst = GL_SRC1_ALPHA;
+			else
+				b.dst = GL_CONSTANT_COLOR;
 		}
 
 		if (GLState::eq_RGB != b.op)

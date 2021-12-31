@@ -529,8 +529,13 @@ void GSRendererNew::EmulateBlending(bool& DATE_GL42, bool& DATE_GL45)
 
 	// Compute the blending equation to detect special case
 	const GIFRegALPHA& ALPHA = m_context->ALPHA;
+	// (Cs - Cd)*F  +  0 
+	// (((0 * 3 + 1) * 3 + 0) * 3 + 2)
 	u8 blend_index = u8(((ALPHA.A * 3 + ALPHA.B) * 3 + ALPHA.C) * 3 + ALPHA.D);
 	const int blend_flag = m_dev->GetBlendFlags(blend_index);
+	const bool alpha_c2_high_one = (ALPHA.C == 2 && ALPHA.FIX > 128u);
+	const bool alpha_c0_high_min_one = (ALPHA.C == 0 && GetAlphaMinMax().min > 128);
+	const bool alpha_c0_high_max_one = (ALPHA.C == 0 && GetAlphaMinMax().max > 128);
 
 	// Do the multiplication in shader for blending accumulation: Cs*As + Cd or Cs*Af + Cd
 	bool accumulation_blend = !!(blend_flag & BLEND_ACCU);
@@ -542,7 +547,9 @@ void GSRendererNew::EmulateBlending(bool& DATE_GL42, bool& DATE_GL45)
 	const bool blend_mix1 = !!(blend_flag & BLEND_MIX1);
 	const bool blend_mix2 = !!(blend_flag & BLEND_MIX2);
 	const bool blend_mix3 = !!(blend_flag & BLEND_MIX3);
-	bool blend_mix = (blend_mix1 || blend_mix2 || blend_mix3);
+	const bool blend_mix4 = (blend_flag & BLEND_MIX4) && (alpha_c2_high_one || alpha_c0_high_min_one);
+	const bool blend_mix123 = (blend_mix1 || blend_mix2 || blend_mix3);
+	bool blend_mix = (blend_mix123 || blend_mix4);
 
 	// SW Blend is (nearly) free. Let's use it.
 	const bool impossible_or_free_blend = (blend_flag & BLEND_A_MAX) // Impossible blending
@@ -562,10 +569,10 @@ void GSRendererNew::EmulateBlending(bool& DATE_GL42, bool& DATE_GL45)
 				sw_blending |= true;
 				[[fallthrough]];
 			case AccBlendLevel::Full:
-				sw_blending |= ALPHA.A != ALPHA.B && ALPHA.C == 0 && GetAlphaMinMax().max > 128;
+				sw_blending |= ALPHA.A != ALPHA.B && alpha_c0_high_max_one;
 				[[fallthrough]];
 			case AccBlendLevel::High:
-				sw_blending |= ALPHA.C == 1 || (ALPHA.A != ALPHA.B && ALPHA.C == 2 && ALPHA.FIX > 128u);
+				sw_blending |= ALPHA.C == 1 || (ALPHA.A != ALPHA.B && alpha_c2_high_one);
 				[[fallthrough]];
 			case AccBlendLevel::Medium:
 				// Initial idea was to enable accurate blending for sprite rendering to handle
@@ -693,12 +700,12 @@ void GSRendererNew::EmulateBlending(bool& DATE_GL42, bool& DATE_GL45)
 		{
 			// Keep HW blending to do the addition/subtraction
 			m_conf.blend = {blend_index, 0, false, true, false};
-			if (ALPHA.A == 2)
+			if (m_conf.ps.blend_a)
 			{
 				// The blend unit does a reverse subtraction so it means
 				// the shader must output a positive value.
 				// Replace 0 - Cs by Cs - 0
-				m_conf.ps.blend_a = ALPHA.B;
+				m_conf.ps.blend_a = m_conf.ps.blend_b;
 				m_conf.ps.blend_b = 2;
 			}
 			// Remove the addition/substraction from the SW blending
@@ -708,10 +715,22 @@ void GSRendererNew::EmulateBlending(bool& DATE_GL42, bool& DATE_GL45)
 		}
 		else if (blend_mix)
 		{
-			m_conf.blend = {blend_index, ALPHA.FIX, ALPHA.C == 2, false, true};
-			m_conf.ps.alpha_clamp = 1;
+			m_conf.blend = {blend_index, ALPHA.FIX, m_conf.ps.blend_c == 2, false, 1u};
+			m_conf.ps.blend_mix = 1;
 
-			if (blend_mix1)
+			// blend_mix4 should be called first to avoid calling blend_mix1
+			if (blend_mix4)
+			{
+				m_conf.blend = {m_conf.ps.blend_c == 0 ? 11u : 17u, (ALPHA.FIX - 0x80u), m_conf.ps.blend_c == 2, false, 2u};
+				m_conf.ps.blend_mix = 2;
+
+				m_conf.ps.blend_a = 0;
+				m_conf.ps.blend_b = 2;
+				m_conf.ps.blend_d = 2;
+
+				fprintf(stderr, "%d: Blend Mix 4\n", s_n);
+			}
+			else if (blend_mix1)
 			{
 				m_conf.ps.blend_a = 0;
 				m_conf.ps.blend_b = 2;

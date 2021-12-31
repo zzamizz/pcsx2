@@ -186,7 +186,7 @@ void GSDevice11::SetupPS(PSSelector sel, const GSHWDrawConfig::PSConstantBuffer*
 		sm.AddMacro("PS_BLEND_B", sel.blend_b);
 		sm.AddMacro("PS_BLEND_C", sel.blend_c);
 		sm.AddMacro("PS_BLEND_D", sel.blend_d);
-		sm.AddMacro("PS_ALPHA_CLAMP", sel.alpha_clamp);
+		sm.AddMacro("PS_BLEND_MIX", sel.blend_mix);
 		sm.AddMacro("PS_PABE", sel.pabe);
 		sm.AddMacro("PS_DITHER", sel.dither);
 		sm.AddMacro("PS_ZCLAMP", sel.zclamp);
@@ -328,8 +328,21 @@ void GSDevice11::SetupOM(OMDepthStencilSelector dssel, OMBlendSelector bsel, u8 
 				bd.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
 				bd.RenderTarget[0].DestBlend = D3D11_BLEND_ONE;
 			}
-			else if (bsel.blend_mix)
+			else if (bsel.blend_mix == 1)
+			{
 				bd.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
+			}
+			else if (bsel.blend_mix == 2)
+			{
+				bd.RenderTarget[0].BlendOp = D3D11_BLEND_OP_SUBTRACT;
+				bd.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
+
+				if (bsel.blend_index == 11)
+
+					bd.RenderTarget[0].DestBlend = D3D11_BLEND_SRC1_ALPHA;
+				else
+					bd.RenderTarget[0].DestBlend = D3D11_BLEND_BLEND_FACTOR;
+			}
 		}
 
 		if (bsel.wr) bd.RenderTarget[0].RenderTargetWriteMask |= D3D11_COLOR_WRITE_ENABLE_RED;
